@@ -1,0 +1,77 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { LINKS } from "@/data/home";
+import type { Contributor } from "@/utils/github";
+import { formatDateLong } from "@/utils/time";
+
+interface Props {
+  contributors: Contributor[] | null;
+  commits: number | null;
+  posts: CollectionEntry<"posts">[];
+  alt: boolean;
+}
+const { contributors, commits, posts, alt } = Astro.props;
+const stack = (contributors ?? []).slice(0, 10);
+const hasNews = posts.length > 0;
+---
+
+<section class:list={{ "home-alt": alt }}>
+  <div class:list={["home-w home-s", { "home-two home-two-even": hasNews }]}>
+    <div class="home-stack">
+      {
+        stack.length > 0 && (
+          <ul class="home-avs" role="list" aria-label="Top contributors">
+            {stack.map((c) => (
+              <li>
+                <a href={c.profileUrl} title={c.login}>
+                  <img
+                    src={`${c.avatarUrl}${c.avatarUrl.includes("?") ? "&" : "?"}s=96`}
+                    width="48"
+                    height="48"
+                    alt={c.login}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+      <h2 class="home-d home-h2 home-h2-sm">
+        {
+          contributors
+            ? `Planted by ${contributors.length} contributor${contributors.length === 1 ? "" : "s"}`
+            : "Planted by its contributors"
+        }
+      </h2>
+      <p class="home-muted">
+        {commits !== null && `${commits.toLocaleString("en")} commits so far. `}Your first pull request is welcome.
+      </p>
+      <a class="home-link" href={LINKS.contribute}>Start contributing →</a>
+    </div>
+
+    {
+      hasNews && (
+        <div>
+          <div class="home-news-head">
+            <h2 class="home-d">Fresh from the orchard</h2>
+            <a class="home-link" href="/news">
+              All news →
+            </a>
+          </div>
+          <ul class="home-news-list" role="list">
+            {posts.map((p) => (
+              <li>
+                <a href={`/news/${p.id}`} class="home-news">
+                  <time datetime={p.data.date.toISOString()}>{formatDateLong(p.data.date)}</time>
+                  <span class="t">{p.data.title}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+  </div>
+</section>

@@ -1,0 +1,86 @@
+---
+import apple from "@/assets/brand/pomme-apple.svg";
+import { releaseParts, type HomePlatform } from "@/utils/downloads";
+import type { Release } from "@/utils/github";
+
+interface Props {
+  platforms: HomePlatform[];
+  release: Release | null;
+  ruled: boolean;
+}
+const { platforms, release, ruled } = Astro.props;
+const first = platforms[0];
+const meta = release ? [...releaseParts(release), `${release.downloads.toLocaleString("en")} downloads`] : [];
+---
+
+<section id="download" class:list={["home-w home-s home-download", { "home-ruled": ruled }]}>
+  <img src={apple.src} width="56" height="56" alt="" class="home-pixel" />
+  <h2 class="home-d home-h2 home-h2-lg">Ready to pick one?</h2>
+
+  <div class="home-tabs" role="radiogroup" aria-label="Platform">
+    {
+      platforms.map((p, i) => (
+        <button
+          type="button"
+          role="radio"
+          class:list={["home-tab", { on: i === 0 }]}
+          aria-checked={i === 0 ? "true" : "false"}
+          tabindex={i === 0 ? 0 : -1}
+          data-plat={p.key}
+          data-href={p.href}
+          data-cta={p.cta}
+          data-file={p.fileLabel}
+          data-details={p.details}
+          data-note={p.note}
+        >
+          {p.label}
+        </button>
+      ))
+    }
+  </div>
+
+  <a href={first.href} class="home-btn home-pri home-btn-lg" data-dl-link><span data-dl="cta">{first.cta}</span></a>
+
+  <div class="home-dl-meta" aria-live="polite">
+    <span><code class="home-mono" data-dl="file">{first.fileLabel}</code>{" · "}<span data-dl="details">{first.details}</span></span>
+    {meta.length > 0 && <span>{meta.join(" · ")}</span>}
+    <span data-dl="note">{first.note}</span>
+  </div>
+</section>
+
+<script>
+  const root = document.getElementById("download");
+  const tabs = Array.from(root?.querySelectorAll<HTMLButtonElement>("[data-plat]") ?? []);
+  const link = root?.querySelector<HTMLAnchorElement>("[data-dl-link]");
+  const fields = ["cta", "file", "details", "note"] as const;
+
+  function select(tab: HTMLButtonElement | undefined, focus = false) {
+    if (!tab) return;
+    for (const t of tabs) {
+      const on = t === tab;
+      t.classList.toggle("on", on);
+      t.setAttribute("aria-checked", String(on));
+      t.tabIndex = on ? 0 : -1;
+    }
+    if (focus) tab.focus();
+    if (link && tab.dataset.href) link.href = tab.dataset.href;
+    for (const name of fields) {
+      const el = root?.querySelector<HTMLElement>(`[data-dl="${name}"]`);
+      if (el) el.textContent = tab.dataset[name] ?? "";
+    }
+  }
+
+  tabs.forEach((tab, i) => {
+    tab.addEventListener("click", () => select(tab));
+    tab.addEventListener("keydown", (e) => {
+      const step = e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : e.key === "ArrowLeft" || e.key === "ArrowUp" ? -1 : 0;
+      if (!step) return;
+      e.preventDefault();
+      select(tabs[(i + step + tabs.length) % tabs.length], true);
+    });
+  });
+
+  const ua = navigator.userAgent;
+  const guess = /Android|iPhone|iPad/i.test(ua) ? "mobile" : /Mac/i.test(ua) ? "macos" : /Linux|X11|CrOS/i.test(ua) ? "linux" : null;
+  if (guess) select(tabs.find((t) => t.dataset.plat === guess));
+</script>

@@ -1,0 +1,93 @@
+import parityJson from "@/data/parity.json";
+import { GITHUB_URL } from "@/utils/github";
+
+/**
+ * Hero parallax. Each layer moves down by (scroll distance x speed) over the first
+ * `range` pixels of scroll. 0 = fixed to the page, 1 = fixed to the viewport.
+ */
+export const PARALLAX = {
+  range: 900,
+  sky: 0.5,
+  logo: 0.58,
+  far: 0.36,
+  mid: 0.24,
+  close: 0.12,
+  near: 0,
+} as const;
+
+/**
+ * Browser demo. Flip `enabled` once a web build exists; `entry` is a module URL that
+ * exports `mount(el: HTMLElement)`. Nothing is fetched until "Play the demo" is pressed.
+ */
+export const DEMO = {
+  enabled: false,
+  entry: "",
+} as const;
+
+export const LINKS = {
+  docs: "https://docs.pomme.rs/",
+  discord: "https://discord.gg/ucBA55bHPR",
+  releases: `${GITHUB_URL}/releases`,
+  contribute: GITHUB_URL,
+} as const;
+
+export interface PlatformConfig {
+  key: "windows" | "macos" | "linux" | "mobile";
+  label: string;
+  match?: RegExp;
+}
+
+export const PLATFORMS: PlatformConfig[] = [
+  { key: "windows", label: "Windows", match: /windows.*\.(exe|msi)$/i },
+  { key: "macos", label: "macOS", match: /macos.*\.dmg$/i },
+  { key: "linux", label: "Linux", match: /linux.*\.AppImage$/i },
+  { key: "mobile", label: "Mobile" },
+];
+
+export const MOBILE_NOTE = "Android and iOS are on the way.";
+
+export function archLabel(platform: PlatformConfig["key"], file: string): string {
+  if (/arm64|aarch64/i.test(file)) return platform === "macos" ? "Apple Silicon" : "ARM64";
+  if (/x64|x86_64|amd64/i.test(file)) return platform === "macos" ? "Intel" : "x64";
+  return "";
+}
+
+export const FEATURES = [
+  { title: "Native binary", body: "No Java runtime to install and no garbage-collector stutter." },
+  { title: "Vulkan renderer", body: "GPU-driven chunks, entities and particles. Shader packs in early support." },
+  { title: "Real servers", body: "Joins vanilla servers from 1.20 to 26.3 with your Microsoft account." },
+  { title: "Tested in-game", body: "Scripts drive a real client on every supported version before each release." },
+  { title: "Yours to fork", body: "GPL-3.0, built in the open on GitHub." },
+];
+
+export const PARITY_STAGES = ["Not started", "Started", "Playable, gaps", "Mostly there", "Matches vanilla, tested"] as const;
+export const PARITY_MAX_STAGE = PARITY_STAGES.length - 1;
+
+type Counts = { tracked: number; ready: number; inProgress: number; planned: number; tested: number };
+export interface Parity {
+  updated: string | null;
+  trackerUrl: string | null;
+  counts: Counts;
+  percent: number;
+  subsystems: { name: string; stage: number }[];
+}
+
+/** Null until every count and stage in parity.json is filled in. */
+export function getParity(): Parity | null {
+  const { counts, subsystems, updated, trackerUrl } = parityJson as {
+    counts: Record<keyof Counts, number | null>;
+    subsystems: { name: string; stage: number | null }[];
+    updated: string | null;
+    trackerUrl: string | null;
+  };
+  const filled = Object.values(counts).every((v) => typeof v === "number") && subsystems.every((s) => typeof s.stage === "number");
+  if (!filled || !counts.tracked) return null;
+  const c = counts as Counts;
+  return {
+    updated,
+    trackerUrl,
+    counts: c,
+    percent: Math.round((c.ready / c.tracked) * 100),
+    subsystems: subsystems.map((s) => ({ name: s.name, stage: Math.max(0, Math.min(PARITY_MAX_STAGE, s.stage as number)) })),
+  };
+}

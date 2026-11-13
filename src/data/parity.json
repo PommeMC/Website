@@ -1,0 +1,28 @@
+{
+  "$comment": "Fill in every null to show the 'How ripe is it?' section. stage: 0 not started, 1 started, 2 playable with gaps, 3 mostly there, 4 matches vanilla and tested. trackerUrl is optional.",
+  "updated": null,
+  "trackerUrl": null,
+  "counts": {
+    "tracked": null,
+    "ready": null,
+    "inProgress": null,
+    "planned": null,
+    "tested": null
+  },
+  "subsystems": [
+    { "name": "Window, input and game loop", "stage": null },
+    { "name": "Assets and resource packs", "stage": null },
+    { "name": "Network protocol, 1.20 to 26.3", "stage": null },
+    { "name": "Chunk storage and meshing", "stage": null },
+    { "name": "Rendering", "stage": null },
+    { "name": "Lighting and sky", "stage": null },
+    { "name": "Shader packs", "stage": null },
+    { "name": "Entities and models", "stage": null },
+    { "name": "Physics and movement", "stage": null },
+    { "name": "Interaction and inventory", "stage": null },
+    { "name": "Menus, HUD and chat", "stage": null },
+    { "name": "Audio", "stage": null },
+    { "name": "Block entities and signs", "stage": null },
+    { "name": "Mobile and touch controls", "stage": null }
+  ]
+}

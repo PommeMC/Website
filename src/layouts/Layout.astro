@@ -8,9 +8,11 @@ interface Props {
   description: string;
   keywords: string[];
   canonical: string;
+  /** Set to false on pages that render their own nav and footer. */
+  chrome?: boolean;
 }
 
-const { title, description, keywords, canonical } = Astro.props;
+const { title, description, keywords, canonical, chrome = true } = Astro.props;
 ---
 
 <!doctype html>
@@ -34,15 +36,26 @@ const { title, description, keywords, canonical } = Astro.props;
     <link rel="icon" href="/favicon.ico" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <title>{`${title} | Pomme`}</title>
+    <slot name="head" />
   </head>
   <body class="flex min-h-screen flex-col">
-    <div class="bg-primary-400/10 border-primary-400/20 text-primary-400 border-b px-6 py-2 text-center text-xs">
-      This website is currently in preview. Things may change.
-    </div>
-    <NavBar />
-    <main class="flex-1">
-      <slot />
-    </main>
-    <Footer />
+    {
+      chrome && (
+        <div class="bg-primary-400/10 border-primary-400/20 text-primary-400 border-b px-6 py-2 text-center text-xs">
+          This website is currently in preview. Things may change.
+        </div>
+      )
+    }
+    {chrome && <NavBar />}
+    {
+      chrome ? (
+        <main class="flex-1">
+          <slot />
+        </main>
+      ) : (
+        <slot />
+      )
+    }
+    {chrome && <Footer />}
   </body>
 </html>

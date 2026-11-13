@@ -1,0 +1,38 @@
+---
+import { DEMO, MOBILE_NOTE } from "@/data/home";
+import { releaseParts, type HomePlatform } from "@/utils/downloads";
+import type { Release } from "@/utils/github";
+
+interface Props {
+  platforms: HomePlatform[];
+  release: Release | null;
+}
+const { platforms, release } = Astro.props;
+const ribbons = platforms.filter((p) => p.downloadable);
+const meta = [...releaseParts(release), MOBILE_NOTE.replace(/\.$/, "")];
+---
+
+<section class="home-w home-s home-intro">
+  <p class="home-d home-kicker">Free and open source</p>
+  <div class:list={["home-ribs", { "home-ribs-3": !DEMO.enabled }]}>
+    {
+      ribbons.map((p) => (
+        <a href={p.href} class="home-rib" aria-label={`Download Pomme for ${p.label}, ${p.size}`}>
+          {p.label}
+        </a>
+      ))
+    }
+    {
+      DEMO.enabled && (
+        <a href="#demo" class="home-rib">
+          Play in browser
+        </a>
+      )
+    }
+  </div>
+  <p class="home-lede">
+    Pomme is an open-source Java Edition client written in Rust, with a Vulkan renderer. It ships as one native binary, needs no Java, and
+    joins the servers you already play on.
+  </p>
+  <span class="home-small">{meta.join(" · ")}</span>
+</section>

@@ -1,0 +1,59 @@
+---
+import apple from "@/assets/brand/pomme-apple.svg";
+import { PARALLAX } from "@/data/home";
+import { getHeroLayers, HERO_SIZES } from "@/utils/hero";
+
+const layers = await getHeroLayers();
+---
+
+<section class="home-hero" style={`--range: ${PARALLAX.range}px`} data-parallax>
+  {
+    layers.map((layer) => (
+      <Fragment>
+        <img
+          class="home-layer"
+          src={layer.src}
+          srcset={layer.srcset}
+          sizes={HERO_SIZES}
+          width="2560"
+          height="1440"
+          alt=""
+          aria-hidden="true"
+          fetchpriority={layer.priority ? "high" : "auto"}
+          style={`--speed: ${PARALLAX[layer.key]}`}
+        />
+        {layer.key === "sky" && (
+          <div class="home-layer home-logo" style={`--speed: ${PARALLAX.logo}`}>
+            <img src={apple.src} width="64" height="64" alt="" class="home-logo-apple" />
+            <h1 class="home-d home-logo-word">Pomme</h1>
+            <p class="home-d home-logo-tag">Minecraft, grown from scratch</p>
+          </div>
+        )}
+      </Fragment>
+    ))
+  }
+  <div class="home-hero-fade" aria-hidden="true"></div>
+</section>
+
+<script>
+  // Fallback for browsers without CSS scroll-driven animations.
+  const hero = document.querySelector<HTMLElement>("[data-parallax]");
+  const still = matchMedia("(prefers-reduced-motion: reduce)");
+  if (hero && !CSS.supports("animation-timeline: scroll()")) {
+    const range = parseFloat(hero.style.getPropertyValue("--range"));
+    let queued = false;
+    const draw = () => {
+      queued = false;
+      hero.style.setProperty("--s", `${still.matches ? 0 : Math.min(scrollY, range)}px`);
+    };
+    const queue = () => {
+      if (!queued) {
+        queued = true;
+        requestAnimationFrame(draw);
+      }
+    };
+    addEventListener("scroll", queue, { passive: true });
+    still.addEventListener("change", queue);
+    draw();
+  }
+</script>

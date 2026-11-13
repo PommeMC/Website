@@ -1,0 +1,30 @@
+---
+import { LINKS } from "@/data/home";
+import { GITHUB_URL, formatCompact } from "@/utils/github";
+
+interface Props {
+  stars: number | null;
+  showParity: boolean;
+}
+const { stars, showParity } = Astro.props;
+---
+
+<header class="home-bar">
+  <a href="/" class="home-d home-bar-brand">Pomme</a>
+  <nav aria-label="Primary" class="home-bar-nav">
+    <a class="home-nl on" href="#download">Download</a>
+    {
+      showParity && (
+        <a class="home-nl home-desk" href="#parity">
+          Parity
+        </a>
+      )
+    }
+    <a class="home-nl" href="/news">News</a>
+    <a class="home-nl home-desk" href={LINKS.docs}>Docs</a>
+    <a class="home-nl home-desk" href="/community">Community</a>
+    <a class="home-nl home-desk" href={GITHUB_URL} aria-label={stars === null ? "GitHub" : `GitHub, ${stars} stars`}>
+      GitHub{stars !== null && <span aria-hidden="true">&nbsp;★ {formatCompact(stars)}</span>}
+    </a>
+  </nav>
+</header>

@@ -1,0 +1,49 @@
+name: Nightly deploy
+
+# Rebuilds the site every night so build-time GitHub data on the homepage
+# (latest release, file sizes, download counts, stars, contributors) stays fresh.
+#
+# Needs two repository secrets:
+#   CLOUDFLARE_API_TOKEN   - token with the "Edit Cloudflare Workers" permission
+#   CLOUDFLARE_ACCOUNT_ID  - the account that owns the pomme-website worker
+
+on:
+  schedule:
+    - cron: "17 3 * * *" # 03:17 UTC daily
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: github.repository == 'PommeMC/pomme-website' || github.repository == 'PommeMC/Website'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build
+        run: bun run build
+        env:
+          # Raises the GitHub API rate limit for the build-time fetches.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy
+        run: bunx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

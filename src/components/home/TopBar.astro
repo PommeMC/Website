@@ -1,30 +1,98 @@
 ---
+import { Icon } from "astro-icon/components";
+import apple from "@/assets/brand/pomme-apple.svg";
 import { LINKS } from "@/data/home";
 import { GITHUB_URL, formatCompact } from "@/utils/github";
+import { HERO_LAYOUT } from "@/utils/hero";
 
 interface Props {
   stars: number | null;
   showParity: boolean;
 }
 const { stars, showParity } = Astro.props;
+
+const links = [
+  showParity && { label: "Parity", href: "#parity" },
+  { label: "News", href: "/news" },
+  { label: "Docs", href: LINKS.docs },
+  { label: "Community", href: "/community" },
+].filter((l): l is { label: string; href: string } => Boolean(l));
+const githubLabel = stars === null ? "GitHub" : `GitHub, ${stars} stars`;
 ---
 
-<header class="home-bar">
-  <a href="/" class="home-d home-bar-brand">Pomme</a>
-  <nav aria-label="Primary" class="home-bar-nav">
-    <a class="home-nl on" href="#download">Download</a>
-    {
-      showParity && (
-        <a class="home-nl home-desk" href="#parity">
-          Parity
-        </a>
-      )
-    }
-    <a class="home-nl" href="/news">News</a>
-    <a class="home-nl home-desk" href={LINKS.docs}>Docs</a>
-    <a class="home-nl home-desk" href="/community">Community</a>
-    <a class="home-nl home-desk" href={GITHUB_URL} aria-label={stars === null ? "GitHub" : `GitHub, ${stars} stars`}>
-      GitHub{stars !== null && <span aria-hidden="true">&nbsp;★ {formatCompact(stars)}</span>}
+<header class="home-nav" data-nav data-breakpoint={HERO_LAYOUT.mobileBreakpoint}>
+  <div class="home-nav-bar">
+    <a href="/" class="home-nav-brand">
+      <img src={apple.src} width="24" height="24" alt="" class="home-pixel" />
+      <span class="home-d home-nav-word">Pomme</span>
     </a>
-  </nav>
+    <!-- One list for both layouts: inline links on desktop, the drop-down menu on phones. -->
+    <nav id="home-nav-menu" aria-label="Primary" class="home-nav-links">
+      {
+        links.map((l) => (
+          <a class="home-nl" href={l.href}>
+            {l.label}
+          </a>
+        ))
+      }
+      <a class="home-nl home-nav-gh" href={GITHUB_URL} aria-label={githubLabel}>
+        <Icon name="icons/fontawesome/github-brands" aria-hidden="true" class="home-nav-icon" />
+        <span class="home-nav-phone">GitHub</span>
+        {
+          stars !== null && (
+            <span class="home-nav-count">
+              {formatCompact(stars)}
+              <span class="home-nav-phone"> stars</span>
+            </span>
+          )
+        }
+      </a>
+    </nav>
+    <div class="home-nav-end">
+      <a class="home-rib home-rib-sm" href="#download">Download</a>
+      <button type="button" class="home-nav-toggle" aria-expanded="false" aria-controls="home-nav-menu" aria-label="Menu" data-nav-toggle>
+        <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          ><path class="open" d="M3 6h18M3 12h18M3 18h18"></path><path class="close" d="M5 5l14 14M19 5L5 19"></path></svg
+        >
+      </button>
+    </div>
+  </div>
 </header>
+<div class="home-nav-sentinel" aria-hidden="true" data-nav-sentinel></div>
+
+<script>
+  const nav = document.querySelector<HTMLElement>("[data-nav]");
+  const toggle = nav?.querySelector<HTMLButtonElement>("[data-nav-toggle]");
+  const menu = nav?.querySelector<HTMLElement>("#home-nav-menu");
+  const sentinel = document.querySelector("[data-nav-sentinel]");
+
+  if (nav && sentinel) {
+    new IntersectionObserver(([entry]) => nav.toggleAttribute("data-solid", !entry.isIntersecting)).observe(sentinel);
+  }
+
+  if (nav && toggle && menu) {
+    const isOpen = () => nav.hasAttribute("data-open");
+    const setOpen = (open: boolean, returnFocus = false) => {
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "Close menu" : "Menu");
+      nav.toggleAttribute("data-open", open);
+      if (returnFocus) toggle.focus();
+    };
+    toggle.addEventListener("click", () => setOpen(!isOpen()));
+    menu.addEventListener("click", (e) => {
+      if ((e.target as Element).closest("a")) setOpen(false);
+    });
+    nav.addEventListener("keydown", (e) => {
+      if (!isOpen()) return;
+      if (e.key === "Escape") return setOpen(false, true);
+      if (e.key !== "Tab") return;
+      // Keep focus on the menu button and the open menu's links.
+      const items = [toggle, ...menu.querySelectorAll<HTMLElement>("a")];
+      const i = items.indexOf(document.activeElement as HTMLElement);
+      const next = e.shiftKey ? (i <= 0 ? items.length - 1 : i - 1) : i === items.length - 1 ? 0 : i + 1;
+      e.preventDefault();
+      items[next].focus();
+    });
+    matchMedia(`(min-width: ${Number(nav.dataset.breakpoint) + 1}px)`).addEventListener("change", (e) => e.matches && setOpen(false));
+  }
+</script>

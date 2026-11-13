@@ -1,0 +1,46 @@
+{
+  "width": 1738,
+  "height": 432,
+  "parts": [
+    {
+      "id": "p",
+      "file": "0-p.png",
+      "left": 0.0,
+      "top": 18.287,
+      "width": 19.275,
+      "height": 81.713
+    },
+    {
+      "id": "apple",
+      "file": "1-apple.png",
+      "left": 18.412,
+      "top": 0.0,
+      "width": 21.174,
+      "height": 100.0
+    },
+    {
+      "id": "m",
+      "file": "2-m.png",
+      "left": 39.528,
+      "top": 18.287,
+      "width": 20.944,
+      "height": 81.713
+    },
+    {
+      "id": "m",
+      "file": "3-m.png",
+      "left": 60.357,
+      "top": 18.287,
+      "width": 21.519,
+      "height": 81.713
+    },
+    {
+      "id": "e",
+      "file": "4-e.png",
+      "left": 80.667,
+      "top": 18.287,
+      "width": 19.333,
+      "height": 81.713
+    }
+  ]
+}

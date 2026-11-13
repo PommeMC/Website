@@ -16,6 +16,14 @@ export const PARALLAX = {
   near: 0,
 } as const;
 
+/** Logo animations. All of them are off for visitors who prefer reduced motion. */
+export const LOGO_MOTION = {
+  build: true, // letters drop in one by one on load, the apple last
+  hop: true, // the apple hops on hover or tap
+  sway: true, // the apple rocks gently every few seconds
+  fall: true, // the apple falls out of the word as the page scrolls
+} as const;
+
 /**
  * Browser demo. Flip `enabled` once a web build exists; `entry` is a module URL that
  * exports `mount(el: HTMLElement)`. Nothing is fetched until "Play the demo" is pressed.

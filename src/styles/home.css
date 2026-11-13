@@ -10,6 +10,7 @@
   --bar: #0a2412;
   --ink: #12320f;
   --tap: 44px;
+  --gutter: 32px;
   --surface: var(--bg);
   --display: "Josefin Sans", sans-serif;
 
@@ -76,7 +77,7 @@
 .home-w {
   max-width: 1120px;
   margin: 0 auto;
-  padding: 0 32px;
+  padding: 0 var(--gutter);
   box-sizing: border-box;
 }
 .home-s {
@@ -166,51 +167,138 @@
   opacity: 0.85;
 }
 
-.home-bar {
+.home-nav {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 20;
+  color: #fff;
+}
+/* Two stacked backgrounds so the switch can fade: a dark gradient at the top, solid once scrolled. */
+.home-nav::before,
+.home-nav::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transition: opacity 200ms ease;
+}
+.home-nav::before {
+  bottom: -24px;
+  background: linear-gradient(to bottom, rgb(5 20 10 / 0.6), rgb(5 20 10 / 0));
+}
+.home-nav::after {
+  background: var(--bar);
+  box-shadow: 0 1px 0 var(--line);
+  opacity: 0;
+}
+.home-nav[data-solid]::before,
+.home-nav[data-open]::before {
+  opacity: 0;
+}
+.home-nav[data-solid]::after,
+.home-nav[data-open]::after {
+  opacity: 1;
+}
+.home-nav-bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  height: var(--bar-h);
-  padding-left: 14px;
-  background: var(--bar);
+  gap: 28px;
+  height: var(--nav-h);
+  padding: 0 var(--gutter);
 }
-.home-bar-brand {
+.home-nav-brand {
   display: inline-flex;
   align-items: center;
+  gap: 10px;
   min-height: var(--tap);
-  padding-top: 3px;
-  font-size: 16px;
-  color: var(--sun) !important;
 }
-.home-bar-nav {
+.home-nav-word {
+  max-width: 120px;
+  overflow: hidden;
+  padding-top: 3px;
+  font-size: 22px;
+  letter-spacing: 0.06em;
+  transition:
+    max-width 250ms ease,
+    opacity 250ms ease;
+}
+/* At the top the hero logo already says Pomme, so the wordmark waits until the hero scrolls away. */
+.home-nav:not([data-solid], [data-open]) .home-nav-word {
+  max-width: 0;
+  opacity: 0;
+}
+.home-nav-links {
   display: flex;
-  height: 100%;
+  flex: 1;
+  gap: 4px;
+}
+.home-nav-gh {
+  margin-left: auto;
+}
+.home-nav-phone {
+  display: none;
+}
+.home-nav-end {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
 }
 .home-nl {
   display: inline-flex;
   align-items: center;
-  height: 100%;
+  gap: 8px;
+  min-height: var(--tap);
   padding: 3px 12px 0;
   font:
     700 14px var(--display),
     sans-serif;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--sun) !important;
   white-space: nowrap;
 }
 .home-nl:hover {
-  background: #16432a;
+  color: var(--sun) !important;
 }
-.home-nl.on {
-  background: #2f7a1f;
-  color: #fff !important;
+.home-nav-icon {
+  width: 16px;
+  height: 16px;
+  margin-top: -3px;
+  fill: currentColor;
+}
+.home-nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap);
+  height: var(--tap);
+  margin-right: -10px;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+.home-nav-toggle .close,
+.home-nav[data-open] .home-nav-toggle .open {
+  display: none;
+}
+.home-nav[data-open] .home-nav-toggle .close {
+  display: block;
+}
+.home-nav-sentinel {
+  position: absolute;
+  top: 80px;
+  width: 1px;
+  height: 1px;
+}
+.home [id] {
+  scroll-margin-top: var(--nav-h);
 }
 
 .home-hero {
   position: relative;
-  height: calc(100vh - var(--bar-h));
-  height: calc(100svh - var(--bar-h));
+  height: 100vh;
+  height: 100svh;
   min-height: 480px;
   overflow: hidden;
   background: #5792f5;
@@ -222,7 +310,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 50% 100%;
+  /* Wide screens crop the grass rather than the sky, keeping the horizon below the logo. */
+  object-position: 50% 35%;
   will-change: transform;
   transform: translateY(calc(var(--s, 0px) * var(--speed, 0)));
 }
@@ -241,6 +330,11 @@
       animation-timeline: scroll(root block);
       animation-range: 0 var(--range);
     }
+    .anim-fall .home-mark-apple .home-mark-fall {
+      animation: home-fall linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 1100px;
+    }
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -250,30 +344,124 @@
   }
 }
 .home-logo {
-  top: 13%;
+  --logo-w: min(760px, 80vw, 75svh);
+  top: calc(var(--nav-h) + 4%);
   bottom: auto;
   height: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 18px;
   text-align: center;
 }
-.home-logo-apple {
-  width: 64px;
-  height: 64px;
-  image-rendering: pixelated;
+img.home-layer {
+  pointer-events: none;
 }
-.home-logo-word {
-  font-size: 104px;
-  letter-spacing: 0.06em;
-  line-height: 1;
-  color: #fff;
-  /* Hard pixel shadow: plain white on this sky is ~2.3:1, the shadow outlines it for contrast. */
-  text-shadow:
-    0 0.06em 0 #0f2f14,
-    0.03em 0.03em 0 #0f2f14,
-    -0.03em 0.03em 0 #0f2f14;
+
+.home-mark {
+  position: relative;
+  width: var(--logo-w);
+  margin: 0;
+  /* Keeps the letters readable when the logo scrolls down over the terrain. */
+  filter: drop-shadow(0 4px 0 rgb(15 47 20 / 0.55));
+}
+.home-mark-part,
+.home-mark-fall,
+.home-mark-sway,
+.home-mark-img {
+  display: block;
+  transform-origin: 50% 100%;
+}
+.home-mark-part {
+  position: absolute;
+}
+.home-mark-fall,
+.home-mark-sway,
+.home-mark-img {
+  width: 100%;
+  height: 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .anim-build .home-mark-part {
+    animation: home-drop 650ms cubic-bezier(0.3, 0.7, 0.4, 1) both;
+    animation-delay: calc(150ms + var(--n) * 90ms);
+  }
+  .anim-sway .home-mark-apple .home-mark-sway {
+    animation: home-sway 7s ease-in-out 1.6s infinite;
+  }
+  .anim-hop .home-mark-apple:hover .home-mark-img,
+  .anim-hop .home-mark-apple.is-poked .home-mark-img {
+    animation: home-hop 650ms ease-out;
+  }
+}
+
+@keyframes home-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-140%);
+  }
+  55% {
+    opacity: 1;
+  }
+  70% {
+    transform: translateY(0) scaleY(0.88);
+  }
+  85% {
+    transform: translateY(-4%) scaleY(1.03);
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes home-sway {
+  0%,
+  80%,
+  100% {
+    rotate: 0deg;
+  }
+  85% {
+    rotate: -3deg;
+  }
+  90% {
+    rotate: 2.5deg;
+  }
+  95% {
+    rotate: -1deg;
+  }
+}
+@keyframes home-hop {
+  0% {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+  30% {
+    translate: 0 -18%;
+    rotate: -6deg;
+  }
+  55% {
+    translate: 0 0;
+    rotate: 4deg;
+  }
+  70% {
+    translate: 0 -5%;
+    rotate: -2deg;
+  }
+  100% {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+}
+@keyframes home-fall {
+  0%,
+  15% {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+  100% {
+    translate: 35% 260%;
+    rotate: 160deg;
+  }
 }
 .home-logo-tag {
   font-size: 20px;
@@ -328,6 +516,11 @@
   text-transform: uppercase;
   clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 50%, 100% 100%, 0 100%, 8px 50%);
   box-sizing: border-box;
+}
+.home-rib-sm {
+  padding: 3px 22px 0;
+  font-size: 14px;
+  letter-spacing: 0.12em;
 }
 .home-rib:hover {
   background: var(--sun-hover);
@@ -594,25 +787,54 @@
 
 /* Keep in sync with HERO_LAYOUT.mobileBreakpoint in src/utils/hero.ts. */
 @media (max-width: 900px) {
-  .home-w {
-    padding: 0 16px;
+  .home {
+    --gutter: 16px;
   }
-  .home-desk {
-    display: none !important;
+  .home-nav-toggle {
+    display: inline-flex;
+  }
+  .home-nav-links {
+    display: none;
+    position: absolute;
+    inset: var(--nav-h) 0 auto;
+    flex-direction: column;
+    padding: 0 var(--gutter) 12px;
+    border-top: 1px solid var(--line);
+    background: var(--bar);
+  }
+  .home-nav[data-open] .home-nav-links {
+    display: flex;
+  }
+  .home-nav-links .home-nl {
+    min-height: 52px;
+    padding: 3px 0 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 16px;
+  }
+  .home-nav-gh {
+    margin-left: 0;
+  }
+  .home-nav-phone {
+    display: inline;
+  }
+  .home-nav-count {
+    font:
+      400 14px "Inter",
+      sans-serif;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--muted);
+  }
+  .home-nav-bar {
+    gap: 12px;
   }
   .home-hero {
     height: var(--hero-mobile-h);
     min-height: 0;
   }
   .home-logo {
-    top: 56px;
-  }
-  .home-logo-word {
-    font-size: 56px;
-  }
-  .home-logo-apple {
-    width: 40px;
-    height: 40px;
+    --logo-w: calc(100vw - 2 * var(--gutter));
+    top: calc(var(--nav-h) + 8px);
   }
   .home-logo-tag {
     font-size: 14px;

@@ -1,5 +1,5 @@
 ---
-import apple from "@/assets/brand/pomme-apple.svg";
+import LogoMark from "@/components/home/LogoMark.astro";
 import { PARALLAX } from "@/data/home";
 import { getHeroLayers, HERO_SIZES } from "@/utils/hero";
 
@@ -24,8 +24,7 @@ const layers = await getHeroLayers();
         />
         {layer.key === "sky" && (
           <div class="home-layer home-logo" style={`--speed: ${PARALLAX.logo}`}>
-            <img src={apple.src} width="64" height="64" alt="" class="home-logo-apple" />
-            <h1 class="home-d home-logo-word">Pomme</h1>
+            <LogoMark />
             <p class="home-d home-logo-tag">Minecraft, grown from scratch</p>
           </div>
         )}

@@ -8,12 +8,13 @@ import near from "@/assets/hero/plains/05-near.webp";
 import { once } from "@/utils/once";
 
 /** `mobileBreakpoint` must match the max-width media query in home.css. */
-export const HERO_LAYOUT = { barHeight: 44, mobileHeight: 520, mobileBreakpoint: 900 } as const;
+export const HERO_LAYOUT = { navHeight: 64, mobileHeight: 564, mobileBreakpoint: 900 } as const;
 
 // Layers use object-fit: cover, so they render at the larger of the viewport width and the hero height at 16:9.
+// The nav floats over the hero, so on desktop the hero fills the whole viewport height.
 const ASPECT = 16 / 9;
-const { barHeight, mobileHeight, mobileBreakpoint } = HERO_LAYOUT;
-export const HERO_SIZES = `(max-width: ${mobileBreakpoint}px) ${Math.ceil(mobileHeight * ASPECT)}px, max(100vw, calc((100vh - ${barHeight}px) * ${ASPECT.toFixed(4)}))`;
+const { mobileHeight, mobileBreakpoint } = HERO_LAYOUT;
+export const HERO_SIZES = `(max-width: ${mobileBreakpoint}px) ${Math.ceil(mobileHeight * ASPECT)}px, max(100vw, calc(100vh * ${ASPECT.toFixed(4)}))`;
 const WIDTHS = [960, 1600, 2560];
 
 export type HeroLayerKey = "sky" | "far" | "distant" | "mid" | "close" | "near";

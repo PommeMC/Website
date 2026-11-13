@@ -72,9 +72,6 @@ html {
 .bg-section-dark {
   background: transparent;
 }
-.bg-section-light {
-  background: rgba(14, 16, 34, 0.4);
-}
 .section-label {
   font-family: "Rajdhani", sans-serif;
   font-size: 0.875rem;
@@ -98,9 +95,6 @@ html {
 }
 .border-subtle {
   border: 1px solid rgba(255, 255, 255, 0.07);
-}
-.glass-bg {
-  background: rgba(18, 20, 40, 0.55);
 }
 .glass-card {
   background: rgba(255, 255, 255, 0.03);
@@ -255,65 +249,6 @@ button {
   animation-delay: 0.3s;
 }
 
-/* Comparison table */
-.comparison-grid {
-  display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr;
-  gap: 0;
-}
-@media (max-width: 640px) {
-  .comparison-grid {
-    grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr;
-  }
-}
-.comparison-grid .cell {
-  padding: 14px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-}
-@media (max-width: 640px) {
-  .comparison-grid .cell {
-    padding: 10px 12px;
-    font-size: 0.78rem;
-  }
-}
-.comparison-grid .cell-header {
-  font-family: "Rajdhani", sans-serif;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 0.75rem;
-  padding: 12px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-@media (max-width: 640px) {
-  .comparison-grid .cell-header {
-    padding: 10px 12px;
-    font-size: 0.68rem;
-  }
-}
-.comparison-grid .cell-label {
-  color: #8890b0;
-  font-size: 0.82rem;
-}
-.comparison-grid .cell-pomme {
-  color: #4ade80;
-  font-weight: 600;
-  font-family: "Rajdhani", sans-serif;
-  font-size: 1rem;
-  letter-spacing: 0.02em;
-}
-.comparison-grid .cell-java {
-  color: #64688a;
-  font-family: "Rajdhani", sans-serif;
-  font-size: 1rem;
-}
-.row-highlight {
-  background: rgba(74, 222, 128, 0.03);
-}
-
 /* Scroll-triggered fade */
 .reveal {
   opacity: 0;
@@ -340,18 +275,6 @@ button {
 }
 .reveal-delay-5 {
   transition-delay: 0.5s;
-}
-
-.feature-icon {
-  display: inline-flex;
-  height: 2.5rem;
-  width: 2.5rem;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  color: #4ade80;
-  background: rgba(74, 222, 128, 0.08);
-  margin-bottom: 1rem;
 }
 
 .platform-match {

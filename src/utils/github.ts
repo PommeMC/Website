@@ -1,19 +1,17 @@
 import { once } from "@/utils/once";
 
-export const GITHUB_REPO = "PommeMC/Client";
+const GITHUB_REPO = "PommeMC/Client";
 export const GITHUB_URL = `https://github.com/${GITHUB_REPO}`;
 const API = `https://api.github.com/repos/${GITHUB_REPO}`;
 
 type GhAsset = { name: string; size: number; download_count: number; browser_download_url: string };
-type GhRelease = { tag_name: string; published_at: string; html_url: string; body: string | null; assets: GhAsset[] };
+type GhRelease = { tag_name: string; published_at: string; body: string | null; assets: GhAsset[] };
 type GhRepo = { stargazers_count: number };
 type GhContributor = { login: string; avatar_url: string; html_url: string; contributions: number; type: string };
 
 export interface Release {
   version: string;
-  minecraftVersion: string | null;
   publishedAt: Date;
-  url: string;
   assets: GhAsset[];
   downloads: number;
   firstLaunch: Record<string, string>;
@@ -55,10 +53,9 @@ async function countFromLink(url: string): Promise<number | null> {
   return last ? Number(last[1]) : r.data.length;
 }
 
-/** "client-v0.2.10+26.2" -> version "0.2.10", Minecraft "26.2". */
-function parseTag(tag: string): { version: string; minecraftVersion: string | null } {
-  const m = tag.match(/v?(\d+\.\d+(?:\.\d+)?(?:-[\w.]+)?)(?:\+([\w.]+))?$/);
-  return m ? { version: m[1], minecraftVersion: m[2] ?? null } : { version: tag, minecraftVersion: null };
+/** "client-v0.2.10+26.2" -> "0.2.10". */
+function parseVersion(tag: string): string {
+  return tag.match(/v?(\d+\.\d+(?:\.\d+)?(?:-[\w.]+)?)(?:\+[\w.]+)?$/)?.[1] ?? tag;
 }
 
 /** Reads lines like "- **Windows:** on the SmartScreen prompt, ..." from the release notes, keyed by lower-case platform. */
@@ -88,9 +85,8 @@ export const getLatestRelease = once(async (): Promise<Release | null> => {
   if (!r) return null;
   const rel = r.data;
   return {
-    ...parseTag(rel.tag_name),
+    version: parseVersion(rel.tag_name),
     publishedAt: new Date(rel.published_at),
-    url: rel.html_url,
     assets: rel.assets,
     downloads: rel.assets.filter((a) => !/sums/i.test(a.name)).reduce((n, a) => n + a.download_count, 0),
     firstLaunch: parseFirstLaunch(rel.body),

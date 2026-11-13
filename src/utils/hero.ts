@@ -20,8 +20,8 @@ const { mobileHeight, mobileBreakpoint } = HERO_LAYOUT;
 export const HERO_SIZES = `(max-width: ${mobileBreakpoint}px) ${Math.ceil(mobileHeight * ASPECT)}px, max(100vw, calc(100vh * ${ASPECT.toFixed(4)}))`;
 const WIDTHS = [960, 1600, HERO_RENDER.width];
 
-export type HeroLayerKey = "sky" | "far" | "distant" | "mid" | "close" | "near";
-export interface HeroLayer {
+type HeroLayerKey = "sky" | "far" | "distant" | "mid" | "close" | "near";
+interface HeroLayer {
   key: HeroLayerKey;
   src: string;
   srcset: string;

@@ -345,6 +345,13 @@
     animation: none !important;
   }
 }
+.home-sky-video {
+  opacity: 0;
+  transition: opacity 800ms ease;
+}
+.home-sky-video.is-playing {
+  opacity: 1;
+}
 .home-logo {
   --logo-w: min(760px, 80vw, 75svh);
   /* Rendered image height under object-fit: cover, then the ridge's on-screen y after the crop. */

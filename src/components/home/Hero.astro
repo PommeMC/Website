@@ -1,7 +1,7 @@
 ---
 import LogoMark from "@/components/home/LogoMark.astro";
 import { PARALLAX } from "@/data/home";
-import { getHeroLayers, HERO_RENDER, HERO_SIZES } from "@/utils/hero";
+import { getHeroLayers, HERO_RENDER, HERO_SIZES, HERO_SKY_SOURCES } from "@/utils/hero";
 
 const layers = await getHeroLayers();
 ---
@@ -27,10 +27,26 @@ const layers = await getHeroLayers();
           style={`--speed: ${PARALLAX[layer.key]}`}
         />
         {layer.key === "sky" && (
-          <div class="home-layer home-logo" style={`--speed: ${PARALLAX.logo}`}>
-            <LogoMark />
-            <p class="home-d home-logo-tag">A Minecraft client, rewritten from scratch</p>
-          </div>
+          <Fragment>
+            <video
+              class="home-layer home-sky-video"
+              muted
+              loop
+              playsinline
+              preload="none"
+              aria-hidden="true"
+              style={`--speed: ${PARALLAX.sky}`}
+              data-sky-video
+            >
+              {HERO_SKY_SOURCES.map((s) => (
+                <source data-src={s.src} type={s.type} media={s.media} />
+              ))}
+            </video>
+            <div class="home-layer home-logo" style={`--speed: ${PARALLAX.logo}`}>
+              <LogoMark />
+              <p class="home-d home-logo-tag">A Minecraft client, rewritten from scratch</p>
+            </div>
+          </Fragment>
         )}
       </Fragment>
     ))
@@ -39,9 +55,20 @@ const layers = await getHeroLayers();
 </section>
 
 <script>
+  const still = matchMedia("(prefers-reduced-motion: reduce)");
+
+  // The sky video only loads when motion is welcome and data isn't being saved, and pauses while off screen.
+  const video = document.querySelector<HTMLVideoElement>("[data-sky-video]");
+  const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+  if (video && !saveData && !still.matches) {
+    video.querySelectorAll("source").forEach((s) => (s.src = s.dataset.src ?? ""));
+    video.addEventListener("playing", () => video.classList.add("is-playing"), { once: true });
+    video.load();
+    new IntersectionObserver(([entry]) => (entry.isIntersecting ? video.play().catch(() => {}) : video.pause())).observe(video);
+  }
+
   // Fallback for browsers without CSS scroll-driven animations.
   const hero = document.querySelector<HTMLElement>("[data-parallax]");
-  const still = matchMedia("(prefers-reduced-motion: reduce)");
   if (hero && !CSS.supports("animation-timeline: scroll()")) {
     const range = parseFloat(hero.style.getPropertyValue("--range"));
     let queued = false;

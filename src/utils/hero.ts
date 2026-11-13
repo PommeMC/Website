@@ -10,7 +10,6 @@ import skyDesktopH264 from "@/assets/hero/plains/sky-desktop.h264.mp4?url";
 import skyMobileAv1 from "@/assets/hero/plains/sky-mobile.av1.mp4?url";
 import skyMobileH264 from "@/assets/hero/plains/sky-mobile.h264.mp4?url";
 import { MOBILE_BREAKPOINT } from "@/data/layout";
-import { once } from "@/utils/once";
 
 /** Size of the rendered layers, and the highest terrain under the logo as a fraction of the height (measured from the layers). */
 export const HERO_RENDER = { width: 2560, height: 1440, ridgeY: 0.36 } as const;
@@ -31,32 +30,37 @@ export const HERO_SKY_SOURCES: { src: string; type: string; media?: string }[] =
 // Layers use object-fit: cover, so they render at the larger of the viewport width and the hero height at the render aspect.
 // The nav floats over the hero, so on desktop the hero fills the whole viewport height.
 const ASPECT = HERO_RENDER.width / HERO_RENDER.height;
-export const HERO_SIZES = `(max-width: ${MOBILE_BREAKPOINT}px) ${Math.ceil(HERO_MOBILE_HEIGHT * ASPECT)}px, max(100vw, calc(100vh * ${ASPECT.toFixed(4)}))`;
-const WIDTHS = [960, 1600, HERO_RENDER.width];
+const HERO_SIZES = `(max-width: ${MOBILE_BREAKPOINT}px) ${Math.ceil(HERO_MOBILE_HEIGHT * ASPECT)}px, max(100vw, calc(100vh * ${ASPECT.toFixed(4)}))`;
+/** Options for every layer, shared by the Image component and the preload tags so both point at the same files. */
+export const HERO_IMAGE = {
+  widths: [960, 1600, HERO_RENDER.width],
+  sizes: HERO_SIZES,
+  format: "webp" as const,
+  quality: 82,
+  fit: "cover" as const,
+};
 
 type HeroLayerKey = "sky" | "far" | "distant" | "mid" | "close" | "near";
 interface HeroLayer {
   key: HeroLayerKey;
-  src: string;
-  srcset: string;
+  image: ImageMetadata;
   /** Preloaded and fetched first: the sky behind the logo and the nearest terrain. */
   priority: boolean;
 }
 
-const SOURCES: [HeroLayerKey, ImageMetadata][] = [
-  ["sky", sky],
-  ["far", far],
-  ["distant", distant],
-  ["mid", mid],
-  ["close", close],
-  ["near", near],
+export const HERO_LAYERS: HeroLayer[] = [
+  { key: "sky", image: sky, priority: true },
+  { key: "far", image: far, priority: false },
+  { key: "distant", image: distant, priority: false },
+  { key: "mid", image: mid, priority: false },
+  { key: "close", image: close, priority: false },
+  { key: "near", image: near, priority: true },
 ];
 
-export const getHeroLayers = once(() =>
+export const getHeroPreloads = () =>
   Promise.all(
-    SOURCES.map(async ([key, src]): Promise<HeroLayer> => {
-      const img = await getImage({ src, widths: WIDTHS, sizes: HERO_SIZES, format: "webp", quality: 82 });
-      return { key, src: img.src, srcset: img.srcSet.attribute, priority: key === "sky" || key === "near" };
+    HERO_LAYERS.filter((l) => l.priority).map(async (l) => {
+      const img = await getImage({ src: l.image, ...HERO_IMAGE });
+      return { src: img.src, srcset: img.srcSet.attribute };
     })
-  )
-);
+  );

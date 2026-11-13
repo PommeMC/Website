@@ -13,20 +13,19 @@ import Download from "@/components/home/Download.astro";
 import { DEMO, getParity } from "@/data/home";
 import { buildPlatforms } from "@/utils/downloads";
 import { getCommitCount, getContributors, getLatestRelease, getStars } from "@/utils/github";
-import { getHeroLayers, HERO_MOBILE_HEIGHT, HERO_SIZES } from "@/utils/hero";
+import { getHeroPreloads, HERO_IMAGE, HERO_MOBILE_HEIGHT } from "@/utils/hero";
 
-const [release, contributors, commits, stars, layers] = await Promise.all([
+const [release, contributors, commits, stars, preload] = await Promise.all([
   getLatestRelease(),
   getContributors(),
   getCommitCount(),
   getStars(),
-  getHeroLayers(),
+  getHeroPreloads(),
 ]);
 
 const platforms = buildPlatforms(release);
 const parity = getParity();
 const posts = (await getCollection("posts")).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()).slice(0, 3);
-const preload = layers.filter((l) => l.priority);
 ---
 
 <Layout
@@ -40,7 +39,15 @@ const preload = layers.filter((l) => l.priority);
   <Fragment slot="head">
     {
       preload.map((l) => (
-        <link rel="preload" as="image" type="image/webp" href={l.src} imagesrcset={l.srcset} imagesizes={HERO_SIZES} fetchpriority="high" />
+        <link
+          rel="preload"
+          as="image"
+          type="image/webp"
+          href={l.src}
+          imagesrcset={l.srcset}
+          imagesizes={HERO_IMAGE.sizes}
+          fetchpriority="high"
+        />
       ))
     }
   </Fragment>

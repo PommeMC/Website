@@ -1,9 +1,8 @@
 ---
+import { Image } from "astro:assets";
 import LogoMark from "@/components/home/LogoMark.astro";
 import { PARALLAX } from "@/data/home";
-import { getHeroLayers, HERO_RENDER, HERO_SIZES, HERO_SKY_SOURCES } from "@/utils/hero";
-
-const layers = await getHeroLayers();
+import { HERO_IMAGE, HERO_LAYERS, HERO_RENDER, HERO_SKY_SOURCES } from "@/utils/hero";
 ---
 
 <section
@@ -13,15 +12,14 @@ const layers = await getHeroLayers();
   data-nav-until
 >
   {
-    layers.map((layer) => (
+    HERO_LAYERS.map((layer) => (
       <Fragment>
-        <img
+        <Image
           class="home-layer"
-          src={layer.src}
-          srcset={layer.srcset}
-          sizes={HERO_SIZES}
-          width={HERO_RENDER.width}
-          height={HERO_RENDER.height}
+          src={layer.image}
+          {...HERO_IMAGE}
+          layout="none"
+          loading="eager"
           alt=""
           aria-hidden="true"
           fetchpriority={layer.priority ? "high" : "auto"}

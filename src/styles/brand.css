@@ -1,7 +1,5 @@
 /* Brand tokens and the pieces shared by the homepage and the site-wide nav and footer. */
-.home,
-.site-nav,
-.site-footer {
+:root {
   --bg: #0f331a;
   --bg2: #143f21;
   --line: #24552f;
@@ -17,8 +15,28 @@
   --surface: var(--bg);
   --display: "Josefin Sans", sans-serif;
   --body: "Inter", system-ui, sans-serif;
+  --thumb: #3f7a4c;
 
+  scrollbar-color: var(--thumb) var(--bar);
+}
+.home,
+.site-nav,
+.site-footer {
   font: 400 17px/1.6 var(--body);
+}
+/* Safari only styles scrollbars through these; browsers that support scrollbar-color use that instead. */
+@supports not (scrollbar-color: auto) {
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+    background: var(--bar);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--thumb);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--leaf);
+  }
 }
 .home a,
 .site-nav a,
@@ -146,9 +164,7 @@
 
 /* Keep in sync with MOBILE_BREAKPOINT in src/data/layout.ts. */
 @media (max-width: 900px) {
-  .home,
-  .site-nav,
-  .site-footer {
+  :root {
     --gutter: 16px;
   }
   .home-rib-lg {

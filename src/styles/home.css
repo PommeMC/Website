@@ -444,8 +444,18 @@ img.home-layer {
 .home-not-title {
   font-size: 30px;
 }
+/* Josefin Sans puts its line-through below the middle of capitals, so the line is drawn by hand. */
 .home-not-col s {
-  text-decoration-thickness: 2px;
+  position: relative;
+  text-decoration: none;
+}
+.home-not-col s::after {
+  content: "";
+  position: absolute;
+  inset: 0.39em 0 auto;
+  height: 2px;
+  translate: 0 -50%;
+  background: currentColor;
 }
 .home-not-yes {
   background: var(--sun);

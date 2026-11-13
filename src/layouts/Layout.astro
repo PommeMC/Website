@@ -60,5 +60,8 @@ const { title, description, keywords, canonical, chrome = true, navOverlay = fal
       )
     }
     <SiteFooter />
+    <script>
+      addEventListener("dragstart", (e) => e.preventDefault());
+    </script>
   </body>
 </html>

@@ -2,6 +2,7 @@ import { once } from "@/utils/once";
 
 const GITHUB_REPO = "PommeMC/Client";
 export const GITHUB_URL = `https://github.com/${GITHUB_REPO}`;
+export const CONTRIBUTORS_URL = `${GITHUB_URL}/graphs/contributors`;
 const API = `https://api.github.com/repos/${GITHUB_REPO}`;
 
 type GhAsset = { name: string; size: number; download_count: number; browser_download_url: string };
@@ -64,11 +65,13 @@ function parseFirstLaunch(body: string | null): Record<string, string> {
   for (const line of (body ?? "").split("\n")) {
     const m = line.match(/^\s*[-*]\s*\*\*([^*:]+):?\*\*:?\s*(.+)$/);
     if (!m) continue;
-    const text = m[2]
+    const raw = m[2].trim();
+    const text = raw
       .replace(/`([^`]+)`/g, "$1")
       .replace(/\*\*([^*]+)\*\*/g, "$1")
       .trim();
-    const sentence = text.charAt(0).toUpperCase() + text.slice(1);
+    // A note that starts with a command (`chmod ...`) keeps the command's case.
+    const sentence = raw.startsWith("`") ? text : text.charAt(0).toUpperCase() + text.slice(1);
     notes[m[1].trim().toLowerCase()] = /[.!?]$/.test(sentence) ? sentence : `${sentence}.`;
   }
   return notes;

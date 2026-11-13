@@ -6,20 +6,20 @@ import Layout from "@/layouts/Layout.astro";
 import Hero from "@/components/home/Hero.astro";
 import Intro from "@/components/home/Intro.astro";
 import Demo from "@/components/home/Demo.astro";
-import Features from "@/components/home/Features.astro";
 import Parity from "@/components/home/Parity.astro";
 import Community from "@/components/home/Community.astro";
 import Download from "@/components/home/Download.astro";
 import HomeFooter from "@/components/home/HomeFooter.astro";
 import { DEMO, getParity } from "@/data/home";
 import { buildPlatforms } from "@/utils/downloads";
-import { getCommitCount, getContributors, getLatestRelease } from "@/utils/github";
+import { getCommitCount, getContributors, getLatestRelease, getStars } from "@/utils/github";
 import { getHeroLayers, HERO_MOBILE_HEIGHT, HERO_SIZES } from "@/utils/hero";
 
-const [release, contributors, commits, layers] = await Promise.all([
+const [release, contributors, commits, stars, layers] = await Promise.all([
   getLatestRelease(),
   getContributors(),
   getCommitCount(),
+  getStars(),
   getHeroLayers(),
 ]);
 
@@ -50,10 +50,9 @@ const preload = layers.filter((l) => l.priority);
       <Hero />
       <Intro platforms={platforms} release={release} />
       {DEMO.enabled && <Demo />}
-      <Features />
       {parity && <Parity parity={parity} />}
-      <Community contributors={contributors} commits={commits} posts={posts} alt={parity !== null} />
-      <Download platforms={platforms} release={release} ruled={parity === null} />
+      <Community contributors={contributors} commits={commits} stars={stars} posts={posts} alt={parity === null} />
+      <Download platforms={platforms} release={release} ruled={parity !== null} />
     </main>
     <HomeFooter parityUrl={parity?.trackerUrl ?? null} />
   </div>

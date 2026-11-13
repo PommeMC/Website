@@ -74,9 +74,6 @@
   gap: 72px;
   align-items: start;
 }
-.home-two-even {
-  grid-template-columns: 1fr 1fr;
-}
 .home-pixel {
   image-rendering: pixelated;
 }
@@ -134,5 +131,15 @@
   .home,
   .site-nav {
     --gutter: 16px;
+  }
+  .home-rib-lg {
+    padding: 3px 24px 0;
+    font-size: 16px;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+  }
+  .home-two {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
   }
 }

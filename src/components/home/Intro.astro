@@ -1,6 +1,7 @@
 ---
+import Features from "@/components/home/Features.astro";
 import { DEMO, MOBILE_NOTE } from "@/data/home";
-import { releaseParts, type HomePlatform } from "@/utils/downloads";
+import { downloadLabel, releaseParts } from "@/utils/downloads";
 import type { Release } from "@/utils/github";
 
 interface Props {
@@ -12,15 +13,11 @@ const downloads = platforms.filter((p) => p.downloadable);
 const parts = releaseParts(release);
 const [version] = parts;
 const meta = [...parts, MOBILE_NOTE.replace(/\.$/, "")];
-const ariaFor = (p: HomePlatform) => `Download Pomme for ${p.label}, ${p.size}`;
 ---
 
 <section class="home-w home-s home-intro">
   <p class="home-d home-kicker">Free and open source</p>
-  <p class="home-lede">
-    Pomme is an open-source Java Edition client written in Rust, with a Vulkan renderer. It ships as one native binary, needs no Java, and
-    joins the servers you already play on.
-  </p>
+  <p class="home-lede">Pomme is a Minecraft: Java Edition client written in Rust, with a Vulkan renderer.</p>
 
   {
     downloads.map((p) => (
@@ -35,7 +32,7 @@ const ariaFor = (p: HomePlatform) => `Download Pomme for ${p.label}, ${p.size}`;
             .map((o, i, others) => (
               <Fragment>
                 {i > 0 && (i === others.length - 1 ? " and " : ", ")}
-                <a href={o.href} class="home-inline-link" aria-label={ariaFor(o)} set:text={o.label} />
+                <a href={o.href} class="home-inline-link" aria-label={downloadLabel(o)} set:text={o.label} />
               </Fragment>
             ))}
         </p>
@@ -47,7 +44,7 @@ const ariaFor = (p: HomePlatform) => `Download Pomme for ${p.label}, ${p.size}`;
     <div class:list={["home-ribs", { "home-ribs-3": !DEMO.enabled }]}>
       {
         downloads.map((p) => (
-          <a href={p.href} class="home-rib" aria-label={ariaFor(p)}>
+          <a href={p.href} class="home-rib" aria-label={downloadLabel(p)}>
             {p.label}
           </a>
         ))
@@ -62,6 +59,8 @@ const ariaFor = (p: HomePlatform) => `Download Pomme for ${p.label}, ${p.size}`;
     </div>
     <span class="home-small">{meta.join(" · ")}</span>
   </div>
+
+  <Features />
 </section>
 
 <script>

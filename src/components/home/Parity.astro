@@ -9,40 +9,42 @@ const { counts } = parity;
 const squares = Array.from({ length: PARITY_MAX_STAGE }, (_, i) => i + 1);
 ---
 
-<section id="parity" class="home-w home-s home-two home-parity">
-  <div class="home-stack">
-    <h2 class="home-d home-h2">How ripe is it?</h2>
-    <p class="home-muted">
-      Our own read on each part of the game. Spot something that plays differently from vanilla? Tell us and it joins the list.
-    </p>
-    <p class="home-d home-pct"><span class="home-sr">Overall: </span>{parity.percent}%<span class="home-sr"> ready</span></p>
-    <p class="home-counts">
-      <span><b>{counts.ready}</b> of {counts.tracked} ready</span>
-      <span><b>{counts.inProgress}</b> in progress</span>
-      <span><b>{counts.planned}</b> planned</span>
-      <span><b>{counts.tested}</b> tested</span>
-    </p>
-    {parity.updated && <p class="home-small">Updated {parity.updated}</p>}
-    {
-      parity.trackerUrl && (
-        <a class="home-link" href={parity.trackerUrl}>
-          Open the parity tracker →
-        </a>
-      )
-    }
+<section id="parity" class="home-alt">
+  <div class="home-w home-s home-two home-parity">
+    <div class="home-stack">
+      <h2 class="home-d home-h2">How ripe is it?</h2>
+      <p class="home-muted">
+        Our own read on each part of the game. Spot something that plays differently from vanilla? Tell us and it joins the list.
+      </p>
+      <p class="home-d home-pct"><span class="home-sr">Overall: </span>{parity.percent}%<span class="home-sr"> ready</span></p>
+      <p class="home-counts">
+        <span><b>{counts.ready}</b> of {counts.tracked} ready</span>
+        <span><b>{counts.inProgress}</b> in progress</span>
+        <span><b>{counts.planned}</b> planned</span>
+        <span><b>{counts.tested}</b> tested</span>
+      </p>
+      {parity.updated && <p class="home-small">Updated {parity.updated}</p>}
+      {
+        parity.trackerUrl && (
+          <a class="home-link" href={parity.trackerUrl}>
+            Open the parity tracker →
+          </a>
+        )
+      }
+    </div>
+    <ul class="home-rows" role="list">
+      {
+        parity.subsystems.map((s) => (
+          <li class="home-row">
+            <span>{s.name}</span>
+            <span class="home-meter" role="img" aria-label={PARITY_STAGES[s.stage]}>
+              {squares.map((i) => (
+                <i class:list={{ f: i <= s.stage }} />
+              ))}
+            </span>
+          </li>
+        ))
+      }
+    </ul>
   </div>
-  <ul class="home-rows" role="list">
-    {
-      parity.subsystems.map((s) => (
-        <li class="home-row">
-          <span>{s.name}</span>
-          <span class="home-meter" role="img" aria-label={PARITY_STAGES[s.stage]}>
-            {squares.map((i) => (
-              <i class:list={{ f: i <= s.stage }} />
-            ))}
-          </span>
-        </li>
-      ))
-    }
-  </ul>
 </section>

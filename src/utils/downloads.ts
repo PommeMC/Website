@@ -9,7 +9,6 @@ export interface HomePlatform {
   href: string;
   cta: string;
   downloadable: boolean;
-  fileLabel: string;
   details: string;
   size: string | null;
   note: string;
@@ -27,7 +26,6 @@ export function buildPlatforms(release: Release | null): HomePlatform[] {
         href: asset.browser_download_url,
         cta: `Download for ${p.label}`,
         downloadable: true,
-        fileLabel: asset.name,
         details: [archLabel(p.key, asset.name), size].filter(Boolean).join(" · "),
         size,
         note: release?.firstLaunch[p.label.toLowerCase()] ?? "",
@@ -38,14 +36,17 @@ export function buildPlatforms(release: Release | null): HomePlatform[] {
       key: p.key,
       label: p.label,
       href: isMobile ? GITHUB_URL : `${LINKS.releases}/latest`,
-      cta: isMobile ? "Follow mobile progress" : `Get Pomme for ${p.label}`,
+      cta: isMobile ? "Follow progress" : "See releases",
       downloadable: false,
-      fileLabel: isMobile ? "Android and iOS" : p.label,
-      details: "in progress",
+      details: isMobile ? MOBILE_NOTE : "Not in this release",
       size: null,
-      note: isMobile ? `${MOBILE_NOTE} Follow along on GitHub.` : "See the releases page for this platform's files.",
+      note: "",
     };
   });
+}
+
+export function downloadLabel(p: HomePlatform): string {
+  return `Download Pomme for ${p.label}, ${p.size}`;
 }
 
 export function releaseParts(release: Release | null): string[] {

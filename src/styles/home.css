@@ -302,6 +302,9 @@
   min-height: 480px;
   overflow: hidden;
   background: #5792f5;
+  /* Wide screens crop the grass rather than the sky, keeping the horizon below the logo. */
+  --crop-y: 0.35;
+  container-type: size;
 }
 .home-layer {
   position: absolute;
@@ -310,8 +313,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* Wide screens crop the grass rather than the sky, keeping the horizon below the logo. */
-  object-position: 50% 35%;
+  object-position: 50% calc(var(--crop-y) * 100%);
   will-change: transform;
   transform: translateY(calc(var(--s, 0px) * var(--speed, 0)));
 }
@@ -345,14 +347,21 @@
 }
 .home-logo {
   --logo-w: min(760px, 80vw, 75svh);
-  top: calc(var(--nav-h) + 4%);
-  bottom: auto;
+  /* Rendered image height under object-fit: cover, then the ridge's on-screen y after the crop. */
+  --image-h: max(100cqh, calc(100cqw * var(--render-ratio)));
+  --ridge: calc(var(--ridge-y) * var(--image-h) - var(--crop-y) * (var(--image-h) - 100cqh));
+  bottom: calc(100cqh - var(--ridge) + 6px);
   height: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
+  gap: 14px;
+}
+.home-logo-tag {
+  font-size: 20px;
+  letter-spacing: 0.14em;
   text-align: center;
+  color: #0f2f14;
 }
 img.home-layer {
   pointer-events: none;
@@ -462,11 +471,6 @@ img.home-layer {
     translate: 35% 260%;
     rotate: 160deg;
   }
-}
-.home-logo-tag {
-  font-size: 20px;
-  letter-spacing: 0.14em;
-  color: #0f2f14;
 }
 .home-hero-fade {
   position: absolute;
@@ -833,11 +837,12 @@ img.home-layer {
     min-height: 0;
   }
   .home-logo {
-    --logo-w: calc(100vw - 2 * var(--gutter));
-    top: calc(var(--nav-h) + 8px);
+    --logo-w: calc(100vw - 4 * var(--gutter));
+    gap: 10px;
   }
   .home-logo-tag {
-    font-size: 14px;
+    font-size: 12px;
+    letter-spacing: 0.06em;
   }
   .home-s {
     padding-top: 64px;

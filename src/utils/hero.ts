@@ -7,15 +7,18 @@ import close from "@/assets/hero/plains/04-24-80.webp";
 import near from "@/assets/hero/plains/05-near.webp";
 import { once } from "@/utils/once";
 
+/** Size of the rendered layers, and the highest terrain under the logo as a fraction of the height (measured from the layers). */
+export const HERO_RENDER = { width: 2560, height: 1440, ridgeY: 0.36 } as const;
+
 /** `mobileBreakpoint` must match the max-width media query in home.css. */
 export const HERO_LAYOUT = { navHeight: 64, mobileHeight: 564, mobileBreakpoint: 900 } as const;
 
-// Layers use object-fit: cover, so they render at the larger of the viewport width and the hero height at 16:9.
+// Layers use object-fit: cover, so they render at the larger of the viewport width and the hero height at the render aspect.
 // The nav floats over the hero, so on desktop the hero fills the whole viewport height.
-const ASPECT = 16 / 9;
+const ASPECT = HERO_RENDER.width / HERO_RENDER.height;
 const { mobileHeight, mobileBreakpoint } = HERO_LAYOUT;
 export const HERO_SIZES = `(max-width: ${mobileBreakpoint}px) ${Math.ceil(mobileHeight * ASPECT)}px, max(100vw, calc(100vh * ${ASPECT.toFixed(4)}))`;
-const WIDTHS = [960, 1600, 2560];
+const WIDTHS = [960, 1600, HERO_RENDER.width];
 
 export type HeroLayerKey = "sky" | "far" | "distant" | "mid" | "close" | "near";
 export interface HeroLayer {

@@ -1,12 +1,16 @@
 ---
 import LogoMark from "@/components/home/LogoMark.astro";
 import { PARALLAX } from "@/data/home";
-import { getHeroLayers, HERO_SIZES } from "@/utils/hero";
+import { getHeroLayers, HERO_RENDER, HERO_SIZES } from "@/utils/hero";
 
 const layers = await getHeroLayers();
 ---
 
-<section class="home-hero" style={`--range: ${PARALLAX.range}px`} data-parallax>
+<section
+  class="home-hero"
+  style={`--range: ${PARALLAX.range}px; --render-ratio: ${HERO_RENDER.height / HERO_RENDER.width}; --ridge-y: ${HERO_RENDER.ridgeY}`}
+  data-parallax
+>
   {
     layers.map((layer) => (
       <Fragment>
@@ -15,8 +19,8 @@ const layers = await getHeroLayers();
           src={layer.src}
           srcset={layer.srcset}
           sizes={HERO_SIZES}
-          width="2560"
-          height="1440"
+          width={HERO_RENDER.width}
+          height={HERO_RENDER.height}
           alt=""
           aria-hidden="true"
           fetchpriority={layer.priority ? "high" : "auto"}
@@ -25,7 +29,7 @@ const layers = await getHeroLayers();
         {layer.key === "sky" && (
           <div class="home-layer home-logo" style={`--speed: ${PARALLAX.logo}`}>
             <LogoMark />
-            <p class="home-d home-logo-tag">Minecraft, grown from scratch</p>
+            <p class="home-d home-logo-tag">A Minecraft client, rewritten from scratch</p>
           </div>
         )}
       </Fragment>

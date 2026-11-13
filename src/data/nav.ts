@@ -11,14 +11,13 @@ export interface NavLink {
   title?: string;
   /** Short note beside the label in the phone menu. */
   hint?: string;
-  isNew?: boolean;
   /** Icon links sit on the right; on desktop they show the icon only. */
   icon?: "discord-brands" | "github-brands";
   showStars?: boolean;
 }
 
 export const NAV_LINKS: NavLink[] = [
-  { label: "Orchard", href: "https://orchard.pomme.rs/", external: true, title: "Add-on marketplace", hint: "Marketplace", isNew: true },
+  { label: "Orchard", href: "https://orchard.pomme.rs/", external: true, title: "Add-on marketplace", hint: "Marketplace" },
   { label: "News", href: "/news" },
   { label: "Community", href: "/community" },
   { label: "Discord", href: LINKS.discord, external: true, icon: "discord-brands" },
@@ -26,4 +25,5 @@ export const NAV_LINKS: NavLink[] = [
 ];
 
 /** New-tab attributes for links that leave the site. */
-export const externalAttrs = (l: Pick<NavLink, "external">) => (l.external ? { target: "_blank", rel: "noopener" } : {});
+export const NEW_TAB = { target: "_blank", rel: "noopener" } as const;
+export const externalAttrs = (l: Pick<NavLink, "external">) => (l.external ? NEW_TAB : {});

@@ -95,16 +95,6 @@
   text-decoration-thickness: 2px !important;
   text-underline-offset: 6px;
 }
-.site-nav-new {
-  display: inline-block;
-  padding: 3.5px 5px 0;
-  background: var(--sun);
-  color: var(--ink);
-  font-size: 10px;
-  letter-spacing: 0.06em;
-  line-height: 1;
-  translate: 0 -2px;
-}
 .site-nl[data-tip]::after {
   content: attr(data-tip);
   position: absolute;

@@ -37,6 +37,7 @@ export const LINKS = {
   discord: "https://discord.gg/ucBA55bHPR",
   releases: `${GITHUB_URL}/releases`,
   contribute: GITHUB_URL,
+  sponsor: "https://github.com/sponsors/Purdze",
 } as const;
 
 export interface PlatformConfig {

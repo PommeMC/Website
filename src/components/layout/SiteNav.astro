@@ -46,7 +46,6 @@ const linkAttrs = (l: NavLink) => ({
           <a class="site-nl" data-tip={l.title} {...linkAttrs(l)}>
             {l.label}
             {l.title && <span class="home-sr">, {l.title}</span>}
-            {l.isNew && <span class="site-nav-new">New</span>}
             {l.hint && (
               <span class="site-nav-hint site-nav-phone" aria-hidden="true">
                 {l.hint}

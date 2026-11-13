@@ -1,8 +1,6 @@
 import eslintPluginAstro from "eslint-plugin-astro";
-import eslintPluginSvelte from "eslint-plugin-svelte";
 import typescriptEslint from "@typescript-eslint/eslint-plugin";
 import typescriptParser from "@typescript-eslint/parser";
-import svelteParser from "svelte-eslint-parser";
 import eslintConfigPrettier from "eslint-config-prettier";
 
 export default [
@@ -57,25 +55,6 @@ export default [
       // Astro-specific rules
       "astro/no-set-html-directive": "error",
       "astro/no-unused-css-selector": "warn",
-    },
-  },
-
-  // Svelte configuration
-  ...eslintPluginSvelte.configs["flat/recommended"],
-  {
-    files: ["**/*.svelte"],
-    languageOptions: {
-      parser: svelteParser,
-      parserOptions: {
-        parser: typescriptParser,
-        extraFileExtensions: [".svelte"],
-      },
-    },
-    rules: {
-      // Svelte-specific rules
-      "svelte/no-at-html-tags": "warn",
-      "svelte/no-unused-svelte-ignore": "warn",
-      "svelte/valid-compile": "error",
     },
   },
 

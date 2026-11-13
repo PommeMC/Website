@@ -5,6 +5,7 @@ import { getCollection } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import Hero from "@/components/home/Hero.astro";
 import Intro from "@/components/home/Intro.astro";
+import Compare from "@/components/home/Compare.astro";
 import Demo from "@/components/home/Demo.astro";
 import Parity from "@/components/home/Parity.astro";
 import Community from "@/components/home/Community.astro";
@@ -49,6 +50,7 @@ const preload = layers.filter((l) => l.priority);
     <main id="main">
       <Hero />
       <Intro platforms={platforms} release={release} />
+      <Compare />
       {DEMO.enabled && <Demo />}
       {parity && <Parity parity={parity} />}
       <Community contributors={contributors} commits={commits} stars={stars} posts={posts} alt={parity === null} />

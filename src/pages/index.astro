@@ -17,7 +17,7 @@ import HomeFooter from "@/components/home/HomeFooter.astro";
 import { DEMO, getParity } from "@/data/home";
 import { buildPlatforms } from "@/utils/downloads";
 import { getCommitCount, getContributors, getLatestRelease, getStars } from "@/utils/github";
-import { getHeroLayers, HERO_SIZES } from "@/utils/hero";
+import { getHeroLayers, HERO_LAYOUT, HERO_SIZES } from "@/utils/hero";
 
 const [release, stars, contributors, commits, layers] = await Promise.all([
   getLatestRelease(),
@@ -48,7 +48,7 @@ const preload = layers.filter((l) => l.priority);
     }
   </Fragment>
 
-  <div class="home">
+  <div class="home" style={`--bar-h: ${HERO_LAYOUT.barHeight}px; --hero-mobile-h: ${HERO_LAYOUT.mobileHeight}px`}>
     <a href="#main" class="home-skip">Skip to content</a>
     <TopBar stars={stars} showParity={parity !== null} />
     <main id="main">

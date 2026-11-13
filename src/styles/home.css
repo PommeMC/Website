@@ -9,7 +9,7 @@
   --leaf: #8fd45e;
   --bar: #0a2412;
   --ink: #12320f;
-  --bar-h: 44px;
+  --tap: 44px;
   --surface: var(--bg);
   --display: "Josefin Sans", sans-serif;
 
@@ -108,7 +108,7 @@
 .home-link {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  min-height: var(--tap);
   font-weight: 600;
   color: var(--sun) !important;
 }
@@ -177,7 +177,7 @@
 .home-bar-brand {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  min-height: var(--tap);
   padding-top: 3px;
   font-size: 16px;
   color: var(--sun) !important;
@@ -213,7 +213,7 @@
   height: calc(100svh - var(--bar-h));
   min-height: 480px;
   overflow: hidden;
-  background: #7fb0ff;
+  background: #5792f5;
 }
 .home-layer {
   position: absolute;
@@ -317,7 +317,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
+  min-height: var(--tap);
   padding: 3px 26px 0;
   background: var(--sun);
   color: var(--ink) !important;
@@ -516,7 +516,7 @@
   padding-left: 2px;
 }
 .home-tab {
-  min-height: 44px;
+  min-height: var(--tap);
   margin-left: -2px;
   padding: 3px 18px 0;
   border: 2px solid var(--line);
@@ -583,7 +583,7 @@
 .home-footer-links a {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  min-height: var(--tap);
 }
 .home-footer-links a:hover {
   color: var(--text);
@@ -592,6 +592,7 @@
   flex-basis: 100%;
 }
 
+/* Keep in sync with HERO_LAYOUT.mobileBreakpoint in src/utils/hero.ts. */
 @media (max-width: 900px) {
   .home-w {
     padding: 0 16px;
@@ -600,7 +601,7 @@
     display: none !important;
   }
   .home-hero {
-    height: 520px;
+    height: var(--hero-mobile-h);
     min-height: 0;
   }
   .home-logo {

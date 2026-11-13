@@ -1,17 +1,22 @@
 import { getImage } from "astro:assets";
-import sky from "@/assets/hero/jungle/00-sky.webp";
-import far from "@/assets/hero/jungle/01-far.webp";
-import mid from "@/assets/hero/jungle/02-60-150.webp";
-import close from "@/assets/hero/jungle/03-20-60.webp";
-import near from "@/assets/hero/jungle/04-near.webp";
+import sky from "@/assets/hero/plains/00-sky.webp";
+import far from "@/assets/hero/plains/01-far.webp";
+import distant from "@/assets/hero/plains/02-200-500.webp";
+import mid from "@/assets/hero/plains/03-80-200.webp";
+import close from "@/assets/hero/plains/04-24-80.webp";
+import near from "@/assets/hero/plains/05-near.webp";
 import { once } from "@/utils/once";
 
-// Layers use object-fit: cover, so they render at the larger of the viewport width and the hero
-// height at 16:9 (520px tall at <=900px, otherwise the viewport minus the 44px top bar).
-export const HERO_SIZES = "(max-width: 900px) 925px, max(100vw, calc((100vh - 44px) * 1.7778))";
+/** `mobileBreakpoint` must match the max-width media query in home.css. */
+export const HERO_LAYOUT = { barHeight: 44, mobileHeight: 520, mobileBreakpoint: 900 } as const;
+
+// Layers use object-fit: cover, so they render at the larger of the viewport width and the hero height at 16:9.
+const ASPECT = 16 / 9;
+const { barHeight, mobileHeight, mobileBreakpoint } = HERO_LAYOUT;
+export const HERO_SIZES = `(max-width: ${mobileBreakpoint}px) ${Math.ceil(mobileHeight * ASPECT)}px, max(100vw, calc((100vh - ${barHeight}px) * ${ASPECT.toFixed(4)}))`;
 const WIDTHS = [960, 1600, 2560];
 
-export type HeroLayerKey = "sky" | "far" | "mid" | "close" | "near";
+export type HeroLayerKey = "sky" | "far" | "distant" | "mid" | "close" | "near";
 export interface HeroLayer {
   key: HeroLayerKey;
   src: string;
@@ -23,6 +28,7 @@ export interface HeroLayer {
 const SOURCES: [HeroLayerKey, ImageMetadata][] = [
   ["sky", sky],
   ["far", far],
+  ["distant", distant],
   ["mid", mid],
   ["close", close],
   ["near", near],

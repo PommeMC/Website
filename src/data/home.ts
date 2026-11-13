@@ -9,9 +9,10 @@ export const PARALLAX = {
   range: 900,
   sky: 0.5,
   logo: 0.58,
-  far: 0.36,
-  mid: 0.24,
-  close: 0.12,
+  far: 0.42,
+  distant: 0.32,
+  mid: 0.22,
+  close: 0.11,
   near: 0,
 } as const;
 

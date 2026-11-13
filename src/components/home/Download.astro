@@ -1,5 +1,5 @@
 ---
-import apple from "@/assets/brand/pomme-apple.svg";
+import Apple from "@/assets/brand/pomme-apple.svg";
 import { downloadLabel, releaseParts, type HomePlatform } from "@/utils/downloads";
 import type { Release } from "@/utils/github";
 
@@ -15,7 +15,7 @@ const meta = release ? [...releaseParts(release), `${release.downloads.toLocaleS
 <section id="download" class:list={{ "home-ruled": ruled }}>
   <div class="home-w home-s home-two home-download">
     <div class="home-stack">
-      <img src={apple.src} width="48" height="48" alt="" class="home-pixel" />
+      <Apple width={48} height={48} aria-hidden="true" />
       <h2 class="home-d home-h2 home-h2-lg">Ready to pick one?</h2>
       <p class="home-muted">Free to download. Sign in with the Microsoft account that owns Java Edition, and you're in.</p>
     </div>

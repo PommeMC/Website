@@ -102,16 +102,13 @@
   min-height: var(--tap);
 }
 /* The stalk makes the image taller than the fruit, so centring it leaves the fruit below the wordmark. */
-.site-brand img {
+.site-brand svg {
   translate: 0 -2px;
 }
 .site-brand-word {
   padding-top: 3px;
   font-size: 22px;
   letter-spacing: 0.06em;
-}
-.home-pixel {
-  image-rendering: pixelated;
 }
 
 .home-skip {

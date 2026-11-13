@@ -1,0 +1,138 @@
+/* Brand tokens and the pieces shared by the homepage and the site-wide nav. */
+.home,
+.site-nav {
+  --bg: #0f331a;
+  --bg2: #143f21;
+  --line: #24552f;
+  --text: #f1f6e2;
+  --muted: #b4c9a8;
+  --sun: #e4f398;
+  --sun-hover: #f3fbc0;
+  --leaf: #8fd45e;
+  --bar: #0a2412;
+  --ink: #12320f;
+  --tap: 44px;
+  --gutter: 32px;
+  --surface: var(--bg);
+  --display: "Josefin Sans", sans-serif;
+  --body: "Inter", system-ui, sans-serif;
+
+  font: 400 17px/1.6 var(--body);
+}
+.home a,
+.site-nav a {
+  color: inherit;
+  text-decoration: none;
+}
+.home :focus-visible,
+.site-nav :focus-visible {
+  outline: 2px solid var(--sun);
+  outline-offset: 3px;
+}
+.home-d {
+  font-family: var(--display);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin: 0;
+  line-height: 1.05;
+}
+.home-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.home-w {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  box-sizing: border-box;
+}
+.home-s {
+  padding-top: 104px;
+  padding-bottom: 104px;
+}
+.home-alt {
+  --surface: var(--bg2);
+  background: var(--surface);
+}
+.home-ruled {
+  border-top: 1px solid var(--line);
+}
+.home-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+.home-two {
+  display: grid;
+  grid-template-columns: 380px minmax(0, 1fr);
+  gap: 72px;
+  align-items: start;
+}
+.home-two-even {
+  grid-template-columns: 1fr 1fr;
+}
+.home-pixel {
+  image-rendering: pixelated;
+}
+
+.home-skip {
+  position: absolute;
+  left: 8px;
+  top: -100px;
+  z-index: 10;
+  padding: 10px 16px;
+  background: var(--sun);
+  color: var(--ink) !important;
+  font-weight: 600;
+}
+.home-skip:focus {
+  top: 8px;
+}
+
+.home-rib {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap);
+  padding: 3px 26px 0;
+  background: var(--sun);
+  color: var(--ink) !important;
+  font: 700 16px var(--display);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 50%, 100% 100%, 0 100%, 8px 50%);
+  box-sizing: border-box;
+}
+.home-rib-lg {
+  min-height: 56px;
+  padding: 3px 40px 0;
+  font-size: 19px;
+}
+.home-rib-sm {
+  padding: 3px 22px 0;
+  font-size: 14px;
+  letter-spacing: 0.12em;
+}
+.home-rib:hover {
+  background: var(--sun-hover);
+}
+/* clip-path hides the outline, so draw focus inside the shape instead. */
+.home-rib:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 3px var(--ink);
+  background: var(--sun-hover);
+}
+
+/* Keep in sync with MOBILE_BREAKPOINT in src/data/layout.ts. */
+@media (max-width: 900px) {
+  .home,
+  .site-nav {
+    --gutter: 16px;
+  }
+}

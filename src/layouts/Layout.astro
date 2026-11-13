@@ -1,6 +1,7 @@
 ---
 import Footer from "@/components/layout/Footer.astro";
-import NavBar from "@/components/layout/NavBar.astro";
+import SiteNav from "@/components/layout/SiteNav.astro";
+import { NAV_HEIGHT } from "@/data/layout";
 import "@/styles/global.css";
 
 interface Props {
@@ -8,11 +9,13 @@ interface Props {
   description: string;
   keywords: string[];
   canonical: string;
-  /** Set to false on pages that render their own nav and footer. */
+  /** Set to false on pages that render their own footer and main landmark. */
   chrome?: boolean;
+  /** Nav starts clear over a full-bleed hero and turns solid on scroll. */
+  navOverlay?: boolean;
 }
 
-const { title, description, keywords, canonical, chrome = true } = Astro.props;
+const { title, description, keywords, canonical, chrome = true, navOverlay = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -38,7 +41,7 @@ const { title, description, keywords, canonical, chrome = true } = Astro.props;
     <title>{`${title} | Pomme`}</title>
     <slot name="head" />
   </head>
-  <body class="flex min-h-screen flex-col">
+  <body class="flex min-h-screen flex-col" style={`--nav-h: ${NAV_HEIGHT}px`}>
     {
       chrome && (
         <div class="bg-primary-400/10 border-primary-400/20 text-primary-400 border-b px-6 py-2 text-center text-xs">
@@ -46,10 +49,10 @@ const { title, description, keywords, canonical, chrome = true } = Astro.props;
         </div>
       )
     }
-    {chrome && <NavBar />}
+    <SiteNav overlay={navOverlay} />
     {
       chrome ? (
-        <main class="flex-1">
+        <main class="flex-1" id="main">
           <slot />
         </main>
       ) : (

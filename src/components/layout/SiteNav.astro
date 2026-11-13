@@ -1,0 +1,123 @@
+---
+import "@fontsource/josefin-sans/latin-600.css";
+import "@fontsource/josefin-sans/latin-700.css";
+import "@/styles/brand.css";
+import "@/styles/nav.css";
+import { Icon } from "astro-icon/components";
+import apple from "@/assets/brand/pomme-apple.svg";
+import { MOBILE_BREAKPOINT } from "@/data/layout";
+import { DOWNLOADS_HREF, NAV_LINKS, type NavLink } from "@/data/nav";
+import { formatCompact, getStars } from "@/utils/github";
+
+interface Props {
+  /** Clear over the homepage hero until the visitor scrolls; every other page gets the solid bar. */
+  overlay?: boolean;
+}
+const { overlay = false } = Astro.props;
+
+const stars = await getStars();
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+const isCurrent = (l: NavLink) => !l.external && (path === l.href || path.startsWith(`${l.href}/`));
+const pages = NAV_LINKS.filter((l) => !l.icon);
+const social = NAV_LINKS.filter((l) => l.icon);
+const ariaLabel = (l: NavLink) => (l.showStars && stars !== null ? `${l.label}, ${stars} stars` : l.icon ? l.label : undefined);
+const linkAttrs = (l: NavLink) => ({
+  href: l.href,
+  target: l.external ? "_blank" : undefined,
+  rel: l.external ? "noopener" : undefined,
+  "aria-current": isCurrent(l) ? "page" : undefined,
+  "aria-label": ariaLabel(l),
+});
+---
+
+<header
+  class="site-nav"
+  data-nav
+  data-overlay={overlay || undefined}
+  data-solid={!overlay || undefined}
+  data-breakpoint={MOBILE_BREAKPOINT}
+>
+  <a href="#main" class="home-skip">Skip to content</a>
+  <div class="site-nav-bar">
+    <a href="/" class="site-nav-brand">
+      <img src={apple.src} width="24" height="24" alt="" class="home-pixel" />
+      <span class="home-d site-nav-word">Pomme</span>
+    </a>
+    <!-- One list for both layouts: inline links on desktop, the drop-down menu on phones. -->
+    <nav id="site-nav-menu" aria-label="Primary" class="site-nav-links">
+      {
+        pages.map((l) => (
+          <a class="site-nl" data-tip={l.title} {...linkAttrs(l)}>
+            {l.label}
+            {l.title && <span class="home-sr">, {l.title}</span>}
+            {l.isNew && <span class="site-nav-new">New</span>}
+            {l.hint && (
+              <span class="site-nav-hint site-nav-phone" aria-hidden="true">
+                {l.hint}
+              </span>
+            )}
+          </a>
+        ))
+      }
+      <div class="site-nav-social">
+        {
+          social.map((l) => (
+            <a class="site-nl" {...linkAttrs(l)}>
+              <Icon name={`icons/fontawesome/${l.icon}`} aria-hidden="true" class="site-nav-icon" />
+              <span>
+                <span class="site-nav-phone">{l.label}</span>
+                {l.showStars && stars !== null && <span class="site-nav-count">{formatCompact(stars)}</span>}
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </nav>
+    <div class="site-nav-end">
+      <a class="home-rib home-rib-sm" href={DOWNLOADS_HREF}>Download</a>
+      <button type="button" class="site-nav-toggle" aria-expanded="false" aria-controls="site-nav-menu" aria-label="Menu" data-nav-toggle>
+        <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          ><path class="open" d="M3 6h18M3 12h18M3 18h18"></path><path class="close" d="M5 5l14 14M19 5L5 19"></path></svg
+        >
+      </button>
+    </div>
+  </div>
+</header>
+{overlay && <div class="site-nav-sentinel" aria-hidden="true" data-nav-sentinel />}
+
+<script>
+  const nav = document.querySelector<HTMLElement>("[data-nav]");
+  const toggle = nav?.querySelector<HTMLButtonElement>("[data-nav-toggle]");
+  const menu = nav?.querySelector<HTMLElement>("#site-nav-menu");
+  const sentinel = document.querySelector("[data-nav-sentinel]");
+
+  if (nav && sentinel) {
+    new IntersectionObserver(([entry]) => nav.toggleAttribute("data-solid", !entry.isIntersecting)).observe(sentinel);
+  }
+
+  if (nav && toggle && menu) {
+    const isOpen = () => nav.hasAttribute("data-open");
+    const setOpen = (open: boolean, returnFocus = false) => {
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "Close menu" : "Menu");
+      nav.toggleAttribute("data-open", open);
+      if (returnFocus) toggle.focus();
+    };
+    toggle.addEventListener("click", () => setOpen(!isOpen()));
+    menu.addEventListener("click", (e) => {
+      if (isOpen() && (e.target as Element).closest("a")) setOpen(false, true);
+    });
+    nav.addEventListener("keydown", (e) => {
+      if (!isOpen()) return;
+      if (e.key === "Escape") return setOpen(false, true);
+      if (e.key !== "Tab") return;
+      // Keep focus on the menu button and the open menu's links.
+      const items = [toggle, ...menu.querySelectorAll<HTMLElement>("a")];
+      const i = items.indexOf(document.activeElement as HTMLElement);
+      const next = e.shiftKey ? (i <= 0 ? items.length - 1 : i - 1) : i === items.length - 1 ? 0 : i + 1;
+      e.preventDefault();
+      items[next].focus();
+    });
+    matchMedia(`(min-width: ${Number(nav.dataset.breakpoint) + 1}px)`).addEventListener("change", (e) => e.matches && setOpen(false));
+  }
+</script>

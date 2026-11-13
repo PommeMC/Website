@@ -1,34 +1,7 @@
 .home {
-  --bg: #0f331a;
-  --bg2: #143f21;
-  --line: #24552f;
-  --text: #f1f6e2;
-  --muted: #b4c9a8;
-  --sun: #e4f398;
-  --sun-hover: #f3fbc0;
-  --leaf: #8fd45e;
-  --bar: #0a2412;
-  --ink: #12320f;
-  --tap: 44px;
-  --gutter: 32px;
-  --surface: var(--bg);
-  --display: "Josefin Sans", sans-serif;
-
   flex: 1;
   background: var(--bg);
   color: var(--text);
-  font:
-    400 17px/1.6 "Inter",
-    system-ui,
-    sans-serif;
-}
-.home a {
-  color: inherit;
-  text-decoration: none;
-}
-.home :focus-visible {
-  outline: 2px solid var(--sun);
-  outline-offset: 3px;
 }
 .home ul[role="list"] {
   list-style: none;
@@ -43,14 +16,6 @@
   margin: 0;
 }
 
-.home-d {
-  font-family: var(--display);
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  margin: 0;
-  line-height: 1.05;
-}
 .home-h2 {
   font-size: 44px;
 }
@@ -70,46 +35,6 @@
   font-size: 14px;
   color: var(--muted);
 }
-.home-sr {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-.home-w {
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 0 var(--gutter);
-  box-sizing: border-box;
-}
-.home-s {
-  padding-top: 104px;
-  padding-bottom: 104px;
-}
-.home-alt {
-  --surface: var(--bg2);
-  background: var(--surface);
-}
-.home-ruled {
-  border-top: 1px solid var(--line);
-}
-.home-stack {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
-}
-.home-two {
-  display: grid;
-  grid-template-columns: 380px minmax(0, 1fr);
-  gap: 72px;
-  align-items: start;
-}
-.home-two-even {
-  grid-template-columns: 1fr 1fr;
-}
 .home-link {
   display: inline-flex;
   align-items: center;
@@ -121,24 +46,6 @@
   text-decoration: underline !important;
   text-underline-offset: 4px;
 }
-.home-pixel {
-  image-rendering: pixelated;
-}
-
-.home-skip {
-  position: absolute;
-  left: 8px;
-  top: -100px;
-  z-index: 10;
-  padding: 10px 16px;
-  background: var(--sun);
-  color: var(--ink) !important;
-  font-weight: 600;
-}
-.home-skip:focus {
-  top: 8px;
-}
-
 .home-btn {
   display: inline-flex;
   align-items: center;
@@ -146,9 +53,7 @@
   gap: 10px;
   min-height: 52px;
   padding: 3px 28px 0;
-  font:
-    700 17px var(--display),
-    sans-serif;
+  font: 700 17px var(--display);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   border: 0;
@@ -171,130 +76,6 @@
   opacity: 0.85;
 }
 
-.home-nav {
-  position: fixed;
-  inset: 0 0 auto;
-  z-index: 20;
-  color: #fff;
-}
-/* Two stacked backgrounds so the switch can fade: a dark gradient at the top, solid once scrolled. */
-.home-nav::before,
-.home-nav::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  transition: opacity 200ms ease;
-}
-.home-nav::before {
-  bottom: -24px;
-  background: linear-gradient(to bottom, rgb(5 20 10 / 0.6), rgb(5 20 10 / 0));
-}
-.home-nav::after {
-  background: var(--bar);
-  box-shadow: 0 1px 0 var(--line);
-  opacity: 0;
-}
-.home-nav[data-solid]::before,
-.home-nav[data-open]::before {
-  opacity: 0;
-}
-.home-nav[data-solid]::after,
-.home-nav[data-open]::after {
-  opacity: 1;
-}
-.home-nav-bar {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  height: var(--nav-h);
-  padding: 0 var(--gutter);
-}
-.home-nav-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  min-height: var(--tap);
-}
-.home-nav-word {
-  max-width: 120px;
-  overflow: hidden;
-  padding-top: 3px;
-  font-size: 22px;
-  letter-spacing: 0.06em;
-  transition:
-    max-width 250ms ease,
-    opacity 250ms ease;
-}
-/* At the top the hero logo already says Pomme, so the wordmark waits until the hero scrolls away. */
-.home-nav:not([data-solid], [data-open]) .home-nav-word {
-  max-width: 0;
-  opacity: 0;
-}
-.home-nav-links {
-  display: flex;
-  flex: 1;
-  gap: 4px;
-}
-.home-nav-gh {
-  margin-left: auto;
-}
-.home-nav-phone {
-  display: none;
-}
-.home-nav-end {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-left: auto;
-}
-.home-nl {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: var(--tap);
-  padding: 3px 12px 0;
-  font:
-    700 14px var(--display),
-    sans-serif;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-.home-nl:hover {
-  color: var(--sun) !important;
-}
-.home-nav-icon {
-  width: 16px;
-  height: 16px;
-  margin-top: -3px;
-  fill: currentColor;
-}
-.home-nav-toggle {
-  display: none;
-  align-items: center;
-  justify-content: center;
-  width: var(--tap);
-  height: var(--tap);
-  margin-right: -10px;
-  border: 0;
-  background: none;
-  color: inherit;
-  cursor: pointer;
-}
-.home-nav-toggle .close,
-.home-nav[data-open] .home-nav-toggle .open {
-  display: none;
-}
-.home-nav[data-open] .home-nav-toggle .close {
-  display: block;
-}
-.home-nav-sentinel {
-  position: absolute;
-  top: 80px;
-  width: 1px;
-  height: 1px;
-}
 .home [id] {
   scroll-margin-top: var(--nav-h);
 }
@@ -516,41 +297,6 @@ img.home-layer {
   grid-template-columns: repeat(3, 260px);
   gap: 24px 32px;
 }
-.home-rib {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: var(--tap);
-  padding: 3px 26px 0;
-  background: var(--sun);
-  color: var(--ink) !important;
-  font:
-    700 16px var(--display),
-    sans-serif;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 50%, 100% 100%, 0 100%, 8px 50%);
-  box-sizing: border-box;
-}
-.home-rib-lg {
-  min-height: 56px;
-  padding: 3px 40px 0;
-  font-size: 19px;
-}
-.home-rib-sm {
-  padding: 3px 22px 0;
-  font-size: 14px;
-  letter-spacing: 0.12em;
-}
-.home-rib:hover {
-  background: var(--sun-hover);
-}
-/* clip-path hides the outline, so draw focus inside the shape instead. */
-.home-rib:focus-visible {
-  outline: none;
-  box-shadow: inset 0 0 0 3px var(--ink);
-  background: var(--sun-hover);
-}
 .home-lede {
   max-width: 680px;
   font-size: 19px;
@@ -766,9 +512,7 @@ img.home-layer {
   border: 2px solid var(--line);
   background: none;
   color: var(--muted);
-  font:
-    700 14px var(--display),
-    sans-serif;
+  font: 700 14px var(--display);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   cursor: pointer;
@@ -836,49 +580,8 @@ img.home-layer {
   flex-basis: 100%;
 }
 
-/* Keep in sync with HERO_LAYOUT.mobileBreakpoint in src/utils/hero.ts. */
+/* Keep in sync with MOBILE_BREAKPOINT in src/data/layout.ts. */
 @media (max-width: 900px) {
-  .home {
-    --gutter: 16px;
-  }
-  .home-nav-toggle {
-    display: inline-flex;
-  }
-  .home-nav-links {
-    display: none;
-    position: absolute;
-    inset: var(--nav-h) 0 auto;
-    flex-direction: column;
-    padding: 0 var(--gutter) 12px;
-    border-top: 1px solid var(--line);
-    background: var(--bar);
-  }
-  .home-nav[data-open] .home-nav-links {
-    display: flex;
-  }
-  .home-nav-links .home-nl {
-    min-height: 52px;
-    padding: 3px 0 0;
-    border-bottom: 1px solid var(--line);
-    font-size: 16px;
-  }
-  .home-nav-gh {
-    margin-left: 0;
-  }
-  .home-nav-phone {
-    display: inline;
-  }
-  .home-nav-count {
-    font:
-      400 14px "Inter",
-      sans-serif;
-    letter-spacing: 0;
-    text-transform: none;
-    color: var(--muted);
-  }
-  .home-nav-bar {
-    gap: 12px;
-  }
   .home-hero {
     height: var(--hero-mobile-h);
     min-height: 0;

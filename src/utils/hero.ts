@@ -9,16 +9,17 @@ import skyDesktopAv1 from "@/assets/hero/plains/sky-desktop.av1.mp4?url";
 import skyDesktopH264 from "@/assets/hero/plains/sky-desktop.h264.mp4?url";
 import skyMobileAv1 from "@/assets/hero/plains/sky-mobile.av1.mp4?url";
 import skyMobileH264 from "@/assets/hero/plains/sky-mobile.h264.mp4?url";
+import { MOBILE_BREAKPOINT } from "@/data/layout";
 import { once } from "@/utils/once";
 
 /** Size of the rendered layers, and the highest terrain under the logo as a fraction of the height (measured from the layers). */
 export const HERO_RENDER = { width: 2560, height: 1440, ridgeY: 0.36 } as const;
 
-/** `mobileBreakpoint` must match the max-width media query in home.css. */
-export const HERO_LAYOUT = { navHeight: 64, mobileHeight: 564, mobileBreakpoint: 900 } as const;
+/** Fixed hero height on phones, where the viewport is too tall and narrow for a full-height scene. */
+export const HERO_MOBILE_HEIGHT = 564;
 
 const AV1 = 'video/mp4; codecs="av01.0.08M.08"';
-const DESKTOP = `(min-width: ${HERO_LAYOUT.mobileBreakpoint + 1}px)`;
+const DESKTOP = `(min-width: ${MOBILE_BREAKPOINT + 1}px)`;
 /** Looping sky-and-clouds video over the still sky layer, in the order browsers should try them. Its first frame is 00-sky, so the fade-in is seamless. */
 export const HERO_SKY_SOURCES: { src: string; type: string; media?: string }[] = [
   { src: skyDesktopAv1, type: AV1, media: DESKTOP },
@@ -30,8 +31,7 @@ export const HERO_SKY_SOURCES: { src: string; type: string; media?: string }[] =
 // Layers use object-fit: cover, so they render at the larger of the viewport width and the hero height at the render aspect.
 // The nav floats over the hero, so on desktop the hero fills the whole viewport height.
 const ASPECT = HERO_RENDER.width / HERO_RENDER.height;
-const { mobileHeight, mobileBreakpoint } = HERO_LAYOUT;
-export const HERO_SIZES = `(max-width: ${mobileBreakpoint}px) ${Math.ceil(mobileHeight * ASPECT)}px, max(100vw, calc(100vh * ${ASPECT.toFixed(4)}))`;
+export const HERO_SIZES = `(max-width: ${MOBILE_BREAKPOINT}px) ${Math.ceil(HERO_MOBILE_HEIGHT * ASPECT)}px, max(100vw, calc(100vh * ${ASPECT.toFixed(4)}))`;
 const WIDTHS = [960, 1600, HERO_RENDER.width];
 
 type HeroLayerKey = "sky" | "far" | "distant" | "mid" | "close" | "near";

@@ -1,6 +1,7 @@
-/* Brand tokens and the pieces shared by the homepage and the site-wide nav. */
+/* Brand tokens and the pieces shared by the homepage and the site-wide nav and footer. */
 .home,
-.site-nav {
+.site-nav,
+.site-footer {
   --bg: #0f331a;
   --bg2: #143f21;
   --line: #24552f;
@@ -20,12 +21,14 @@
   font: 400 17px/1.6 var(--body);
 }
 .home a,
-.site-nav a {
+.site-nav a,
+.site-footer a {
   color: inherit;
   text-decoration: none;
 }
 .home :focus-visible,
-.site-nav :focus-visible {
+.site-nav :focus-visible,
+.site-footer :focus-visible {
   outline: 2px solid var(--sun);
   outline-offset: 3px;
 }
@@ -73,6 +76,21 @@
   grid-template-columns: 380px minmax(0, 1fr);
   gap: 72px;
   align-items: start;
+}
+.site-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--tap);
+}
+/* The stalk makes the image taller than the fruit, so centring it leaves the fruit below the wordmark. */
+.site-brand img {
+  translate: 0 -2px;
+}
+.site-brand-word {
+  padding-top: 3px;
+  font-size: 22px;
+  letter-spacing: 0.06em;
 }
 .home-pixel {
   image-rendering: pixelated;
@@ -129,7 +147,8 @@
 /* Keep in sync with MOBILE_BREAKPOINT in src/data/layout.ts. */
 @media (max-width: 900px) {
   .home,
-  .site-nav {
+  .site-nav,
+  .site-footer {
     --gutter: 16px;
   }
   .home-rib-lg {

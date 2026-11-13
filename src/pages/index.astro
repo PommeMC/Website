@@ -10,7 +10,6 @@ import Demo from "@/components/home/Demo.astro";
 import Parity from "@/components/home/Parity.astro";
 import Community from "@/components/home/Community.astro";
 import Download from "@/components/home/Download.astro";
-import HomeFooter from "@/components/home/HomeFooter.astro";
 import { DEMO, getParity } from "@/data/home";
 import { buildPlatforms } from "@/utils/downloads";
 import { getCommitCount, getContributors, getLatestRelease, getStars } from "@/utils/github";
@@ -56,6 +55,5 @@ const preload = layers.filter((l) => l.priority);
       <Community contributors={contributors} commits={commits} stars={stars} posts={posts} alt={parity === null} />
       <Download platforms={platforms} release={release} ruled={parity !== null} />
     </main>
-    <HomeFooter parityUrl={parity?.trackerUrl ?? null} />
   </div>
 </Layout>

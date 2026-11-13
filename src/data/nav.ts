@@ -24,3 +24,6 @@ export const NAV_LINKS: NavLink[] = [
   { label: "Discord", href: LINKS.discord, external: true, icon: "discord-brands" },
   { label: "GitHub", href: GITHUB_URL, external: true, icon: "github-brands", showStars: true },
 ];
+
+/** New-tab attributes for links that leave the site. */
+export const externalAttrs = (l: Pick<NavLink, "external">) => (l.external ? { target: "_blank", rel: "noopener" } : {});

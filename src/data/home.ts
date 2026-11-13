@@ -34,7 +34,6 @@ export const DEMO = {
 } as const;
 
 export const LINKS = {
-  docs: "https://docs.pomme.rs/",
   discord: "https://discord.gg/ucBA55bHPR",
   releases: `${GITHUB_URL}/releases`,
   contribute: GITHUB_URL,

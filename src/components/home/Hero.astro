@@ -10,6 +10,7 @@ const layers = await getHeroLayers();
   class="home-hero"
   style={`--range: ${PARALLAX.range}px; --render-ratio: ${HERO_RENDER.height / HERO_RENDER.width}; --ridge-y: ${HERO_RENDER.ridgeY}`}
   data-parallax
+  data-nav-until
 >
   {
     layers.map((layer) => (
@@ -55,6 +56,8 @@ const layers = await getHeroLayers();
 </section>
 
 <script>
+  import { perFrame } from "@/utils/frame";
+
   const still = matchMedia("(prefers-reduced-motion: reduce)");
 
   // The sky video only loads when motion is welcome and data isn't being saved, and pauses while off screen.
@@ -71,17 +74,10 @@ const layers = await getHeroLayers();
   const hero = document.querySelector<HTMLElement>("[data-parallax]");
   if (hero && !CSS.supports("animation-timeline: scroll()")) {
     const range = parseFloat(hero.style.getPropertyValue("--range"));
-    let queued = false;
     const draw = () => {
-      queued = false;
       hero.style.setProperty("--s", `${still.matches ? 0 : Math.min(scrollY, range)}px`);
     };
-    const queue = () => {
-      if (!queued) {
-        queued = true;
-        requestAnimationFrame(draw);
-      }
-    };
+    const queue = perFrame(draw);
     addEventListener("scroll", queue, { passive: true });
     still.addEventListener("change", queue);
     draw();

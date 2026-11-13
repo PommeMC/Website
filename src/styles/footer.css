@@ -1,0 +1,65 @@
+.site-footer {
+  padding: 36px 0;
+  border-top: 1px solid var(--line);
+  background: var(--bar);
+  color: var(--text);
+}
+.site-footer-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+.site-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 4px;
+}
+.site-footer-social {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+.site-footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 32px;
+  padding-top: 20px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.site-footer-legal {
+  max-width: 520px;
+  color: var(--text);
+  font-weight: 600;
+}
+/* Needs to outrank the link reset in brand.css; inline links in plain text must look like links. */
+.site-footer .site-footer-bottom a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.site-footer-bottom a:hover {
+  color: var(--text);
+}
+
+/* Keep in sync with MOBILE_BREAKPOINT in src/data/layout.ts. */
+@media (max-width: 900px) {
+  .site-footer-top > .site-brand {
+    flex: 1;
+  }
+  .site-footer-top > nav {
+    order: 1;
+    flex-basis: 100%;
+  }
+  .site-footer-links {
+    justify-content: space-between;
+    column-gap: 12px;
+  }
+  .site-footer-links .site-nl {
+    padding: 3px 0 0;
+    font-size: 13px;
+  }
+}

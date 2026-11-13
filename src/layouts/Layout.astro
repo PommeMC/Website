@@ -1,5 +1,5 @@
 ---
-import Footer from "@/components/layout/Footer.astro";
+import SiteFooter from "@/components/layout/SiteFooter.astro";
 import SiteNav from "@/components/layout/SiteNav.astro";
 import { NAV_HEIGHT } from "@/data/layout";
 import "@/styles/global.css";
@@ -9,7 +9,7 @@ interface Props {
   description: string;
   keywords: string[];
   canonical: string;
-  /** Set to false on pages that render their own footer and main landmark. */
+  /** Set to false on pages that render their own main landmark and skip the preview banner. */
   chrome?: boolean;
   /** Nav starts clear over a full-bleed hero and turns solid on scroll. */
   navOverlay?: boolean;
@@ -59,6 +59,6 @@ const { title, description, keywords, canonical, chrome = true, navOverlay = fal
         <slot />
       )
     }
-    {chrome && <Footer />}
+    <SiteFooter />
   </body>
 </html>

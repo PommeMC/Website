@@ -1,0 +1,59 @@
+---
+import "@/styles/footer.css";
+import { Icon } from "astro-icon/components";
+import SiteBrand from "@/components/layout/SiteBrand.astro";
+import { DOWNLOADS_HREF, NAV_LINKS, externalAttrs } from "@/data/nav";
+
+const hash = import.meta.env.GIT_COMMIT_HASH;
+const year = new Date().getFullYear();
+const pages = [{ label: "Download", href: DOWNLOADS_HREF }, ...NAV_LINKS.filter((l) => !l.icon)];
+const social = NAV_LINKS.filter((l) => l.icon);
+---
+
+<footer class="site-footer">
+  <div class="home-w">
+    <div class="site-footer-top">
+      <SiteBrand />
+      <nav aria-label="Footer">
+        <ul class="site-footer-links" role="list">
+          {
+            pages.map((l) => (
+              <li>
+                <a class="site-nl" href={l.href} {...externalAttrs(l)}>
+                  {l.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+      <ul class="site-footer-social" role="list">
+        {
+          social.map((l) => (
+            <li>
+              <a class="site-nl" href={l.href} aria-label={l.label} {...externalAttrs(l)}>
+                <Icon name={`icons/fontawesome/${l.icon}`} aria-hidden="true" class="site-icon" />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+    <div class="site-footer-bottom">
+      <p class="site-footer-legal">Not an official Minecraft product. Not approved by or associated with Mojang or Microsoft.</p>
+      <p>
+        &copy; {year} Pomme contributors · GPL-3.0 · <a href="/donate">Donate</a>
+        {
+          hash && (
+            <>
+              {" · "}
+              <a href={`https://github.com/PommeMC/pomme-website/commit/${hash}`} aria-label={`Site version ${hash}`}>
+                {hash}
+              </a>
+            </>
+          )
+        }
+      </p>
+    </div>
+  </div>
+</footer>

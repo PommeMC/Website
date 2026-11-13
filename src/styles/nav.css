@@ -8,7 +8,7 @@
   position: fixed;
   inset: 0 0 auto;
 }
-/* Two stacked backgrounds so the switch can fade: a dark gradient at the top, solid once scrolled. */
+/* Two stacked backgrounds: a dark gradient that keeps links readable over the hero, and the solid bar that fills in over it. */
 .site-nav::before,
 .site-nav::after {
   content: "";
@@ -24,8 +24,7 @@
 }
 .site-nav::after {
   background: var(--bar);
-  box-shadow: 0 1px 0 var(--line);
-  opacity: 0;
+  opacity: var(--nav-fill, 0);
 }
 .site-nav[data-solid]::before,
 .site-nav[data-open]::before {
@@ -33,6 +32,7 @@
 }
 .site-nav[data-solid]::after,
 .site-nav[data-open]::after {
+  box-shadow: 0 1px 0 var(--line);
   opacity: 1;
 }
 .site-nav-bar {
@@ -42,28 +42,15 @@
   height: var(--nav-h);
   padding: 0 var(--gutter);
 }
-.site-nav-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  min-height: var(--tap);
-}
-/* The stalk makes the image taller than the fruit, so centring it leaves the fruit below the wordmark. */
-.site-nav-brand img {
-  translate: 0 -2px;
-}
-.site-nav-word {
+.site-nav .site-brand-word {
   max-width: 120px;
   overflow: hidden;
-  padding-top: 3px;
-  font-size: 22px;
-  letter-spacing: 0.06em;
   transition:
     max-width 250ms ease,
     opacity 250ms ease;
 }
 /* Over the homepage hero the big logo already says Pomme, so the wordmark waits until the hero scrolls away. */
-.site-nav:not([data-solid], [data-open]) .site-nav-word {
+.site-nav:not([data-solid], [data-open]) .site-brand-word {
   max-width: 0;
   opacity: 0;
 }
@@ -139,7 +126,7 @@
 .site-nl[data-tip]:focus-visible::after {
   opacity: 1;
 }
-.site-nav-icon {
+.site-icon {
   width: 16px;
   height: 16px;
   margin-top: -3px;
@@ -163,12 +150,6 @@
 }
 .site-nav[data-open] .site-nav-toggle .close {
   display: block;
-}
-.site-nav-sentinel {
-  position: absolute;
-  top: 80px;
-  width: 1px;
-  height: 1px;
 }
 
 /* Keep in sync with MOBILE_BREAKPOINT in src/data/layout.ts. */

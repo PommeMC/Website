@@ -634,42 +634,6 @@ img.home-layer {
 .home-dl-meta {
   padding: 16px 24px;
 }
-.home-footer {
-  background: var(--bar);
-}
-.home-footer-in {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px 32px;
-  padding-top: 20px;
-  padding-bottom: 24px;
-  font-size: 13px;
-  color: var(--muted);
-}
-.home-footer-legal {
-  max-width: 520px;
-  color: var(--text);
-  font-weight: 600;
-}
-.home-footer-links {
-  display: flex;
-  flex-wrap: wrap;
-  column-gap: 20px;
-}
-.home-footer-links a {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--tap);
-}
-.home-footer-links a:hover {
-  color: var(--text);
-}
-.home-footer-copy {
-  flex-basis: 100%;
-}
-
 /* Keep in sync with MOBILE_BREAKPOINT in src/data/layout.ts. */
 @media (max-width: 900px) {
   .home-hero {

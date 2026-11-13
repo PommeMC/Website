@@ -4,7 +4,6 @@ import typescriptParser from "@typescript-eslint/parser";
 import eslintConfigPrettier from "eslint-config-prettier";
 
 export default [
-  // Ignore patterns
   {
     ignores: [
       "dist/**",
@@ -19,7 +18,6 @@ export default [
     ],
   },
 
-  // Base TypeScript configuration
   {
     files: ["**/*.ts", "**/*.tsx"],
     languageOptions: {
@@ -47,17 +45,15 @@ export default [
     },
   },
 
-  // Astro configuration
   ...eslintPluginAstro.configs.recommended,
   {
     files: ["**/*.astro"],
     rules: {
-      // Astro-specific rules
       "astro/no-set-html-directive": "error",
       "astro/no-unused-css-selector": "warn",
     },
   },
 
-  // Prettier compatibility (must be last)
+  // Must be last, so it can switch off any rules above that clash with Prettier.
   eslintConfigPrettier,
 ];

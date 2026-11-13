@@ -55,7 +55,7 @@ bun run preview
 website/
 ├─ src/
 │  ├─ pages/         # Astro route files
-│  ├─ components/    # Astro & Svelte components (islands)
+│  ├─ components/    # Astro components
 │  ├─ layouts/       # Shared layout templates
 │  ├─ styles/        # Tailwind v4 theme tokens
 │  └─ content/       # Markdown or MDX content
@@ -68,7 +68,7 @@ website/
 
 This project uses Astro 5, which introduces faster rebuilds, partial hydration improvements, and first-class hybrid rendering.
 
-Svelte is used for dynamic islands and component interactivity.
+Interactive bits (nav menu, download tabs, hero parallax) are small inline scripts; no client-side framework is shipped.
 
 Tailwind v4 leverages the new @theme token system for consistent color and typography design.
 

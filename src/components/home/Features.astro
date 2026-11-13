@@ -1,13 +1,30 @@
 ---
-import { FEATURES } from "@/data/home";
+import { FEATURES, NOT_A } from "@/data/home";
 ---
 
 <section class="home-alt">
   <div class="home-w home-s">
-    <h2 class="home-d home-h2 home-features-title">
-      Not a mod. Not a launcher. <span class="home-sun">The whole client, rebuilt.</span>
-    </h2>
-    <ul class="home-three" role="list">
+    <h2 class="home-sr">Not a mod. Not a launcher. The whole client, rebuilt.</h2>
+    <ul class="home-not" role="list">
+      {
+        NOT_A.map((c) => (
+          <li class:list={["home-not-col", { "home-not-yes": !c.isNot }]}>
+            <p class="home-d home-not-title">
+              {c.isNot ? (
+                <s>
+                  <span class="home-sr">Not </span>
+                  {c.title}
+                </s>
+              ) : (
+                c.title
+              )}
+            </p>
+            <p>{c.body}</p>
+          </li>
+        ))
+      }
+    </ul>
+    <ul class="home-points" role="list">
       {
         FEATURES.map((f) => (
           <li class="home-feature">

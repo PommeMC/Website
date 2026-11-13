@@ -49,6 +49,8 @@ const meta = release ? [...releaseParts(release), `${release.downloads.toLocaleS
 </section>
 
 <script>
+  import { detectPlatform } from "@/utils/platform";
+
   const root = document.getElementById("download");
   const tabs = Array.from(root?.querySelectorAll<HTMLButtonElement>("[data-plat]") ?? []);
   const link = root?.querySelector<HTMLAnchorElement>("[data-dl-link]");
@@ -80,7 +82,6 @@ const meta = release ? [...releaseParts(release), `${release.downloads.toLocaleS
     });
   });
 
-  const ua = navigator.userAgent;
-  const guess = /Android|iPhone|iPad/i.test(ua) ? "mobile" : /Mac/i.test(ua) ? "macos" : /Linux|X11|CrOS/i.test(ua) ? "linux" : null;
-  if (guess) select(tabs.find((t) => t.dataset.plat === guess));
+  const platform = detectPlatform();
+  if (platform) select(tabs.find((t) => t.dataset.plat === platform));
 </script>

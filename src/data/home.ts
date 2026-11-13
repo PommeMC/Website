@@ -61,6 +61,12 @@ export function archLabel(platform: PlatformConfig["key"], file: string): string
   return "";
 }
 
+export const NOT_A = [
+  { title: "A mod", body: "Mods patch Mojang's Java client. Pomme doesn't run that client at all.", isNot: true },
+  { title: "A launcher", body: "Launchers start the official game. Pomme is the game client itself.", isNot: true },
+  { title: "The whole client", body: "Renderer, networking, menus and physics, written again in Rust.", isNot: false },
+];
+
 export const FEATURES = [
   { title: "Native binary", body: "No Java runtime to install and no garbage-collector stutter." },
   { title: "Vulkan renderer", body: "GPU-driven chunks, entities and particles. Shader packs in early support." },

@@ -8,31 +8,71 @@ interface Props {
   release: Release | null;
 }
 const { platforms, release } = Astro.props;
-const ribbons = platforms.filter((p) => p.downloadable);
-const meta = [...releaseParts(release), MOBILE_NOTE.replace(/\.$/, "")];
+const downloads = platforms.filter((p) => p.downloadable);
+const parts = releaseParts(release);
+const [version] = parts;
+const meta = [...parts, MOBILE_NOTE.replace(/\.$/, "")];
+const ariaFor = (p: HomePlatform) => `Download Pomme for ${p.label}, ${p.size}`;
 ---
 
 <section class="home-w home-s home-intro">
   <p class="home-d home-kicker">Free and open source</p>
-  <div class:list={["home-ribs", { "home-ribs-3": !DEMO.enabled }]}>
-    {
-      ribbons.map((p) => (
-        <a href={p.href} class="home-rib" aria-label={`Download Pomme for ${p.label}, ${p.size}`}>
-          {p.label}
-        </a>
-      ))
-    }
-    {
-      DEMO.enabled && (
-        <a href="#demo" class="home-rib">
-          Play in browser
-        </a>
-      )
-    }
-  </div>
   <p class="home-lede">
     Pomme is an open-source Java Edition client written in Rust, with a Vulkan renderer. It ships as one native binary, needs no Java, and
     joins the servers you already play on.
   </p>
-  <span class="home-small">{meta.join(" · ")}</span>
+
+  {
+    downloads.map((p) => (
+      <div class="home-pick" data-pick={p.key} hidden>
+        <a href={p.href} class="home-rib home-rib-lg">
+          {p.cta}
+        </a>
+        <p class="home-small">
+          {[p.details, version].filter(Boolean).join(" · ")} · also for{" "}
+          {downloads
+            .filter((o) => o !== p)
+            .map((o, i, others) => (
+              <Fragment>
+                {i > 0 && (i === others.length - 1 ? " and " : ", ")}
+                <a href={o.href} class="home-inline-link" aria-label={ariaFor(o)} set:text={o.label} />
+              </Fragment>
+            ))}
+        </p>
+      </div>
+    ))
+  }
+
+  <div class="home-pick-fallback" data-pick-fallback>
+    <div class:list={["home-ribs", { "home-ribs-3": !DEMO.enabled }]}>
+      {
+        downloads.map((p) => (
+          <a href={p.href} class="home-rib" aria-label={ariaFor(p)}>
+            {p.label}
+          </a>
+        ))
+      }
+      {
+        DEMO.enabled && (
+          <a href="#demo" class="home-rib">
+            Play in browser
+          </a>
+        )
+      }
+    </div>
+    <span class="home-small">{meta.join(" · ")}</span>
+  </div>
 </section>
+
+<script>
+  import { detectPlatform } from "@/utils/platform";
+
+  // One button for the visitor's own system; phones, unknown systems and no-JS visitors keep the full set.
+  const platform = detectPlatform();
+  const pick = platform && document.querySelector<HTMLElement>(`[data-pick="${platform}"]`);
+  const fallback = document.querySelector<HTMLElement>("[data-pick-fallback]");
+  if (pick && fallback) {
+    pick.hidden = false;
+    fallback.hidden = true;
+  }
+</script>

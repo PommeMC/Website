@@ -7,19 +7,23 @@ const DEFAULT_AVATAR = "/assets/brand/pomme.png";
 
 const posts = defineCollection({
   loader: glob({ pattern: "**/*.mdx", base: "./src/content/posts" }),
-  schema: rssSchema.extend({
-    date: z.coerce.date(),
-    category: z.enum(["dev-log", "announcement"]).default("announcement"),
-    author: z.string().default(DEFAULT_AUTHOR),
-    authorAvatar: z.string().default(DEFAULT_AVATAR),
-    cover: z
-      .object({
-        src: z.string().url(),
-        alt: z.string().optional(),
-        credit: z.string().optional(),
-      })
-      .optional(),
-  }),
+  schema: ({ image }) =>
+    rssSchema.extend({
+      date: z.coerce.date(),
+      category: z.enum(["dev-log", "announcement"]).default("announcement"),
+      author: z.string().default(DEFAULT_AUTHOR),
+      authorAvatar: z.string().default(DEFAULT_AVATAR),
+      /** A picture next to the post (./cover.png) or a full URL. */
+      cover: z
+        .object({
+          src: z.union([image(), z.string().url()]),
+          alt: z.string(),
+          caption: z.string().optional(),
+        })
+        .optional(),
+      /** GitHub usernames to thank at the end of the post. */
+      thanks: z.array(z.string()).optional(),
+    }),
 });
 
 export const collections = { posts };

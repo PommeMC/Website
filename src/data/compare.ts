@@ -16,5 +16,3 @@ export const COMPARE = {
     alt: "The same view with LoD: the badlands valley, a river, wooded hills, rock spires and mountains run all the way to the horizon.",
   },
 } as const;
-
-export const compareValueText = (pos: number) => `${COMPARE.vanilla.label} ${pos}%, ${COMPARE.pomme.label} ${100 - pos}%`;

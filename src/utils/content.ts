@@ -27,3 +27,6 @@ export function formatBytes(bytes: number): string {
 }
 
 export const plural = (n: number, word: string) => `${n.toLocaleString("en")} ${word}${n === 1 ? "" : "s"}`;
+
+/** "a, b and c", British style (no comma before "and"). */
+export const listFormat = new Intl.ListFormat("en-GB");

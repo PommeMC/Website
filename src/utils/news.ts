@@ -1,4 +1,4 @@
-import { getCollection } from "astro:content";
+import { getCollection, type CollectionEntry } from "astro:content";
 import { countWords, minutesToRead, plural, truncateForPreview } from "@/utils/content";
 import { getReleases, type Release } from "@/utils/github";
 
@@ -19,7 +19,7 @@ export interface NewsEntry {
   cta: string;
   /** Reading time for posts, downloads for releases. */
   meta: string | null;
-  cover?: { src: string; alt?: string };
+  cover?: { src: ImageMetadata | string; alt: string };
   /** Releases only: the first few changes, and how many more there are. */
   changes?: { shown: string[]; more: number };
 }
@@ -40,20 +40,35 @@ function fromRelease(r: Release): NewsEntry {
   };
 }
 
+/** Posts, newest first. */
+export async function getPosts(): Promise<CollectionEntry<"posts">[]> {
+  return (await getCollection("posts")).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+}
+
+/** Title, summary and reading time, shared by the news list and the post page. */
+export function postInfo(post: CollectionEntry<"posts">) {
+  const body = post.body ?? "";
+  return {
+    title: post.data.title ?? post.id,
+    summary: post.data.description ?? truncateForPreview(body, 160),
+    readTime: `${minutesToRead(countWords(body))} min read`,
+  };
+}
+
 /** Posts and releases together, newest first. */
 export async function getNewsEntries(): Promise<NewsEntry[]> {
-  const [posts, releases] = await Promise.all([getCollection("posts"), getReleases()]);
+  const [posts, releases] = await Promise.all([getPosts(), getReleases()]);
   const fromPosts = posts.map((p): NewsEntry => {
-    const body = p.body ?? "";
+    const { title, summary, readTime } = postInfo(p);
     return {
       category: p.data.category,
-      title: p.data.title ?? p.id,
+      title,
       date: p.data.date,
-      summary: p.data.description ?? truncateForPreview(body, 160),
+      summary,
       href: `/news/${p.id}`,
       external: false,
       cta: "Read the post",
-      meta: `${minutesToRead(countWords(body))} min read`,
+      meta: readTime,
       cover: p.data.cover,
     };
   });

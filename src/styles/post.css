@@ -1,0 +1,223 @@
+/* The text keeps a comfortable reading width; pictures and sliders break out wider. */
+.post-col,
+.post-body > *,
+.post-wide {
+  --measure: 680px;
+  width: min(var(--measure), 100% - 2 * var(--gutter));
+  margin-inline: auto;
+}
+.post-wide,
+.post-body > :is(.cmp, p:has(> img:only-child)) {
+  --measure: 960px;
+}
+
+.post-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+.post-back {
+  margin-bottom: 8px;
+}
+.post-title {
+  font-size: 52px;
+}
+.post-summary {
+  font-size: 20px;
+  color: var(--muted);
+}
+.post-byline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+.post-byline img {
+  border-radius: 50%;
+  background: var(--line);
+}
+.post-byline > span {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.4;
+}
+
+.post-wide {
+  margin-top: 40px;
+}
+.post-wide img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.post-wide figcaption {
+  margin-top: 10px;
+}
+
+.post-body {
+  margin-top: 40px;
+}
+.post-body > * + * {
+  margin-top: 20px;
+}
+.post-body h2 {
+  margin-top: 48px;
+  font: 700 28px/1.15 var(--display);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.post-body h3 {
+  margin-top: 36px;
+  font: 700 21px/1.2 var(--display);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.post-body :is(ul, ol) {
+  padding-left: 22px;
+}
+.post-body ul {
+  list-style: square;
+}
+.post-body ol {
+  list-style: decimal;
+}
+.post-body li + li {
+  margin-top: 6px;
+}
+.post-body li::marker {
+  color: var(--sun);
+}
+.post-body a {
+  color: var(--sun);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.post-body img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.post-body blockquote {
+  padding-left: 20px;
+  border-left: 3px solid var(--leaf);
+  color: var(--muted);
+}
+.post-body :not(pre) > code {
+  padding: 1px 6px;
+  background: var(--bar);
+  font-size: 0.9em;
+}
+.post-body pre {
+  overflow-x: auto;
+  padding: 16px 20px;
+  background: var(--bar) !important;
+  font-size: 14px;
+}
+.post-body hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+
+.post-end {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 56px;
+}
+.post-thanks {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.post-thanks-faces {
+  display: flex;
+  flex: none;
+}
+.post-thanks-faces img {
+  border: 2px solid var(--bg);
+  border-radius: 50%;
+}
+.post-thanks-faces img + img {
+  margin-left: -8px;
+}
+.post-thanks a {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.post-get {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px 24px;
+  padding: 24px 28px;
+  background: var(--sun);
+  color: var(--ink);
+}
+.post-get-title {
+  font-size: 24px;
+}
+.post-get p:not(.post-get-title) {
+  font-size: 14px;
+}
+.post-get-button {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding: 3px 24px 0;
+  background: var(--ink);
+  color: var(--sun) !important;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+}
+.post-get-button:hover {
+  background: var(--bar);
+}
+.post-nav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.post-nav a {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+}
+.post-nav a:hover {
+  border-color: var(--sun);
+}
+.post-nav .home-d {
+  font-size: 16px;
+}
+.post-nav-next {
+  grid-column: 2;
+  align-items: flex-end;
+  text-align: right;
+}
+
+/* Keep in sync with MOBILE_BREAKPOINT in src/data/layout.ts. */
+@media (max-width: 900px) {
+  .post-title {
+    font-size: 36px;
+  }
+  .post-summary {
+    font-size: 18px;
+  }
+  .post-wide,
+  .post-body > :is(.cmp, p:has(> img:only-child)) {
+    width: 100%;
+  }
+  .post-wide figcaption {
+    padding-inline: var(--gutter);
+  }
+  .post-nav {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .post-nav-next {
+    grid-column: auto;
+  }
+}

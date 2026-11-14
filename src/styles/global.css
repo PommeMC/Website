@@ -1,8 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap");
 @import "tailwindcss";
 
-@plugin "@tailwindcss/typography";
-
 @custom-variant dark (@media (prefers-color-scheme: dark));
 
 @theme {
@@ -120,34 +118,6 @@ button {
     background: rgba(30, 34, 65, 0.5);
     color: #4ade80;
     border: 1px solid rgba(255, 255, 255, 0.07);
-  }
-}
-
-.prose code::before,
-.prose code::after {
-  content: none !important;
-}
-.prose :where(pre):not(:where([class~="not-prose"] *)) {
-  @apply bg-transparent;
-}
-.prose {
-  --tw-prose-body: theme(colors.gray.800);
-  --tw-prose-headings: theme(colors.gray.900);
-  a {
-    color: #16a34a;
-  }
-  @variant dark {
-    a {
-      color: #4ade80;
-    }
-  }
-  word-break: keep-all;
-  overflow-wrap: anywhere;
-}
-@variant dark {
-  .prose {
-    --tw-prose-body: #8890b0;
-    --tw-prose-headings: #e4e6f4;
   }
 }
 

@@ -36,26 +36,6 @@
   color: var(--ink);
 }
 
-.news-tag {
-  display: inline-block;
-  justify-self: start;
-  padding: 4px 7px 1px;
-  background: var(--sun);
-  color: var(--ink);
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-.news-tag[data-category="dev-log"] {
-  background: var(--leaf);
-}
-.news-tag[data-category="announcement"] {
-  padding: 3px 6px 0;
-  border: 1px solid var(--text);
-  background: none;
-  color: var(--text);
-}
 .news-meta {
   display: flex;
   flex-wrap: wrap;

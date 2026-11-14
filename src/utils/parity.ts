@@ -1,15 +1,13 @@
-import { existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
-import sharp from "sharp";
 import { capitalize } from "@/utils/content";
+import { fetchJson } from "@/utils/fetch";
 import { once } from "@/utils/once";
 
 /**
- * Parity results from a run of the Client's in-game scripts on both Pomme and vanilla. The export (parity.json plus
- * images) is copied into public/parity, which is git-ignored for now; without it the parity page isn't built.
+ * Parity results from a run of the Client's in-game scripts on both Pomme and vanilla, published to R2 by the Client.
+ * latest.json names the newest export; each export's files never change. If either can't be fetched at build time,
+ * the parity page isn't built.
  */
-const DIR = join(process.cwd(), "public", "parity");
-const URL_BASE = "/parity/";
+const BUCKET = "https://parity.pomme.rs/parity";
 
 type Result = "pass" | "fail" | "skip";
 const CLIENTS = ["pomme", "vanilla"] as const;
@@ -17,8 +15,8 @@ type Client = (typeof CLIENTS)[number];
 
 export interface Shot {
   name: string;
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
   score: number;
   flagged: boolean;
   pomme: string;
@@ -92,42 +90,44 @@ function assertConsistent(scenarios: Scenario[]) {
 /** "blockEntities" -> "Block entities". */
 const kindLabel = (kind: string) => capitalize(kind.replace(/([A-Z])/g, " $1").toLowerCase());
 
+/** parity.json as published, before image paths are made absolute and categories gather their scenarios. */
+interface ParityJson {
+  generatedAt: string;
+  commit: string;
+  versions: ParityRun["versions"];
+  categories: { id: string; name: string }[];
+  scenarios: Scenario[];
+  gaps: ParityRun["gaps"];
+  coverage?: Record<string, { items: Coverage["items"] }>;
+}
+
 export const getParityRun = once(async (): Promise<ParityRun | null> => {
-  const file = join(DIR, "parity.json");
-  if (!existsSync(file)) return null;
-  const raw = JSON.parse(readFileSync(file, "utf8"));
-  const url = (path: string) => URL_BASE + path;
-  const scenarios: Scenario[] = await Promise.all(
-    raw.scenarios.map(async (s: Scenario) => ({
-      ...s,
-      shots: await Promise.all(
-        s.shots.map(async (shot) => {
-          const { width = 0, height = 0 } = await sharp(join(DIR, shot.pomme)).metadata();
-          return {
-            ...shot,
-            width,
-            height,
-            pomme: url(shot.pomme),
-            vanilla: url(shot.vanilla),
-            heatmap: shot.heatmap && url(shot.heatmap),
-          };
-        })
-      ),
-    }))
-  );
+  const latest = (await fetchJson<{ commit: string }>(`${BUCKET}/latest.json`, "parity"))?.data;
+  if (!latest) return null;
+  const base = `${BUCKET}/${latest.commit}/`;
+  const raw = (await fetchJson<ParityJson>(`${base}parity.json`, "parity"))?.data;
+  if (!raw) return null;
+  const scenarios = raw.scenarios.map((s) => ({
+    ...s,
+    shots: s.shots.map((shot) => ({
+      ...shot,
+      pomme: base + shot.pomme,
+      vanilla: base + shot.vanilla,
+      heatmap: shot.heatmap && base + shot.heatmap,
+    })),
+  }));
   assertConsistent(scenarios);
   return {
     generatedAt: new Date(raw.generatedAt),
     commit: raw.commit,
     versions: raw.versions,
-    categories: raw.categories.map((c: { id: string; name: string }) => ({
+    categories: raw.categories.map((c) => ({
       ...c,
       scenarios: scenarios.filter((s) => s.category === c.id),
     })),
     scenarios,
     gaps: raw.gaps,
-    coverage: Object.entries(raw.coverage ?? {}).map(([kind, c]) => {
-      const items = (c as { items: Coverage["items"] }).items;
+    coverage: Object.entries(raw.coverage ?? {}).map(([kind, { items }]) => {
       const count = (status: CoverageStatus) => items.filter((i) => i.status === status).length;
       return {
         kind,

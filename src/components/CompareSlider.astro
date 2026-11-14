@@ -4,7 +4,7 @@ import { Image } from "astro:assets";
 import { compareValueText } from "@/utils/compare";
 
 interface Side {
-  /** An imported image, or the URL of one that is already optimised (then `size` is required). */
+  /** An imported image, or the URL of one that is already optimised. */
   src: ImageMetadata | string;
   label: string;
   alt: string;

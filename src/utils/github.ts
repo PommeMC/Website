@@ -1,4 +1,5 @@
 import { capitalize } from "@/utils/content";
+import { fetchJson } from "@/utils/fetch";
 import { once } from "@/utils/once";
 
 const GITHUB_REPO = "PommeMC/Client";
@@ -49,19 +50,7 @@ function headers(): Record<string, string> {
   return h;
 }
 
-async function get<T>(url: string): Promise<{ data: T; res: Response } | null> {
-  try {
-    const res = await fetch(url, { headers: headers() });
-    if (!res.ok) {
-      console.warn(`[github] ${res.status} for ${url}`);
-      return null;
-    }
-    return { data: (await res.json()) as T, res };
-  } catch (err) {
-    console.warn(`[github] request failed for ${url}`, err);
-    return null;
-  }
-}
+const get = <T>(url: string) => fetchJson<T>(url, "github", { headers: headers() });
 
 /** With per_page=1, the "last" page number in the Link header is the total item count. */
 async function countFromLink(url: string): Promise<number | null> {

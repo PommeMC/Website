@@ -14,7 +14,7 @@ const label = shotLabel(shot.name);
   <CompareSlider
     before={{ src: shot.vanilla, label: "Vanilla", alt: `${title}, ${label}: vanilla` }}
     after={{ src: shot.pomme, label: "Pomme", alt: `${title}, ${label}: Pomme` }}
-    size={{ width: shot.width, height: shot.height }}
+    size={shot.width && shot.height ? { width: shot.width, height: shot.height } : undefined}
   >
     {shot.heatmap && shot.flagged && <img class="parity-heat" src={shot.heatmap} alt="" loading="lazy" hidden />}
   </CompareSlider>

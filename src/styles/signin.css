@@ -1,3 +1,10 @@
+/* Centred in the space between the nav and the footer, however tall the window. */
+main:has(.signin),
+.home:has(> .signin) {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 .signin {
   display: flex;
   flex-direction: column;

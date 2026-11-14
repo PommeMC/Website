@@ -136,15 +136,17 @@ function toRun(raw: ParityJson, base: string): ParityRun {
 }
 
 export const getParityRun = once(async (): Promise<ParityRun | null> => {
-  const latest = (await fetchJson<{ commit: string }>(`${BUCKET}/latest.json`, "parity"))?.data;
+  // `export` names the export's folder; the first exports were named after their commit and have no `export` field.
+  const latest = (await fetchJson<{ export?: string; commit: string }>(`${BUCKET}/latest.json`, "parity"))?.data;
   if (!latest) return null;
-  const base = `${BUCKET}/${latest.commit}/`;
+  const folder = latest.export ?? latest.commit;
+  const base = `${BUCKET}/${folder}/`;
   const raw = (await fetchJson<ParityJson>(`${base}parity.json`, "parity"))?.data;
   if (!raw) return null;
   try {
     return toRun(raw, base);
   } catch (err) {
-    console.warn(`[parity] export ${latest.commit} is unusable, so the parity sections are left out`, err);
+    console.warn(`[parity] export ${folder} is unusable, so the parity sections are left out`, err);
     return null;
   }
 });

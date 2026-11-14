@@ -1,6 +1,6 @@
 ---
 import "@/styles/post.css";
-import { Image } from "astro:assets";
+import { getImage, Image } from "astro:assets";
 import { render, type CollectionEntry } from "astro:content";
 import CompareSlider from "@/components/CompareSlider.astro";
 import LongDate from "@/components/LongDate.astro";
@@ -33,6 +33,19 @@ const { Content } = await render(post);
 const components = { CompareSlider };
 const { title, summary, readTime } = postInfo(post);
 
+// A local cover is shared as a JPEG at link-preview width, since not every site that shows previews reads WebP.
+const cover = data.cover;
+const share =
+  cover &&
+  (typeof cover.src === "string"
+    ? { src: cover.src, alt: cover.alt }
+    : await getImage({ src: cover.src, width: 1200, format: "jpg" }).then((img) => ({
+        src: img.src,
+        width: Number(img.attributes.width),
+        height: Number(img.attributes.height),
+        alt: cover.alt,
+      })));
+
 const release = await getLatestRelease();
 const systems = listFormat.format(
   buildPlatforms(release)
@@ -41,7 +54,7 @@ const systems = listFormat.format(
 );
 ---
 
-<Layout title={title} description={summary} keywords={["pomme", "news"]} canonical={`/news/${post.id}`}>
+<Layout title={title} description={summary} keywords={["pomme", "news"]} canonical={`/news/${post.id}`} share={share}>
   <div class="home">
     <article class="home-s post">
       <header class="post-col post-head">

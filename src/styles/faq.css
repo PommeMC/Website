@@ -1,0 +1,76 @@
+.faq-groups {
+  border-left: 2px solid var(--line);
+}
+.faq-groups a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 14px;
+  color: var(--muted);
+}
+.faq-groups a:hover {
+  color: var(--text);
+}
+
+.faq-main {
+  max-width: 720px;
+}
+.faq-main > section + section {
+  margin-top: 64px;
+}
+.faq-h2 {
+  font-size: 30px;
+  margin-bottom: 8px;
+}
+/* Clear the sticky nav when a link jumps here. */
+.faq-h2,
+.faq-q {
+  scroll-margin-top: calc(var(--nav-h) + 24px);
+}
+.faq-q {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+.faq-q h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+/* The link sits beside the heading, not in it, so the heading's text is only the question. */
+.faq-q-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.faq-anchor {
+  color: var(--leaf);
+  opacity: 0;
+}
+.faq-q:hover .faq-anchor,
+.faq-anchor:focus-visible {
+  opacity: 1;
+}
+.faq-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 24px;
+}
+
+@media (max-width: 900px) {
+  /* The groups wrap onto more lines rather than scroll sideways, so none are hidden off the edge. */
+  .faq-groups {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    border-left: 0;
+  }
+  .faq-groups a {
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+  }
+}

@@ -1,5 +1,6 @@
 ---
 import Apple from "@/assets/brand/pomme-apple.svg";
+import { FAQ_HREF } from "@/data/nav";
 import { plural } from "@/utils/content";
 import { downloadLabel, releaseParts, type HomePlatform } from "@/utils/downloads";
 import type { Release } from "@/utils/github";
@@ -19,6 +20,7 @@ const meta = release ? [...releaseParts(release), plural(release.downloads, "dow
       <Apple width={48} height={48} aria-hidden="true" />
       <h2 class="home-d home-h2 home-h2-lg">Ready to pick one?</h2>
       <p class="home-muted">Free to download. Sign in with the Microsoft account that owns Java Edition, and you're in.</p>
+      <a class="home-link" href={FAQ_HREF}>Questions? Read the FAQ →</a>
     </div>
 
     <div class="home-dl">

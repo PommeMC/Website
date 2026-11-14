@@ -54,6 +54,7 @@ export const PLATFORMS: PlatformConfig[] = [
 ];
 
 export const MOBILE_NOTE = "Android and iOS are on the way.";
+export const SERVER_VERSIONS = "1.20 to 26.3";
 
 export function archLabel(platform: PlatformConfig["key"], file: string): string {
   if (/arm64|aarch64/i.test(file)) return platform === "macos" ? "Apple Silicon" : "ARM64";
@@ -77,6 +78,6 @@ export const FEATURES = [
     title: "Vanilla-checked",
     body: "Physics, movement and rendering ported line by line, with in-game tests run against the official client.",
   },
-  { title: "Real servers", body: "Joins vanilla servers from 1.20 to 26.3 with your Microsoft account." },
+  { title: "Real servers", body: `Joins vanilla servers from ${SERVER_VERSIONS} with your Microsoft account.` },
   { title: "Yours to fork", body: "GPL-3.0, built in the open on GitHub." },
 ];

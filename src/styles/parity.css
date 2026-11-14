@@ -1,20 +1,3 @@
-.parity {
-  display: grid;
-  grid-template-columns: 300px minmax(0, 1fr);
-  align-items: start;
-  gap: 56px;
-}
-.parity-side {
-  position: sticky;
-  top: calc(var(--nav-h) + 24px);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 20px;
-}
-.parity-h1 {
-  font-size: 44px;
-}
 .parity-stats {
   display: flex;
   flex-direction: column;
@@ -216,16 +199,6 @@
 
 /* Keep in sync with MOBILE_BREAKPOINT in src/data/layout.ts. */
 @media (max-width: 900px) {
-  .parity {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 40px;
-  }
-  .parity-side {
-    position: static;
-  }
-  .parity-h1 {
-    font-size: 36px;
-  }
   .parity-row > summary,
   .parity-row-plain {
     grid-template-columns: 16px minmax(0, 1fr) auto;

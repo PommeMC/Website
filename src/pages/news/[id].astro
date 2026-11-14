@@ -1,7 +1,8 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import { getCollection, render } from "astro:content";
-import { formatDateLong, formatRelativeDate } from "@/utils/time";
+import LongDate from "@/components/LongDate.astro";
+import { formatRelativeDate } from "@/utils/time";
 import { countWords, minutesToRead, truncateForPreview } from "@/utils/content";
 import { components } from "@/mdx/components";
 import { Icon } from "astro-icon/components";
@@ -39,7 +40,7 @@ const publishedAt = new Date(post.data.date);
       <div class="animate-fade-up text-dim mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs delay-100">
         <span class="inline-flex items-center gap-1.5">
           <Icon name="icons/lucide/calendar" class="size-3.5" />
-          <time datetime={publishedAt.toISOString()}>{formatDateLong(publishedAt)}</time>
+          <LongDate date={publishedAt} />
           <span class="opacity-60">· {formatRelativeDate(publishedAt)}</span>
         </span>
         <span>·</span>

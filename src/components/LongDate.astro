@@ -1,0 +1,10 @@
+---
+import { formatDateLong } from "@/utils/time";
+
+interface Props {
+  date: Date;
+}
+const { date } = Astro.props;
+---
+
+<time datetime={date.toISOString()}>{formatDateLong(date)}</time>

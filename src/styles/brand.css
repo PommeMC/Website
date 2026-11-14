@@ -83,6 +83,15 @@
 .home-ruled {
   border-top: 1px solid var(--line);
 }
+.home {
+  flex: 1;
+  background: var(--bg);
+  color: var(--text);
+}
+/* Components set their own display, which would otherwise override the hidden attribute. */
+.home [hidden] {
+  display: none !important;
+}
 .home-stack {
   display: flex;
   flex-direction: column;
@@ -94,6 +103,24 @@
   grid-template-columns: 380px minmax(0, 1fr);
   gap: 72px;
   align-items: start;
+}
+.home-muted {
+  color: var(--muted);
+}
+.home-small {
+  font-size: 14px;
+  color: var(--muted);
+}
+.home-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  font-weight: 600;
+  color: var(--sun) !important;
+}
+.home-link:hover {
+  text-decoration: underline !important;
+  text-underline-offset: 4px;
 }
 .site-brand {
   display: inline-flex;

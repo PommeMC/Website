@@ -1,0 +1,10 @@
+---
+import { NEWS_CATEGORIES, type NewsCategory } from "@/utils/news";
+
+interface Props {
+  category: NewsCategory;
+}
+const { category } = Astro.props;
+---
+
+<span class="home-d news-tag" data-category={category}>{NEWS_CATEGORIES[category].tag}</span>

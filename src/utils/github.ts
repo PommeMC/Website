@@ -6,16 +6,30 @@ export const CONTRIBUTORS_URL = `${GITHUB_URL}/graphs/contributors`;
 const API = `https://api.github.com/repos/${GITHUB_REPO}`;
 
 type GhAsset = { name: string; size: number; download_count: number; browser_download_url: string };
-type GhRelease = { tag_name: string; published_at: string; body: string | null; assets: GhAsset[] };
+type GhRelease = {
+  tag_name: string;
+  html_url: string;
+  published_at: string;
+  body: string | null;
+  draft: boolean;
+  prerelease: boolean;
+  assets: GhAsset[];
+};
 type GhRepo = { stargazers_count: number };
 type GhContributor = { login: string; avatar_url: string; html_url: string; contributions: number; type: string };
 
 export interface Release {
+  /** "Pomme" for client builds, "Launcher" for the retired launcher. */
+  product: string;
   version: string;
+  url: string;
   publishedAt: Date;
   assets: GhAsset[];
   downloads: number;
   firstLaunch: Record<string, string>;
+  /** Pull request titles from the generated "What's Changed" list. */
+  changes: string[];
+  contributors: number;
 }
 
 export interface Contributor {
@@ -77,24 +91,53 @@ function parseFirstLaunch(body: string | null): Record<string, string> {
   return notes;
 }
 
+/** Reads the generated "* Add a thing by @someone in https://..." lines. */
+function parseChanges(body: string | null): { changes: string[]; contributors: number } {
+  const changes: string[] = [];
+  const authors = new Set<string>();
+  for (const line of (body ?? "").split(/\r?\n/)) {
+    const m = line.match(/^\s*\*\s+(.+?) by @([\w-]+(?:\[bot\])?) in https:\/\/\S+$/);
+    if (!m) continue;
+    // Drop conventional-commit prefixes such as "chore(deps): ".
+    const title = m[1].replace(/^\w+(?:\([^)]*\))?!?:\s*/, "");
+    changes.push(title.charAt(0).toUpperCase() + title.slice(1));
+    if (!m[2].endsWith("[bot]")) authors.add(m[2]);
+  }
+  return { changes, contributors: authors.size };
+}
+
+function toRelease(rel: GhRelease): Release {
+  return {
+    product: rel.tag_name.startsWith("launcher-") ? "Launcher" : "Pomme",
+    version: parseVersion(rel.tag_name),
+    url: rel.html_url,
+    publishedAt: new Date(rel.published_at),
+    assets: rel.assets,
+    downloads: rel.assets.filter((a) => !/sums/i.test(a.name)).reduce((n, a) => n + a.download_count, 0),
+    firstLaunch: parseFirstLaunch(rel.body),
+    ...parseChanges(rel.body),
+  };
+}
+
 function toContributors(list: GhContributor[]): Contributor[] {
   return list
     .filter((c) => c.type !== "Bot" && !c.login.endsWith("[bot]"))
     .map((c) => ({ login: c.login, avatarUrl: c.avatar_url, profileUrl: c.html_url, commits: c.contributions }));
 }
 
-export const getLatestRelease = once(async (): Promise<Release | null> => {
-  const r = await get<GhRelease>(`${API}/releases/latest`);
+/** Published releases, newest first. */
+export const getReleases = once(async (): Promise<Release[] | null> => {
+  const r = await get<GhRelease[]>(`${API}/releases?per_page=100`);
   if (!r) return null;
-  const rel = r.data;
-  return {
-    version: parseVersion(rel.tag_name),
-    publishedAt: new Date(rel.published_at),
-    assets: rel.assets,
-    downloads: rel.assets.filter((a) => !/sums/i.test(a.name)).reduce((n, a) => n + a.download_count, 0),
-    firstLaunch: parseFirstLaunch(rel.body),
-  };
+  return r.data
+    .filter((rel) => !rel.draft && !rel.prerelease)
+    .map(toRelease)
+    .sort((a, b) => b.publishedAt.valueOf() - a.publishedAt.valueOf());
 });
+
+export async function getLatestRelease(): Promise<Release | null> {
+  return (await getReleases())?.find((r) => r.product === "Pomme") ?? null;
+}
 
 export const getStars = once(async () => (await get<GhRepo>(API))?.data.stargazers_count ?? null);
 

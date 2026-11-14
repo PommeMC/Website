@@ -3,7 +3,8 @@ import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import { LINKS } from "@/data/home";
 import { CONTRIBUTORS_URL, formatCompact, type Contributor } from "@/utils/github";
-import { formatDateLong } from "@/utils/time";
+import LongDate from "@/components/LongDate.astro";
+import { plural } from "@/utils/content";
 
 interface Props {
   contributors: Contributor[] | null;
@@ -30,7 +31,7 @@ const avatar = (c: Contributor) => `${c.avatarUrl}${c.avatarUrl.includes("?") ? 
     <div class="home-two">
       <div class="home-stack">
         <h2 class="home-d home-h2 home-h2-sm">
-          {all.length > 0 ? `Planted by ${all.length} contributor${all.length === 1 ? "" : "s"}` : "Planted by its contributors"}
+          {all.length > 0 ? `Planted by ${plural(all.length, "contributor")}` : "Planted by its contributors"}
         </h2>
         {totals.length > 0 && <p class="home-totals">{totals.join(" · ")}</p>}
         <p class="home-muted">Listed by number of commits. Your first pull request is welcome.</p>
@@ -78,7 +79,7 @@ const avatar = (c: Contributor) => `${c.avatarUrl}${c.avatarUrl.includes("?") ? 
             {posts.map((p) => (
               <li>
                 <a href={`/news/${p.id}`} class="home-news">
-                  <time datetime={p.data.date.toISOString()}>{formatDateLong(p.data.date)}</time>
+                  <LongDate date={p.data.date} />
                   <span class="t">{p.data.title}</span>
                 </a>
               </li>

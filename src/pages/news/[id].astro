@@ -90,11 +90,15 @@ const systems = listFormat.format(
               </span>
               <span>
                 Thanks to{" "}
-                {listFormat
-                  .formatToParts(data.thanks)
-                  .map((part) =>
-                    part.type === "element" ? <a href={`https://github.com/${part.value}`}>{part.value}</a> : part.value
-                  )}{" "}
+                {listFormat.formatToParts(data.thanks).map((part) =>
+                  part.type === "element" ? (
+                    <a class="home-quiet-link" href={`https://github.com/${part.value}`}>
+                      {part.value}
+                    </a>
+                  ) : (
+                    part.value
+                  )
+                )}{" "}
                 for their work on this.
               </span>
             </p>

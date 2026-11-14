@@ -5,9 +5,9 @@ import ParityShot from "@/components/parity/ParityShot.astro";
 import ResultMark from "@/components/parity/ResultMark.astro";
 import Layout from "@/layouts/Layout.astro";
 import { NEW_TAB } from "@/data/nav";
-import { plural } from "@/utils/content";
+import { listFormat, plural } from "@/utils/content";
 import { GITHUB_URL, NEW_ISSUE_URL } from "@/utils/github";
-import { getParityRun, tally, type ParityRun, type Scenario } from "@/utils/parity";
+import { getParityRun, scenarioAnchor, tally, type ParityRun, type Scenario } from "@/utils/parity";
 
 // Only generated when a parity export is present, so without one /parity is a real 404.
 export async function getStaticPaths() {
@@ -25,6 +25,7 @@ const versionText = sameVersion
   : `Pomme on ${run.versions.pomme}, vanilla on ${run.versions.vanilla}`;
 const gapAreas = [...new Set(run.gaps.map((g) => g.area))];
 const METER_SQUARES = 10;
+const titles = new Map(run.scenarios.map((s) => [s.id, s.title]));
 const shotsText = (s: Scenario) => {
   const t = tally([s]);
   return t.shots > 0 ? `${t.shotsAlike} of ${t.shots} within tolerance` : "No screenshots";
@@ -84,7 +85,15 @@ const shotsText = (s: Scenario) => {
                 {run.coverage.map((c) => {
                   const total = c.items.length;
                   const filled = Math.floor((c.counts.implemented / total) * METER_SQUARES);
-                  const left = c.items.filter((i) => i.status !== "implemented");
+                  // Built items link to the scenarios that cover them.
+                  const items = c.items.map((i) => ({
+                    ...i,
+                    tests: i.status === "implemented" ? i.scripts.filter((id) => titles.has(id)) : [],
+                  }));
+                  const lists = [
+                    { label: "Built", items: items.filter((i) => i.status === "implemented") },
+                    { label: "Still to do", items: items.filter((i) => i.status !== "implemented") },
+                  ];
                   return (
                     <div class="parity-cov">
                       <h3 class="home-d">{c.label}</h3>
@@ -97,18 +106,37 @@ const shotsText = (s: Scenario) => {
                           <i class:list={{ on: i < filled }} />
                         ))}
                       </span>
-                      {left.length > 0 && (
-                        <details class="parity-more">
-                          <summary class="home-link">Still to do ({left.length})</summary>
-                          <ul class="parity-left">
-                            {left.map((i) => (
-                              <li>
-                                {i.name}
-                                {i.status === "progress" && <span class="home-small"> · in progress{i.note && `: ${i.note}`}</span>}
-                              </li>
-                            ))}
-                          </ul>
-                        </details>
+                      {lists.map(
+                        (list) =>
+                          list.items.length > 0 && (
+                            <details class="parity-more">
+                              <summary class="home-link">
+                                {list.label} ({list.items.length})
+                              </summary>
+                              <ul class="parity-left">
+                                {list.items.map((i) => (
+                                  <li>
+                                    {i.name}
+                                    {i.status === "progress" && <span class="home-small"> · in progress{i.note && `: ${i.note}`}</span>}
+                                    {i.tests.length > 0 && (
+                                      <span class="home-small">
+                                        {" · tested in "}
+                                        {listFormat.formatToParts(i.tests).map((part) =>
+                                          part.type === "element" ? (
+                                            <a class="home-quiet-link" href={`#${scenarioAnchor(part.value)}`}>
+                                              {titles.get(part.value)}
+                                            </a>
+                                          ) : (
+                                            part.value
+                                          )
+                                        )}
+                                      </span>
+                                    )}
+                                  </li>
+                                ))}
+                              </ul>
+                            </details>
+                          )
                       )}
                     </div>
                   );
@@ -145,7 +173,7 @@ const shotsText = (s: Scenario) => {
                     </Fragment>
                   );
                   return s.shots.length > 0 || s.checks.length > 0 ? (
-                    <details class="parity-row">
+                    <details class="parity-row" id={scenarioAnchor(s.id)}>
                       <summary>{summary}</summary>
                       {s.checks.length > 0 && (
                         <table class="parity-checks">
@@ -189,7 +217,9 @@ const shotsText = (s: Scenario) => {
                       )}
                     </details>
                   ) : (
-                    <div class="parity-row parity-row-plain">{summary}</div>
+                    <div class="parity-row parity-row-plain" id={scenarioAnchor(s.id)}>
+                      {summary}
+                    </div>
                   );
                 })}
               </section>
@@ -227,6 +257,17 @@ const shotsText = (s: Scenario) => {
 </Layout>
 
 <script>
+  // Links to a scenario open its row, so its screenshots and heatmaps are one click away.
+  const openLinked = () => {
+    const target = location.hash && document.getElementById(location.hash.slice(1));
+    if (target instanceof HTMLDetailsElement) {
+      target.open = true;
+      target.scrollIntoView();
+    }
+  };
+  addEventListener("hashchange", openLinked);
+  openLinked();
+
   for (const button of document.querySelectorAll<HTMLButtonElement>("[data-heat-toggle]")) {
     button.addEventListener("click", () => {
       const heat = button.closest("figure")?.querySelector<HTMLElement>(".parity-heat");

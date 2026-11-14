@@ -47,6 +47,7 @@
 }
 
 .parity-row {
+  scroll-margin-top: calc(var(--nav-h) + 16px);
   border-top: 1px solid var(--line);
 }
 .parity-row:last-child {

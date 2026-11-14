@@ -42,12 +42,16 @@ const social = NAV_LINKS.filter((l) => l.icon);
     <div class="site-footer-bottom">
       <p class="site-footer-legal">Not an official Minecraft product. Not approved by or associated with Mojang or Microsoft.</p>
       <p>
-        &copy; {year} Pomme · GPL-3.0 · <a href={LINKS.sponsor} {...NEW_TAB}>Donate</a>
+        &copy; {year} Pomme · GPL-3.0 · <a class="home-quiet-link" href={LINKS.sponsor} {...NEW_TAB}>Donate</a>
         {
           hash && (
             <>
               {" · "}
-              <a href={`https://github.com/PommeMC/pomme-website/commit/${hash}`} aria-label={`Site version ${hash}`}>
+              <a
+                class="home-quiet-link"
+                href={`https://github.com/PommeMC/pomme-website/commit/${hash}`}
+                aria-label={`Site version ${hash}`}
+              >
                 {hash}
               </a>
             </>

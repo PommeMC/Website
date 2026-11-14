@@ -143,8 +143,6 @@
 }
 .post-thanks a {
   color: var(--text);
-  text-decoration: underline;
-  text-underline-offset: 3px;
 }
 .post-get {
   display: flex;

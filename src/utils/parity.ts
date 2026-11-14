@@ -49,7 +49,14 @@ type CoverageStatus = "implemented" | "progress" | "missing";
 export interface Coverage {
   kind: string;
   label: string;
-  items: { id: string; name: string; status: CoverageStatus; note?: string }[];
+  items: {
+    id: string;
+    name: string;
+    status: CoverageStatus;
+    note?: string;
+    /** Scenarios that cover the item. */
+    scripts: string[];
+  }[];
   counts: { implemented: number; progress: number };
 }
 
@@ -147,3 +154,6 @@ export function tally(scenarios: Scenario[]) {
 
 /** "moved_0_1" -> "Moved 0 1". */
 export const shotLabel = (name: string) => capitalize(name.replace(/_/g, " "));
+
+/** Anchor for a scenario's row, so other parts of the page can link to it. */
+export const scenarioAnchor = (id: string) => `scenario-${id.replace(/\//g, "-")}`;

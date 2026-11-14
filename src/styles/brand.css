@@ -38,9 +38,8 @@
     background: var(--leaf);
   }
 }
-.home a,
-.site-nav a,
-.site-footer a {
+/* Zero specificity, so any link class can restyle it. */
+:where(.home, .site-nav, .site-footer) a {
   color: inherit;
   text-decoration: none;
 }
@@ -131,6 +130,13 @@
 }
 .home-bullets ::marker {
   color: var(--sun);
+}
+.home-quiet-link {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.home-quiet-link:hover {
+  color: var(--text);
 }
 .site-brand {
   display: inline-flex;

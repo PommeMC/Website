@@ -35,14 +35,6 @@
   color: var(--text);
   font-weight: 600;
 }
-/* Needs to outrank the link reset in brand.css; inline links in plain text must look like links. */
-.site-footer .site-footer-bottom a {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-.site-footer-bottom a:hover {
-  color: var(--text);
-}
 
 /* Keep in sync with MOBILE_BREAKPOINT in src/data/layout.ts. */
 @media (max-width: 900px) {

@@ -48,12 +48,12 @@ const groups = await getFaq();
               </h2>
               {g.questions.map((q) => (
                 <div class="faq-q" id={q.id}>
-                  <h3>
-                    {q.question}
+                  <div class="faq-q-head">
+                    <h3>{q.question}</h3>
                     <a class="faq-anchor" href={`#${q.id}`} aria-label={`Link to “${q.question}”`}>
                       #
                     </a>
-                  </h3>
+                  </div>
                   <p class="home-muted">{q.answer}</p>
                   {q.list && q.list.length > 0 && (
                     <ul class="home-bullets">

@@ -41,8 +41,13 @@
   font-weight: 600;
   margin: 0;
 }
+/* The link sits beside the heading, not in it, so the heading's text is only the question. */
+.faq-q-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
 .faq-anchor {
-  margin-left: 8px;
   color: var(--leaf);
   opacity: 0;
 }

@@ -2,7 +2,7 @@
 import Features from "@/components/home/Features.astro";
 import { DEMO, MOBILE_NOTE } from "@/data/home";
 import { listFormat } from "@/utils/content";
-import { downloadLabel, releaseParts } from "@/utils/downloads";
+import { downloadLabel, releaseParts, type HomePlatform } from "@/utils/downloads";
 import type { Release } from "@/utils/github";
 
 interface Props {
@@ -27,7 +27,8 @@ const meta = [...parts, MOBILE_NOTE.replace(/\.$/, "")];
           {p.cta}
         </a>
         <p class="home-small">
-          {[p.details, version].filter(Boolean).join(" · ")} · also for{" "}
+          {[p.details, version].filter(Boolean).join(" · ")}
+          {downloads.length > 1 && " · also for "}
           {listFormat.formatToParts(downloads.filter((o) => o !== p).map((o) => o.label)).map((part) => {
             const o = downloads.find((d) => d.label === part.value);
             return part.type === "element" && o ? (

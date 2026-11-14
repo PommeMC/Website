@@ -4,8 +4,8 @@ import { once } from "@/utils/once";
 
 /**
  * Parity results from a run of the Client's in-game scripts on both Pomme and vanilla, published to R2 by the Client.
- * latest.json names the newest export; each export's files never change. If either can't be fetched at build time,
- * the parity page isn't built.
+ * latest.json names the newest export; each export's files never change. If either can't be fetched at build time, or
+ * the export is malformed or inconsistent, the parity sections are left out rather than failing the whole build.
  */
 const BUCKET = "https://parity.pomme.rs/parity";
 
@@ -101,12 +101,8 @@ interface ParityJson {
   coverage?: Record<string, { items: Coverage["items"] }>;
 }
 
-export const getParityRun = once(async (): Promise<ParityRun | null> => {
-  const latest = (await fetchJson<{ commit: string }>(`${BUCKET}/latest.json`, "parity"))?.data;
-  if (!latest) return null;
-  const base = `${BUCKET}/${latest.commit}/`;
-  const raw = (await fetchJson<ParityJson>(`${base}parity.json`, "parity"))?.data;
-  if (!raw) return null;
+/** Turns a published export into what the pages use. Throws if the export is malformed or inconsistent. */
+function toRun(raw: ParityJson, base: string): ParityRun {
   const scenarios = raw.scenarios.map((s) => ({
     ...s,
     shots: s.shots.map((shot) => ({
@@ -137,6 +133,20 @@ export const getParityRun = once(async (): Promise<ParityRun | null> => {
       };
     }),
   };
+}
+
+export const getParityRun = once(async (): Promise<ParityRun | null> => {
+  const latest = (await fetchJson<{ commit: string }>(`${BUCKET}/latest.json`, "parity"))?.data;
+  if (!latest) return null;
+  const base = `${BUCKET}/${latest.commit}/`;
+  const raw = (await fetchJson<ParityJson>(`${base}parity.json`, "parity"))?.data;
+  if (!raw) return null;
+  try {
+    return toRun(raw, base);
+  } catch (err) {
+    console.warn(`[parity] export ${latest.commit} is unusable, so the parity sections are left out`, err);
+    return null;
+  }
 });
 
 const passesOnBoth = (s: Scenario) => CLIENTS.every((c) => s.mechanics[c] === "pass");

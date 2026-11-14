@@ -118,13 +118,13 @@ const systems = listFormat.format(
             older && (
               <a href={`/news/${older.id}`}>
                 <span class="home-small">← Older</span>
-                <span class="home-d">{older.data.title}</span>
+                <span class="home-d">{postInfo(older).title}</span>
               </a>
             )
           }
           <a href={newer ? `/news/${newer.id}` : "/news"} class="post-nav-next">
             <span class="home-small">{newer ? "Newer →" : "Newest post"}</span>
-            <span class="home-d">{newer ? newer.data.title : "Back to all news →"}</span>
+            <span class="home-d">{newer ? postInfo(newer).title : "Back to all news →"}</span>
           </a>
         </nav>
       </footer>

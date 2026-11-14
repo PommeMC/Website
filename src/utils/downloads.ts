@@ -10,7 +10,6 @@ export interface HomePlatform {
   cta: string;
   downloadable: boolean;
   details: string;
-  size: string | null;
   note: string;
 }
 
@@ -20,15 +19,16 @@ export function buildPlatforms(release: Release | null): HomePlatform[] {
     const asset = match ? release?.assets.find((a) => match.test(a.name)) : undefined;
     if (asset) {
       const size = formatBytes(asset.size);
+      const arch = archLabel(p.key, asset.name);
       return {
         key: p.key,
         label: p.label,
         href: asset.browser_download_url,
         cta: `Download for ${p.label}`,
         downloadable: true,
-        details: [archLabel(p.key, asset.name), size].filter(Boolean).join(" · "),
-        size,
-        note: release?.firstLaunch[p.label.toLowerCase()] ?? "",
+        // Browsers report every Mac as Intel, so the Mac build says plainly which chips it runs on.
+        details: [p.key === "macos" && arch ? `${arch} only` : arch, size].filter(Boolean).join(" · "),
+        note: release?.firstLaunch[p.key] ?? "",
       };
     }
     const isMobile = p.key === "mobile";
@@ -39,14 +39,13 @@ export function buildPlatforms(release: Release | null): HomePlatform[] {
       cta: isMobile ? "Follow progress" : "See releases",
       downloadable: false,
       details: isMobile ? MOBILE_NOTE : "Not in this release",
-      size: null,
       note: "",
     };
   });
 }
 
 export function downloadLabel(p: HomePlatform): string {
-  return `Download Pomme for ${p.label}, ${p.size}`;
+  return `Download Pomme for ${p.label}, ${p.details}`;
 }
 
 export function releaseParts(release: Release | null): string[] {

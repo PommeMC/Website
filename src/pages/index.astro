@@ -16,17 +16,18 @@ import { getParityRun } from "@/utils/parity";
 import { getCommitCount, getContributors, getLatestRelease, getStars } from "@/utils/github";
 import { getHeroPreloads, HERO_IMAGE, HERO_MOBILE_HEIGHT } from "@/utils/hero";
 
-const [release, contributors, commits, stars, preload] = await Promise.all([
+const [release, contributors, commits, stars, preload, parity, allPosts] = await Promise.all([
   getLatestRelease(),
   getContributors(),
   getCommitCount(),
   getStars(),
   getHeroPreloads(),
+  getParityRun(),
+  getPosts(),
 ]);
 
 const platforms = buildPlatforms(release);
-const parity = await getParityRun();
-const posts = (await getPosts()).slice(0, 3);
+const posts = allPosts.slice(0, 3);
 ---
 
 <Layout

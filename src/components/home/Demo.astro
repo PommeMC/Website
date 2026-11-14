@@ -32,12 +32,14 @@ import { DEMO } from "@/data/home";
       if (!entry) return;
       play.disabled = true;
       play.textContent = "Loading…";
+      const poster = [...stage.childNodes];
       try {
         const mod = (await import(/* @vite-ignore */ entry)) as { mount?: (el: HTMLElement) => unknown };
         stage.replaceChildren();
         await mod.mount?.(stage);
       } catch (err) {
         console.error("[demo] failed to load", err);
+        stage.replaceChildren(...poster);
         play.disabled = false;
         play.textContent = "Couldn't load the demo. Try again";
       }

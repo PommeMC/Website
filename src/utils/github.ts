@@ -68,7 +68,7 @@ function parseVersion(tag: string): string {
 /** Reads lines like "- **Windows:** on the SmartScreen prompt, ..." from the release notes, keyed by lower-case platform. */
 function parseFirstLaunch(body: string | null): Record<string, string> {
   const notes: Record<string, string> = {};
-  for (const line of (body ?? "").split("\n")) {
+  for (const line of (body ?? "").split(/\r?\n/)) {
     const m = line.match(/^\s*[-*]\s*\*\*([^*:]+):?\*\*:?\s*(.+)$/);
     if (!m) continue;
     const raw = m[2].trim();

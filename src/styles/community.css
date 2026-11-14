@@ -1,0 +1,159 @@
+.community {
+  width: min(880px, 100% - 2 * var(--gutter));
+  margin-inline: auto;
+}
+.community-head {
+  gap: 20px;
+}
+.community-h1 {
+  font-size: 64px;
+}
+.community-lede {
+  max-width: 560px;
+  font-size: 19px;
+  color: var(--muted);
+}
+.community-join {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+.community > section {
+  margin-top: 72px;
+}
+.community-h2 {
+  font-size: 30px;
+}
+.community > section > .community-h2,
+.community-people-head {
+  margin-bottom: 20px;
+}
+
+.community-way {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 4px 20px;
+  padding: 20px 0;
+  border-top: 1px solid var(--line);
+}
+.community-way:last-child {
+  border-bottom: 1px solid var(--line);
+}
+.community-num {
+  font-size: 26px;
+  color: var(--sun);
+}
+.community-way h3 {
+  font-size: 20px;
+}
+.community-way-text p {
+  margin-top: 4px;
+  font-size: 15px;
+}
+.community-issues {
+  grid-column: 2 / -1;
+  margin-top: 12px;
+}
+.community-issues li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 4px 16px;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+.community-issues a {
+  font-weight: 600;
+  font-size: 15px;
+}
+.community-issues a:hover {
+  color: var(--sun);
+}
+
+.community-talk {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.community-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 24px;
+  background: var(--bg2);
+}
+.community-panel h3 {
+  font-size: 22px;
+}
+.community-panel .home-link {
+  min-height: 36px;
+}
+
+.community-people-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 4px 16px;
+}
+.community-people {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 40px;
+}
+.community-people li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+}
+.community-people a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  min-height: 52px;
+  font-weight: 600;
+  font-size: 15px;
+}
+.community-people a:hover {
+  color: var(--sun);
+}
+.community-people img {
+  flex: none;
+  border-radius: 50%;
+  background: var(--line);
+}
+.community-people span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.community-rules {
+  margin-top: 56px;
+  padding: 20px 0;
+  border-block: 1px solid var(--line);
+}
+
+/* Keep in sync with MOBILE_BREAKPOINT in src/data/layout.ts. */
+@media (max-width: 900px) {
+  .community-h1 {
+    font-size: 44px;
+  }
+  .community-way {
+    grid-template-columns: 40px minmax(0, 1fr);
+    align-items: start;
+  }
+  .community-way > .home-link,
+  .community-issues {
+    grid-column: 2;
+  }
+  .community-talk,
+  .community-people {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

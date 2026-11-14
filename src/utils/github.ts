@@ -3,6 +3,7 @@ import { once } from "@/utils/once";
 const GITHUB_REPO = "PommeMC/Client";
 export const GITHUB_URL = `https://github.com/${GITHUB_REPO}`;
 export const CONTRIBUTORS_URL = `${GITHUB_URL}/graphs/contributors`;
+export const NEW_ISSUE_URL = `${GITHUB_URL}/issues/new/choose`;
 const API = `https://api.github.com/repos/${GITHUB_REPO}`;
 
 type GhAsset = { name: string; size: number; download_count: number; browser_download_url: string };
@@ -15,7 +16,8 @@ type GhRelease = {
   prerelease: boolean;
   assets: GhAsset[];
 };
-type GhRepo = { stargazers_count: number };
+type GhRepo = { stargazers_count: number; has_discussions: boolean };
+type GhIssue = { number: number; title: string; html_url: string; labels: { name: string }[]; pull_request?: unknown };
 type GhContributor = { login: string; avatar_url: string; html_url: string; contributions: number; type: string };
 
 export interface Release {
@@ -139,7 +141,36 @@ export async function getLatestRelease(): Promise<Release | null> {
   return (await getReleases())?.find((r) => r.product === "Pomme") ?? null;
 }
 
-export const getStars = once(async () => (await get<GhRepo>(API))?.data.stargazers_count ?? null);
+const getRepo = once(async () => (await get<GhRepo>(API))?.data ?? null);
+
+export const getStars = async () => (await getRepo())?.stargazers_count ?? null;
+
+/** Where to suggest a feature: Discussions when the repo has them, otherwise a new issue. */
+export const getIdeasUrl = async () => ((await getRepo())?.has_discussions ? `${GITHUB_URL}/discussions` : NEW_ISSUE_URL);
+
+export interface Issue {
+  number: number;
+  title: string;
+  url: string;
+  labels: string[];
+}
+
+/** Open issues labelled as good first issues, newest first. */
+export const getGoodFirstIssues = once(async (): Promise<Issue[] | null> => {
+  const r = await get<GhIssue[]>(`${API}/issues?state=open&labels=good%20first%20issue&per_page=5`);
+  if (!r) return null;
+  return r.data
+    .filter((i) => !i.pull_request)
+    .map((i) => ({
+      number: i.number,
+      title: i.title,
+      url: i.html_url,
+      labels: i.labels.map((l) => l.name).filter((n) => n !== "good first issue"),
+    }));
+});
+
+/** A GitHub avatar URL at a given pixel size. */
+export const sizedAvatar = (url: string, px: number) => `${url}${url.includes("?") ? "&" : "?"}s=${px}`;
 
 export const getContributors = once(async (): Promise<Contributor[] | null> => {
   const all: GhContributor[] = [];

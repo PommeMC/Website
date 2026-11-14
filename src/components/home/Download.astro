@@ -1,5 +1,6 @@
 ---
 import Apple from "@/assets/brand/pomme-apple.svg";
+import { plural } from "@/utils/content";
 import { downloadLabel, releaseParts, type HomePlatform } from "@/utils/downloads";
 import type { Release } from "@/utils/github";
 
@@ -9,7 +10,7 @@ interface Props {
   ruled: boolean;
 }
 const { platforms, release, ruled } = Astro.props;
-const meta = release ? [...releaseParts(release), `${release.downloads.toLocaleString("en")} downloads`] : [];
+const meta = release ? [...releaseParts(release), plural(release.downloads, "download")] : [];
 ---
 
 <section id="download" class:list={{ "home-ruled": ruled }}>

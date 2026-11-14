@@ -17,7 +17,7 @@ export interface NavLink {
 }
 
 export const NAV_LINKS: NavLink[] = [
-  { label: "Orchard", href: "https://orchard.pomme.rs/", external: true, title: "Add-on marketplace", hint: "Marketplace" },
+  { label: "Orchard", href: LINKS.orchard, external: true, title: "Add-on marketplace", hint: "Marketplace" },
   { label: "News", href: "/news" },
   { label: "Community", href: "/community" },
   { label: "Discord", href: LINKS.discord, external: true, icon: "discord-brands" },

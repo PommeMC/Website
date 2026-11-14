@@ -10,7 +10,7 @@ import Layout from "@/layouts/Layout.astro";
 import { DOWNLOADS_HREF } from "@/data/nav";
 import { listFormat } from "@/utils/content";
 import { buildPlatforms } from "@/utils/downloads";
-import { getLatestRelease } from "@/utils/github";
+import { getLatestRelease, sizedAvatar } from "@/utils/github";
 import { getPosts, postInfo } from "@/utils/news";
 
 export async function getStaticPaths() {
@@ -79,7 +79,13 @@ const systems = listFormat.format(
             <p class="home-small post-thanks">
               <span class="post-thanks-faces" aria-hidden="true">
                 {data.thanks.map((login) => (
-                  <Image src={`https://avatars.githubusercontent.com/${login}?s=56`} width={28} height={28} layout="fixed" alt="" />
+                  <Image
+                    src={sizedAvatar(`https://avatars.githubusercontent.com/${login}`, 56)}
+                    width={28}
+                    height={28}
+                    layout="fixed"
+                    alt=""
+                  />
                 ))}
               </span>
               <span>

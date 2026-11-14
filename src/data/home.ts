@@ -38,6 +38,7 @@ export const LINKS = {
   releases: `${GITHUB_URL}/releases`,
   contribute: GITHUB_URL,
   sponsor: "https://github.com/sponsors/Purdze",
+  orchard: "https://orchard.pomme.rs/",
 } as const;
 
 export interface PlatformConfig {

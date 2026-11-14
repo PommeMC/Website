@@ -2,7 +2,7 @@
 import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import { LINKS } from "@/data/home";
-import { CONTRIBUTORS_URL, formatCompact, type Contributor } from "@/utils/github";
+import { CONTRIBUTORS_URL, formatCompact, sizedAvatar, type Contributor } from "@/utils/github";
 import LongDate from "@/components/LongDate.astro";
 import { plural } from "@/utils/content";
 
@@ -20,10 +20,7 @@ const all = contributors ?? [];
 // Fill the grid with names; when there are more than fit, the last cell links to the full list instead.
 const shown = all.length > GRID ? all.slice(0, GRID - 1) : all;
 const more = all.length - shown.length;
-const totals = [commits !== null && `${commits.toLocaleString("en")} commits`, stars !== null && `${formatCompact(stars)} stars`].filter(
-  Boolean
-);
-const avatar = (c: Contributor) => `${c.avatarUrl}${c.avatarUrl.includes("?") ? "&" : "?"}s=80`;
+const totals = [commits !== null && plural(commits, "commit"), stars !== null && `${formatCompact(stars)} stars`].filter(Boolean);
 ---
 
 <section class:list={{ "home-alt": alt }}>
@@ -44,7 +41,7 @@ const avatar = (c: Contributor) => `${c.avatarUrl}${c.avatarUrl.includes("?") ? 
             {shown.map((c) => (
               <li>
                 <a href={c.profileUrl} class="home-person" title={c.login}>
-                  <Image src={avatar(c)} width={40} height={40} layout="fixed" alt="" />
+                  <Image src={sizedAvatar(c.avatarUrl, 80)} width={40} height={40} layout="fixed" alt="" />
                   <span>{c.login}</span>
                 </a>
               </li>

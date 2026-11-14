@@ -4,8 +4,16 @@ import SiteNav from "@/components/layout/SiteNav.astro";
 import { NAV_HEIGHT } from "@/data/layout";
 import "@/styles/global.css";
 
+interface ShareImage {
+  src: string;
+  width?: number;
+  height?: number;
+  alt: string;
+}
+
 interface Props {
-  title: string;
+  /** Shown as "<title> | Pomme". Left out on the homepage, which uses the site's own title. */
+  title?: string;
   description: string;
   keywords: string[];
   canonical: string;
@@ -13,9 +21,21 @@ interface Props {
   chrome?: boolean;
   /** Nav starts clear over a full-bleed hero and turns solid on scroll. */
   navOverlay?: boolean;
+  /** The picture shown when the page is shared. */
+  share?: ShareImage;
 }
 
-const { title, description, keywords, canonical, chrome = true, navOverlay = false } = Astro.props;
+const SITE_CARD: ShareImage = {
+  src: "/og.jpg",
+  width: 1200,
+  height: 630,
+  alt: "Pomme, a Minecraft client written from scratch in Rust, next to a landscape captured in Pomme.",
+};
+
+const { title, description, keywords, canonical, chrome = true, navOverlay = false, share = SITE_CARD } = Astro.props;
+const fullTitle = title ? `${title} | Pomme` : "Pomme: a Minecraft client written in Rust";
+const url = new URL(canonical, Astro.site);
+const shareUrl = new URL(share.src, Astro.site);
 ---
 
 <!doctype html>
@@ -25,20 +45,21 @@ const { title, description, keywords, canonical, chrome = true, navOverlay = fal
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
     <meta name="keywords" content={keywords.join(", ")} />
-    <meta property="og:title" content={title} />
+    <meta property="og:title" content={fullTitle} />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="/assets/logo/256x.png" />
-    <meta property="og:url" content={`https://pomme.rs` + canonical} />
+    <meta property="og:image" content={shareUrl} />
+    {share.width && <meta property="og:image:width" content={String(share.width)} />}
+    {share.height && <meta property="og:image:height" content={String(share.height)} />}
+    <meta property="og:image:alt" content={share.alt} />
+    <meta property="og:url" content={url} />
     <meta property="og:description" content={description} />
     <meta property="og:site_name" content="Pomme" />
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content="/assets/logo/256x.png" />
-    <link rel="canonical" href={`https://pomme.rs` + canonical} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image:alt" content={share.alt} />
+    <link rel="canonical" href={url} />
     <link rel="icon" href="/favicon.ico" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <title>{`${title} | Pomme`}</title>
+    <title>{fullTitle}</title>
     <slot name="head" />
   </head>
   <body style={`--nav-h: ${NAV_HEIGHT}px`}>

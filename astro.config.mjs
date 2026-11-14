@@ -1,5 +1,4 @@
 import { defineConfig } from "astro/config";
-import tailwindcss from "@tailwindcss/vite";
 import { execSync } from "child_process";
 import icon from "astro-icon";
 import sitemap from "@astrojs/sitemap";
@@ -12,7 +11,6 @@ export default defineConfig({
   site: "https://pomme.rs",
 
   vite: {
-    plugins: [tailwindcss()],
     define: {
       "import.meta.env.GIT_COMMIT_HASH": JSON.stringify(GIT_COMMIT_HASH),
     },

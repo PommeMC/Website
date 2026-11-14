@@ -41,11 +41,11 @@ const { title, description, keywords, canonical, chrome = true, navOverlay = fal
     <title>{`${title} | Pomme`}</title>
     <slot name="head" />
   </head>
-  <body class="flex min-h-screen flex-col" style={`--nav-h: ${NAV_HEIGHT}px`}>
+  <body style={`--nav-h: ${NAV_HEIGHT}px`}>
     <SiteNav overlay={navOverlay} />
     {
       chrome ? (
-        <main class="flex-1" id="main">
+        <main id="main">
           <slot />
         </main>
       ) : (

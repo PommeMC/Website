@@ -31,7 +31,6 @@
   text-transform: uppercase;
   border: 0;
   cursor: pointer;
-  box-sizing: border-box;
 }
 .home-pri {
   background: var(--sun);

@@ -2,6 +2,7 @@
 import SiteFooter from "@/components/layout/SiteFooter.astro";
 import SiteNav from "@/components/layout/SiteNav.astro";
 import { NAV_HEIGHT } from "@/data/layout";
+import { UNLISTED } from "@/data/unlisted";
 import "@/styles/global.css";
 
 interface ShareImage {
@@ -45,6 +46,7 @@ const shareUrl = new URL(share.src, Astro.site);
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
     <meta name="keywords" content={keywords.join(", ")} />
+    {UNLISTED.includes(canonical) && <meta name="robots" content="noindex" />}
     <meta property="og:title" content={fullTitle} />
     <meta property="og:type" content="website" />
     <meta property="og:image" content={shareUrl} />

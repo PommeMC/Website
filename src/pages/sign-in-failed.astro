@@ -1,0 +1,97 @@
+---
+import "@/styles/signin.css";
+import Layout from "@/layouts/Layout.astro";
+import { LINKS } from "@/data/home";
+import { NEW_TAB } from "@/data/nav";
+import { SIGN_IN_FAILED_HREF } from "@/data/unlisted";
+
+const XBOX = { label: "Go to xbox.com", href: "https://www.xbox.com" };
+
+/**
+ * A fix for each failure the Client reports. `code` is for when the Client sends one; until then the reason's wording
+ * is matched, so these follow the Client's messages in pomme-auth.
+ */
+const FIXES = [
+  {
+    code: "not-owned",
+    match: "doesn't own minecraft",
+    fix: "Sign in with the Microsoft account you bought Minecraft: Java Edition on.",
+  },
+  {
+    code: "no-xbox-profile",
+    match: "no xbox profile",
+    fix: "Sign in once at xbox.com to create a profile, then try again.",
+    link: XBOX,
+  },
+  {
+    code: "adult-verification",
+    match: "adult verification",
+    fix: "A parent or guardian needs to allow this account to play online in its Xbox family settings.",
+    link: XBOX,
+  },
+  {
+    code: "country",
+    match: "isn't available in this account's country",
+    fix: "Microsoft doesn't offer Xbox Live in this account's country, so it can't sign in to Minecraft.",
+  },
+  {
+    code: "cancelled",
+    match: "cancelled",
+    fix: "The Microsoft sign-in was closed or declined.",
+  },
+  {
+    code: "timed-out",
+    match: "timed out",
+    fix: "The sign-in took too long, so finish the Microsoft steps in one go next time.",
+  },
+];
+---
+
+<Layout title="Sign-in didn't finish" description="Pomme couldn't finish signing in." keywords={[]} canonical={SIGN_IN_FAILED_HREF}>
+  <div class="home">
+    <div class="home-w home-s signin">
+      <span class="signin-mark signin-bad" aria-hidden="true">✗</span>
+      <h1 class="home-d signin-h1">Sign-in didn't finish</h1>
+      <div class="signin-reason" data-reason-box hidden>
+        <p class="home-small">What went wrong</p>
+        <p data-reason></p>
+      </div>
+      {
+        FIXES.map((f) => (
+          <p data-fix={f.code} data-match={f.match} hidden>
+            {f.fix}
+            {f.link && (
+              <>
+                {" "}
+                <a class="home-inline-link" href={f.link.href} {...NEW_TAB}>
+                  {f.link.label}
+                </a>
+              </>
+            )}
+          </p>
+        ))
+      }
+      <p class="home-muted">Go back to Pomme and choose Sign in to try again, or Use a Code if the browser keeps failing.</p>
+      <a class="home-link" href={LINKS.discord} {...NEW_TAB}>Get help on Discord →</a>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  // The reason comes from the address, which anyone can edit, so it's only ever shown as text.
+  const MAX_LENGTH = 300;
+  const params = new URLSearchParams(location.search);
+  const reason = params.get("reason")?.trim() ?? "";
+  const box = document.querySelector<HTMLElement>("[data-reason-box]");
+  const text = box?.querySelector("[data-reason]");
+  if (reason && box && text) {
+    text.textContent = reason.length > MAX_LENGTH ? `${reason.slice(0, MAX_LENGTH)}…` : reason;
+    box.hidden = false;
+  }
+
+  const fixes = [...document.querySelectorAll<HTMLElement>("[data-fix]")];
+  const code = params.get("code");
+  const lower = reason.toLowerCase();
+  const fix = fixes.find((f) => f.dataset.fix === code) ?? fixes.find((f) => lower && f.dataset.match && lower.includes(f.dataset.match));
+  if (fix) fix.hidden = false;
+</script>

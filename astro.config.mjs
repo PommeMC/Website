@@ -9,6 +9,10 @@ const GIT_COMMIT_HASH = (process.env.GITHUB_SHA || "").trim().slice(0, 7) || exe
 
 export default defineConfig({
   site: "https://pomme.rs",
+  // Pages are built as community.html rather than community/index.html, so Cloudflare serves /community without
+  // redirecting to /community/, matching the site's links.
+  trailingSlash: "never",
+  build: { format: "file" },
 
   vite: {
     define: {

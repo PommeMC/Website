@@ -85,7 +85,6 @@
 }
 .home {
   flex: 1;
-  background: var(--bg);
   color: var(--text);
 }
 /* Components set their own display, which would otherwise override the hidden attribute. */

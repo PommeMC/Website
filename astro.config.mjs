@@ -26,10 +26,6 @@ export default defineConfig({
         protocol: "https",
         hostname: "avatars.githubusercontent.com",
       },
-      {
-        protocol: "https",
-        hostname: "images.opencollective.com",
-      },
     ],
   },
 

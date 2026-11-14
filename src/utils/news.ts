@@ -9,7 +9,7 @@ export const NEWS_CATEGORIES = {
 } as const;
 export type NewsCategory = keyof typeof NEWS_CATEGORIES;
 
-export interface NewsEntry {
+interface NewsEntry {
   category: NewsCategory;
   title: string;
   date: Date;

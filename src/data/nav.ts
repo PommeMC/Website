@@ -1,7 +1,7 @@
 import { LINKS } from "@/data/home";
 import { GITHUB_URL } from "@/utils/github";
 
-export const DOWNLOADS_HREF = "/downloads";
+export const DOWNLOADS_HREF = "/#download";
 
 export interface NavLink {
   label: string;

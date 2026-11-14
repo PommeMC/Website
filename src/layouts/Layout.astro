@@ -9,7 +9,7 @@ interface Props {
   description: string;
   keywords: string[];
   canonical: string;
-  /** Set to false on pages that render their own main landmark and skip the preview banner. */
+  /** Set to false on pages that render their own main landmark. */
   chrome?: boolean;
   /** Nav starts clear over a full-bleed hero and turns solid on scroll. */
   navOverlay?: boolean;
@@ -19,7 +19,7 @@ const { title, description, keywords, canonical, chrome = true, navOverlay = fal
 ---
 
 <!doctype html>
-<html lang="en" class="dark bg-background-dark-90 scroll-smooth text-white [tap-highlight-color:transparent]" style="color-scheme: dark;">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
@@ -42,13 +42,6 @@ const { title, description, keywords, canonical, chrome = true, navOverlay = fal
     <slot name="head" />
   </head>
   <body class="flex min-h-screen flex-col" style={`--nav-h: ${NAV_HEIGHT}px`}>
-    {
-      chrome && (
-        <div class="bg-primary-400/10 border-primary-400/20 text-primary-400 border-b px-6 py-2 text-center text-xs">
-          This website is currently in preview. Things may change.
-        </div>
-      )
-    }
     <SiteNav overlay={navOverlay} />
     {
       chrome ? (

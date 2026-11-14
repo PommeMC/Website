@@ -26,6 +26,12 @@ const versionText = sameVersion
   : `Pomme on ${run.versions.pomme}, vanilla on ${run.versions.vanilla}`;
 const gapAreas = [...new Set(run.gaps.map((g) => g.area))];
 const titles = new Map(run.scenarios.map((s) => [s.id, s.title]));
+// Categories where every scenario behaves the same start closed; any with a difference start open.
+const categories = run.categories.map((c) => {
+  const t = tally(c.scenarios);
+  const anchor = `cat-${c.id}`;
+  return { c, t, allAlike: t.behaveAlike === t.scenarios, anchor, titleId: `${anchor}-title` };
+});
 const shotsText = (s: Scenario) => {
   const t = tally([s]);
   return t.shots > 0 ? `${t.shotsAlike} of ${t.shots} within tolerance` : "No screenshots";
@@ -72,6 +78,22 @@ const shotsText = (s: Scenario) => {
       </aside>
 
       <div class="parity-main">
+        <nav aria-label="Scenario categories">
+          <ul class="parity-jump" role="list">
+            {
+              categories.map(({ c, t, allAlike, anchor }) => (
+                <li>
+                  <a href={`#${anchor}`} class:list={{ "parity-jump-diff": !allAlike }}>
+                    {c.name}
+                    <span class="home-small">
+                      {t.behaveAlike}/{t.scenarios}
+                    </span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
         {
           run.coverage.length > 0 && (
             <section aria-labelledby="built">
@@ -141,18 +163,19 @@ const shotsText = (s: Scenario) => {
           )
         }
         {
-          run.categories.map((c) => {
-            const t = tally(c.scenarios);
-            return (
-              <section aria-labelledby={`cat-${c.id}`}>
-                <div class="parity-cat-head">
-                  <h2 class="home-d" id={`cat-${c.id}`}>
-                    {c.name}
-                  </h2>
+          categories.map(({ c, t, allAlike, anchor, titleId }) => (
+            <section class="parity-group" aria-labelledby={titleId}>
+              {/* Screen readers don't treat a heading inside a summary as one, so the outline gets its own. */}
+              <h2 class="home-sr" id={titleId}>
+                {c.name}
+              </h2>
+              <details class="parity-cat" id={anchor} open={!allAlike}>
+                <summary class="parity-cat-head">
+                  <span class="home-d parity-cat-name">{c.name}</span>
                   <p class="home-small">
                     {t.behaveAlike} of {plural(t.scenarios, "scenario")} behave the same
                   </p>
-                </div>
+                </summary>
                 {c.scenarios.map((s) => {
                   const summary = (
                     <Fragment>
@@ -217,9 +240,9 @@ const shotsText = (s: Scenario) => {
                     </div>
                   );
                 })}
-              </section>
-            );
-          })
+              </details>
+            </section>
+          ))
         }
 
         {
@@ -252,15 +275,19 @@ const shotsText = (s: Scenario) => {
 </Layout>
 
 <script>
-  // Links to a scenario open its row, so its screenshots and heatmaps are one click away.
+  // A link to a category or scenario opens it and the category around it, so the target is on screen.
   const openLinked = () => {
     const target = location.hash && document.getElementById(location.hash.slice(1));
-    if (target instanceof HTMLDetailsElement) {
-      target.open = true;
-      target.scrollIntoView();
-    }
+    if (!target) return;
+    for (let el = target.closest("details"); el; el = el.parentElement?.closest("details") ?? null) el.open = true;
+    target.scrollIntoView();
   };
   addEventListener("hashchange", openLinked);
+  // Following a link to the address already showing changes nothing, so it would leave a closed target shut.
+  addEventListener("click", (e) => {
+    const link = e.target instanceof Element && e.target.closest<HTMLAnchorElement>('a[href^="#"]');
+    if (link && link.hash === location.hash) openLinked();
+  });
   openLinked();
 
   for (const button of document.querySelectorAll<HTMLButtonElement>("[data-heat-toggle]")) {

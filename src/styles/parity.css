@@ -14,8 +14,39 @@
   color: var(--sun);
 }
 
-.parity-main > section + section {
+.parity-main > * + * {
   margin-top: 56px;
+}
+/* Categories stack as one list, so a closed one is a single row. */
+.parity-main > .parity-group + .parity-group {
+  margin-top: 0;
+}
+
+.parity-jump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.parity-jump a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+}
+.parity-jump a:hover {
+  border-color: var(--leaf);
+}
+.parity-jump .parity-jump-diff {
+  border-color: var(--sun);
+}
+
+.parity-cat > summary {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+.parity-cat[open] > summary {
+  border-bottom: 0;
 }
 .parity-cat-head {
   display: flex;
@@ -25,12 +56,16 @@
   gap: 4px 16px;
   margin-bottom: 12px;
 }
-.parity-cat-head h2 {
+.parity-cat-head h2,
+.parity-cat-name {
   font-size: 28px;
 }
 
+.parity-cat,
 .parity-row {
   scroll-margin-top: calc(var(--nav-h) + 16px);
+}
+.parity-row {
   border-top: 1px solid var(--line);
 }
 .parity-row:last-child {
@@ -45,24 +80,36 @@
   min-height: 52px;
   padding: 8px 0;
 }
+.parity-cat > summary,
 .parity-row > summary {
   cursor: pointer;
 }
+.parity-cat > summary:hover .parity-cat-name,
 .parity-row > summary:hover .parity-title {
   color: var(--sun);
 }
-/* A plus that turns into a minus while the row is open; rows without screenshots keep the column empty. */
+/* A plus that turns into a minus while it's open; scenario rows without screenshots keep the column empty. */
 .parity-row > summary::before,
-.parity-row-plain::before {
-  content: "";
+.parity-row-plain::before,
+.parity-cat-name::before {
   color: var(--sun);
   font-weight: 700;
 }
-.parity-row > summary::before {
+.parity-row-plain::before {
+  content: "";
+}
+.parity-row > summary::before,
+.parity-cat-name::before {
   content: "+";
 }
-.parity-row[open] > summary::before {
+.parity-row[open] > summary::before,
+.parity-cat[open] .parity-cat-name::before {
   content: "–";
+}
+.parity-cat-name::before {
+  display: inline-block;
+  width: 1em;
+  margin-right: 12px;
 }
 .parity-name {
   display: flex;

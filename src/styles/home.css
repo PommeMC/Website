@@ -284,11 +284,6 @@ img.home-layer {
   align-items: center;
   gap: 14px;
 }
-.home-inline-link {
-  color: var(--sun) !important;
-  text-decoration: underline !important;
-  text-underline-offset: 3px;
-}
 
 .home-demo {
   padding-bottom: 104px;

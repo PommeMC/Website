@@ -121,6 +121,11 @@
   text-decoration: underline !important;
   text-underline-offset: 4px;
 }
+.home-inline-link {
+  color: var(--sun) !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px;
+}
 .site-brand {
   display: inline-flex;
   align-items: center;

@@ -24,6 +24,9 @@ export const NAV_LINKS: NavLink[] = [
   { label: "GitHub", href: GITHUB_URL, external: true, icon: "github-brands", showStars: true },
 ];
 
+/** Download plus the nav's page links, for lists of everywhere a visitor can go. */
+export const SITE_PAGES: NavLink[] = [{ label: "Download", href: DOWNLOADS_HREF }, ...NAV_LINKS.filter((l) => !l.icon)];
+
 /** New-tab attributes for links that leave the site. */
 export const NEW_TAB = { target: "_blank", rel: "noopener" } as const;
 export const externalAttrs = (l: Pick<NavLink, "external">) => (l.external ? NEW_TAB : {});

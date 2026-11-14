@@ -1,6 +1,6 @@
 ---
 import Features from "@/components/home/Features.astro";
-import { DEMO, MOBILE_NOTE } from "@/data/home";
+import { DEMO, LINKS, MOBILE_NOTE } from "@/data/home";
 import { listFormat } from "@/utils/content";
 import { downloadLabel, releaseParts, type HomePlatform } from "@/utils/downloads";
 import type { Release } from "@/utils/github";
@@ -50,6 +50,13 @@ const meta = [...parts, MOBILE_NOTE.replace(/\.$/, "")];
             {p.label}
           </a>
         ))
+      }
+      {
+        downloads.length === 0 && (
+          <a href={`${LINKS.releases}/latest`} class="home-rib">
+            See releases
+          </a>
+        )
       }
       {
         DEMO.enabled && (

@@ -17,7 +17,8 @@ permissions:
 
 concurrency:
   group: nightly-deploy
-  cancel-in-progress: true
+  # Queue rather than cancel, so a manual run can't abort a deploy halfway through.
+  cancel-in-progress: false
 
 jobs:
   deploy:

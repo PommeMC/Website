@@ -5,7 +5,7 @@ import { once } from "@/utils/once";
 /**
  * Parity results from a run of the Client's in-game scripts on both Pomme and vanilla, published to R2 by the Client.
  * latest.json names the newest export; each export's files never change. If either can't be fetched at build time, or
- * the export is malformed or inconsistent, the parity sections are left out rather than failing the whole build.
+ * the export is malformed, the parity sections are left out rather than failing the whole build.
  */
 const BUCKET = "https://parity.pomme.rs/parity";
 
@@ -74,17 +74,18 @@ function checkResult(checks: Check[], client: Client): Result {
   return results.every((r) => r === "pass") ? "pass" : "skip";
 }
 
-/** A scenario's overall result per client must agree with its checks: any fail is a fail, all passes is a pass. */
-function assertConsistent(scenarios: Scenario[]) {
-  const wrong = scenarios
-    .filter((s) => s.checks.length > 0)
-    .flatMap((s) =>
-      CLIENTS.flatMap((c) => {
-        const fromChecks = checkResult(s.checks, c);
-        return fromChecks === s.mechanics[c] ? [] : [`${s.id} (${c}: says ${s.mechanics[c]}, checks say ${fromChecks})`];
-      })
-    );
-  if (wrong.length > 0) throw new Error(`parity.json results disagree with their checks: ${wrong.join("; ")}`);
+/**
+ * A scenario's overall result per client must agree with its checks: any fail is a fail, all passes is a pass. One that
+ * doesn't is left out with a warning, so a single bad scenario doesn't take the rest of the results down with it.
+ */
+function consistentOnly(scenarios: Scenario[]): Scenario[] {
+  return scenarios.filter((s) => {
+    const wrong = CLIENTS.filter((c) => s.checks.length > 0 && checkResult(s.checks, c) !== s.mechanics[c]);
+    for (const c of wrong) {
+      console.warn(`[parity] left out ${s.id}: ${c} says ${s.mechanics[c]}, its checks say ${checkResult(s.checks, c)}`);
+    }
+    return wrong.length === 0;
+  });
 }
 
 /** "blockEntities" -> "Block entities". */
@@ -101,18 +102,23 @@ interface ParityJson {
   coverage?: Record<string, { items: Coverage["items"] }>;
 }
 
-/** Turns a published export into what the pages use. Throws if the export is malformed or inconsistent. */
+/** Turns a published export into what the pages use, filling in optional fields. Throws if a required part is missing. */
 function toRun(raw: ParityJson, base: string): ParityRun {
-  const scenarios = raw.scenarios.map((s) => ({
-    ...s,
-    shots: s.shots.map((shot) => ({
-      ...shot,
-      pomme: base + shot.pomme,
-      vanilla: base + shot.vanilla,
-      heatmap: shot.heatmap && base + shot.heatmap,
-    })),
-  }));
-  assertConsistent(scenarios);
+  if (!Array.isArray(raw.scenarios) || !Array.isArray(raw.categories) || !raw.versions) {
+    throw new Error("parity.json has no scenarios, categories or versions");
+  }
+  const scenarios = consistentOnly(
+    raw.scenarios.map((s) => ({
+      ...s,
+      checks: s.checks ?? [],
+      shots: (s.shots ?? []).map((shot) => ({
+        ...shot,
+        pomme: base + shot.pomme,
+        vanilla: base + shot.vanilla,
+        heatmap: shot.heatmap && base + shot.heatmap,
+      })),
+    }))
+  );
   return {
     generatedAt: new Date(raw.generatedAt),
     commit: raw.commit,
@@ -122,8 +128,9 @@ function toRun(raw: ParityJson, base: string): ParityRun {
       scenarios: scenarios.filter((s) => s.category === c.id),
     })),
     scenarios,
-    gaps: raw.gaps,
-    coverage: Object.entries(raw.coverage ?? {}).map(([kind, { items }]) => {
+    gaps: raw.gaps ?? [],
+    coverage: Object.entries(raw.coverage ?? {}).map(([kind, c]) => {
+      const items = (c.items ?? []).map((i) => ({ ...i, scripts: i.scripts ?? [] }));
       const count = (status: CoverageStatus) => items.filter((i) => i.status === status).length;
       return {
         kind,

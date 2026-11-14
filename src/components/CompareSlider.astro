@@ -83,14 +83,24 @@ const widths = [640, 1120, 1600, 2240];
 
     input.addEventListener("input", () => set(Number(input.value)));
     // Dragging is handled on the whole frame rather than the range thumb, which iOS only lets you grab directly.
+    // A touch only moves the split once it heads sideways, so a finger scrolling past the image leaves it alone.
+    let touchStartX: number | null = null;
     box.addEventListener("pointerdown", (e) => {
-      e.preventDefault();
+      if (e.button !== 0) return;
       box.setPointerCapture(e.pointerId);
+      touchStartX = e.pointerType === "touch" ? e.clientX : null;
+      if (touchStartX !== null) return;
+      e.preventDefault();
       fromPointer(e);
       input.focus({ preventScroll: true });
     });
     box.addEventListener("pointermove", (e) => {
-      if (box.hasPointerCapture(e.pointerId)) fromPointer(e);
+      if (!box.hasPointerCapture(e.pointerId)) return;
+      if (touchStartX !== null) {
+        if (Math.abs(e.clientX - touchStartX) < 8) return;
+        touchStartX = null;
+      }
+      fromPointer(e);
     });
   }
 </script>

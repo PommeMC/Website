@@ -11,5 +11,7 @@
   "observability": {
     "enabled": true,
   },
-  "preview_urls": true,
+  // Only pomme.rs serves the site, and nothing uploads preview versions.
+  "workers_dev": false,
+  "preview_urls": false,
 }

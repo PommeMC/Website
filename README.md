@@ -41,7 +41,7 @@ How to get the project running on your local machine for development.
 bun run build
 ```
 
-This command builds a production-ready deployment into the `dist` directory. These files are ready to be deployed on Cloudflare Pages.
+This command builds a production-ready deployment into the `dist` directory. The site runs as a Cloudflare Worker, deployed by the Deploy workflow in `.github/workflows` on every push to master and every night.
 
 ### Preview the production build
 

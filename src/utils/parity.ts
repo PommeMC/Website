@@ -80,9 +80,12 @@ function checkResult(checks: Check[], client: Client): Result {
  */
 function consistentOnly(scenarios: Scenario[]): Scenario[] {
   return scenarios.filter((s) => {
-    const wrong = CLIENTS.filter((c) => s.checks.length > 0 && checkResult(s.checks, c) !== s.mechanics[c]);
-    for (const c of wrong) {
-      console.warn(`[parity] left out ${s.id}: ${c} says ${s.mechanics[c]}, its checks say ${checkResult(s.checks, c)}`);
+    if (s.checks.length === 0) return true;
+    const wrong = CLIENTS.map((c) => ({ c, fromChecks: checkResult(s.checks, c) })).filter(
+      ({ c, fromChecks }) => fromChecks !== s.mechanics[c]
+    );
+    for (const { c, fromChecks } of wrong) {
+      console.warn(`[parity] left out ${s.id}: ${c} says ${s.mechanics[c]}, its checks say ${fromChecks}`);
     }
     return wrong.length === 0;
   });

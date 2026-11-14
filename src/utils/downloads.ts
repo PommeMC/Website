@@ -35,7 +35,7 @@ export function buildPlatforms(release: Release | null): HomePlatform[] {
     return {
       key: p.key,
       label: p.label,
-      href: isMobile ? GITHUB_URL : `${LINKS.releases}/latest`,
+      href: isMobile ? GITHUB_URL : LINKS.latestRelease,
       cta: isMobile ? "Follow progress" : "See releases",
       downloadable: false,
       details: isMobile ? MOBILE_NOTE : "Not in this release",

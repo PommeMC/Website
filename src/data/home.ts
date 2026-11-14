@@ -34,7 +34,7 @@ export const DEMO = {
 
 export const LINKS = {
   discord: "https://discord.gg/ucBA55bHPR",
-  releases: `${GITHUB_URL}/releases`,
+  latestRelease: `${GITHUB_URL}/releases/latest`,
   contribute: GITHUB_URL,
   sponsor: "https://github.com/sponsors/Purdze",
   orchard: "https://orchard.pomme.rs/",

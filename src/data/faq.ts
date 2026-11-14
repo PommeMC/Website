@@ -95,7 +95,8 @@ export async function getFaq(): Promise<FaqGroup[]> {
         {
           id: "mods",
           question: "Can I use Fabric or Forge mods?",
-          answer: "No. Those mods are Java code written for Mojang's client, which Pomme doesn't run.",
+          answer:
+            "No. Those mods are Java code written for Mojang's client, which Pomme doesn't run. Add-ons made for Pomme are coming soon, on the Orchard.",
         },
       ],
     },
@@ -122,6 +123,13 @@ export async function getFaq(): Promise<FaqGroup[]> {
       title: "The project",
       questions: [
         {
+          id: "orchard",
+          question: "What is the Orchard?",
+          answer:
+            "Pomme's marketplace. Today it has plugins and software for Minecraft servers written in Rust, such as Pumpkin and Steel, free and paid. Add-ons for the Pomme client are coming soon.",
+          links: [{ label: "Visit the Orchard", href: LINKS.orchard }],
+        },
+        {
           id: "official",
           question: "Is this an official Minecraft product?",
           answer: "No. Pomme is a community project and isn't approved by or associated with Mojang or Microsoft.",
@@ -138,7 +146,7 @@ export async function getFaq(): Promise<FaqGroup[]> {
         {
           id: "help",
           question: "How can I help?",
-          answer: "Play and report bugs, make add-ons, contribute code or sponsor the project.",
+          answer: "Play and report bugs, contribute code, publish on the Orchard or sponsor the project.",
           links: [{ label: "Ways to help", href: "/community" }],
         },
         {

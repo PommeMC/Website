@@ -20,7 +20,7 @@ export interface NavLink {
 }
 
 const NAV_LINKS: NavLink[] = [
-  { label: "Orchard", href: LINKS.orchard, external: true, title: "Add-on marketplace", hint: "Marketplace" },
+  { label: "Orchard", href: LINKS.orchard, external: true, title: "Pomme's marketplace", hint: "Marketplace" },
   { label: "News", href: "/news" },
   { label: "Community", href: "/community" },
   { label: "Parity", href: PARITY_HREF, title: "How close it is to vanilla", hint: "vs vanilla" },

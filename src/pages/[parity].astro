@@ -29,9 +29,9 @@ const titles = new Map(run.scenarios.map((s) => [s.id, s.title]));
 // Categories where every scenario behaves the same start closed; any with a difference start open.
 const categories = run.categories.map((c) => {
   const t = tally(c.scenarios);
-  return { c, t, allAlike: t.behaveAlike === t.scenarios };
+  const anchor = `cat-${c.id}`;
+  return { c, t, allAlike: t.behaveAlike === t.scenarios, anchor, titleId: `${anchor}-title` };
 });
-const catAnchor = (id: string) => `cat-${id}`;
 const shotsText = (s: Scenario) => {
   const t = tally([s]);
   return t.shots > 0 ? `${t.shotsAlike} of ${t.shots} within tolerance` : "No screenshots";
@@ -81,9 +81,9 @@ const shotsText = (s: Scenario) => {
         <nav aria-label="Scenario categories">
           <ul class="parity-jump" role="list">
             {
-              categories.map(({ c, t, allAlike }) => (
+              categories.map(({ c, t, allAlike, anchor }) => (
                 <li>
-                  <a href={`#${catAnchor(c.id)}`} class:list={{ "parity-jump-diff": !allAlike }}>
+                  <a href={`#${anchor}`} class:list={{ "parity-jump-diff": !allAlike }}>
                     {c.name}
                     <span class="home-small">
                       {t.behaveAlike}/{t.scenarios}
@@ -163,79 +163,85 @@ const shotsText = (s: Scenario) => {
           )
         }
         {
-          categories.map(({ c, t, allAlike }) => (
-            <details class="parity-cat" id={catAnchor(c.id)} open={!allAlike}>
-              <summary class="parity-cat-head">
-                <h2 class="home-d">{c.name}</h2>
-                <p class="home-small">
-                  {t.behaveAlike} of {plural(t.scenarios, "scenario")} behave the same
-                </p>
-              </summary>
-              {c.scenarios.map((s) => {
-                const summary = (
-                  <Fragment>
-                    <span class="parity-name">
-                      <span class="parity-title">{s.title}</span>
-                      <span class="home-small">{s.description}</span>
-                    </span>
-                    <span class="parity-results">
-                      <ResultMark result={s.mechanics.pomme} label="Pomme" />
-                      <ResultMark result={s.mechanics.vanilla} label="Vanilla" />
-                    </span>
-                    <span class="home-small parity-shots-text">{shotsText(s)}</span>
-                  </Fragment>
-                );
-                return s.shots.length > 0 || s.checks.length > 0 ? (
-                  <details class="parity-row" id={scenarioAnchor(s.id)}>
-                    <summary>{summary}</summary>
-                    {s.checks.length > 0 && (
-                      <table class="parity-checks">
-                        <caption class="home-sr">Checks in {s.title}</caption>
-                        <thead>
-                          <tr>
-                            <th scope="col">Check</th>
-                            <th scope="col">Pomme</th>
-                            <th scope="col">Vanilla</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {s.checks.map((check) => (
+          categories.map(({ c, t, allAlike, anchor, titleId }) => (
+            <section class="parity-group" aria-labelledby={titleId}>
+              {/* Screen readers don't treat a heading inside a summary as one, so the outline gets its own. */}
+              <h2 class="home-sr" id={titleId}>
+                {c.name}
+              </h2>
+              <details class="parity-cat" id={anchor} open={!allAlike}>
+                <summary class="parity-cat-head">
+                  <span class="home-d parity-cat-name">{c.name}</span>
+                  <p class="home-small">
+                    {t.behaveAlike} of {plural(t.scenarios, "scenario")} behave the same
+                  </p>
+                </summary>
+                {c.scenarios.map((s) => {
+                  const summary = (
+                    <Fragment>
+                      <span class="parity-name">
+                        <span class="parity-title">{s.title}</span>
+                        <span class="home-small">{s.description}</span>
+                      </span>
+                      <span class="parity-results">
+                        <ResultMark result={s.mechanics.pomme} label="Pomme" />
+                        <ResultMark result={s.mechanics.vanilla} label="Vanilla" />
+                      </span>
+                      <span class="home-small parity-shots-text">{shotsText(s)}</span>
+                    </Fragment>
+                  );
+                  return s.shots.length > 0 || s.checks.length > 0 ? (
+                    <details class="parity-row" id={scenarioAnchor(s.id)}>
+                      <summary>{summary}</summary>
+                      {s.checks.length > 0 && (
+                        <table class="parity-checks">
+                          <caption class="home-sr">Checks in {s.title}</caption>
+                          <thead>
                             <tr>
-                              <td>{check.text}</td>
-                              <td>
-                                <ResultMark result={check.pomme} />
-                              </td>
-                              <td>
-                                <ResultMark result={check.vanilla} />
-                              </td>
+                              <th scope="col">Check</th>
+                              <th scope="col">Pomme</th>
+                              <th scope="col">Vanilla</th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    )}
-                    {s.shots.length > 0 && (
-                      <div class="parity-shots">
-                        {s.shots.slice(0, SHOWN_SHOTS).map((shot) => (
-                          <ParityShot shot={shot} title={s.title} />
-                        ))}
-                        {s.shots.length > SHOWN_SHOTS && (
-                          <details class="parity-more">
-                            <summary class="home-link">Show {plural(s.shots.length - SHOWN_SHOTS, "more screenshot")}</summary>
-                            {s.shots.slice(SHOWN_SHOTS).map((shot) => (
-                              <ParityShot shot={shot} title={s.title} />
+                          </thead>
+                          <tbody>
+                            {s.checks.map((check) => (
+                              <tr>
+                                <td>{check.text}</td>
+                                <td>
+                                  <ResultMark result={check.pomme} />
+                                </td>
+                                <td>
+                                  <ResultMark result={check.vanilla} />
+                                </td>
+                              </tr>
                             ))}
-                          </details>
-                        )}
-                      </div>
-                    )}
-                  </details>
-                ) : (
-                  <div class="parity-row parity-row-plain" id={scenarioAnchor(s.id)}>
-                    {summary}
-                  </div>
-                );
-              })}
-            </details>
+                          </tbody>
+                        </table>
+                      )}
+                      {s.shots.length > 0 && (
+                        <div class="parity-shots">
+                          {s.shots.slice(0, SHOWN_SHOTS).map((shot) => (
+                            <ParityShot shot={shot} title={s.title} />
+                          ))}
+                          {s.shots.length > SHOWN_SHOTS && (
+                            <details class="parity-more">
+                              <summary class="home-link">Show {plural(s.shots.length - SHOWN_SHOTS, "more screenshot")}</summary>
+                              {s.shots.slice(SHOWN_SHOTS).map((shot) => (
+                                <ParityShot shot={shot} title={s.title} />
+                              ))}
+                            </details>
+                          )}
+                        </div>
+                      )}
+                    </details>
+                  ) : (
+                    <div class="parity-row parity-row-plain" id={scenarioAnchor(s.id)}>
+                      {summary}
+                    </div>
+                  );
+                })}
+              </details>
+            </section>
           ))
         }
 
@@ -277,6 +283,11 @@ const shotsText = (s: Scenario) => {
     target.scrollIntoView();
   };
   addEventListener("hashchange", openLinked);
+  // Following a link to the address already showing changes nothing, so it would leave a closed target shut.
+  addEventListener("click", (e) => {
+    const link = e.target instanceof Element && e.target.closest<HTMLAnchorElement>('a[href^="#"]');
+    if (link && link.hash === location.hash) openLinked();
+  });
   openLinked();
 
   for (const button of document.querySelectorAll<HTMLButtonElement>("[data-heat-toggle]")) {

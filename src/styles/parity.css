@@ -18,7 +18,7 @@
   margin-top: 56px;
 }
 /* Categories stack as one list, so a closed one is a single row. */
-.parity-main > .parity-cat + .parity-cat {
+.parity-main > .parity-group + .parity-group {
   margin-top: 0;
 }
 
@@ -56,7 +56,8 @@
   gap: 4px 16px;
   margin-bottom: 12px;
 }
-.parity-cat-head h2 {
+.parity-cat-head h2,
+.parity-cat-name {
   font-size: 28px;
 }
 
@@ -83,27 +84,29 @@
 .parity-row > summary {
   cursor: pointer;
 }
-.parity-cat > summary:hover h2,
+.parity-cat > summary:hover .parity-cat-name,
 .parity-row > summary:hover .parity-title {
   color: var(--sun);
 }
 /* A plus that turns into a minus while it's open; scenario rows without screenshots keep the column empty. */
 .parity-row > summary::before,
 .parity-row-plain::before,
-.parity-cat > summary h2::before {
-  content: "";
+.parity-cat-name::before {
   color: var(--sun);
   font-weight: 700;
 }
+.parity-row-plain::before {
+  content: "";
+}
 .parity-row > summary::before,
-.parity-cat > summary h2::before {
+.parity-cat-name::before {
   content: "+";
 }
 .parity-row[open] > summary::before,
-.parity-cat[open] > summary h2::before {
+.parity-cat[open] .parity-cat-name::before {
   content: "–";
 }
-.parity-cat > summary h2::before {
+.parity-cat-name::before {
   display: inline-block;
   width: 1em;
   margin-right: 12px;

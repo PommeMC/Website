@@ -1,0 +1,207 @@
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  color: #fff;
+}
+.site-nav[data-overlay] {
+  position: fixed;
+  inset: 0 0 auto;
+}
+/* Two stacked backgrounds: a dark gradient that keeps links readable over the hero, and the solid bar that fills in over it. */
+.site-nav::before,
+.site-nav::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transition: opacity 200ms ease;
+}
+.site-nav::before {
+  bottom: -24px;
+  /* Dark enough for 4.5:1 white text even when a bright cloud passes behind (worst case over the sky loop: 5.7:1). */
+  background: linear-gradient(to bottom, rgb(5 20 10 / 0.65), rgb(5 20 10 / 0.5) var(--nav-h), rgb(5 20 10 / 0));
+}
+.site-nav::after {
+  background: var(--bar);
+  opacity: var(--nav-fill, 0);
+}
+.site-nav[data-solid]::before,
+.site-nav[data-open]::before {
+  opacity: 0;
+}
+.site-nav[data-solid]::after,
+.site-nav[data-open]::after {
+  box-shadow: 0 1px 0 var(--line);
+  opacity: 1;
+}
+.site-nav-bar {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  height: var(--nav-h);
+  padding: 0 var(--gutter);
+}
+.site-nav .site-brand-word {
+  max-width: 120px;
+  overflow: hidden;
+  transition:
+    max-width 250ms ease,
+    opacity 250ms ease;
+}
+/* Over the homepage hero the big logo already says Pomme, so the wordmark waits until the hero scrolls away. */
+.site-nav:not([data-solid], [data-open]) .site-brand-word {
+  max-width: 0;
+  opacity: 0;
+}
+.site-nav-links {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 4px;
+}
+.site-nav-social {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+.site-nav-phone {
+  display: none;
+}
+.site-nav-end {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.site-nl {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: var(--tap);
+  min-height: var(--tap);
+  padding: 3px 12px 0;
+  font: 700 14px var(--display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.site-nl:hover {
+  color: var(--sun) !important;
+}
+.site-nl:hover,
+.site-nl[aria-current="page"] {
+  text-decoration: underline !important;
+  text-decoration-thickness: 2px !important;
+  text-underline-offset: 6px;
+}
+.site-nl[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 50%;
+  translate: -50% 0;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  background: var(--bar);
+  color: var(--text);
+  font: 500 13px var(--body);
+  letter-spacing: 0;
+  text-transform: none;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease;
+}
+.site-nl[data-tip]:hover::after,
+.site-nl[data-tip]:focus-visible::after {
+  opacity: 1;
+}
+.site-icon {
+  width: 16px;
+  height: 16px;
+  margin-top: -3px;
+  fill: currentColor;
+}
+.site-nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap);
+  height: var(--tap);
+  margin-right: -10px;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+.site-nav-toggle .close,
+.site-nav[data-open] .site-nav-toggle .open {
+  display: none;
+}
+.site-nav[data-open] .site-nav-toggle .close {
+  display: block;
+}
+
+/* Keep in sync with MOBILE_BREAKPOINT in src/data/layout.ts. */
+@media (max-width: 900px) {
+  .site-nav-toggle {
+    display: inline-flex;
+  }
+  .site-nav-bar {
+    gap: 12px;
+  }
+  .site-nav-end {
+    margin-left: auto;
+  }
+  .site-nav-links {
+    display: none;
+    position: absolute;
+    inset: var(--nav-h) 0 auto;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0 var(--gutter) 16px;
+    border-top: 1px solid var(--line);
+    background: var(--bar);
+  }
+  .site-nav[data-open] .site-nav-links {
+    display: flex;
+  }
+  .site-nav-links .site-nl {
+    font-size: 16px;
+  }
+  .site-nav-links > .site-nl {
+    min-height: 52px;
+    padding: 3px 0 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .site-nl[data-tip]::after {
+    display: none;
+  }
+  .site-nav-phone {
+    display: inline;
+  }
+  /* The hint is its own flex item, and Inter sits lower than Josefin Sans, so it's lifted onto the label's baseline. */
+  .site-nav-hint {
+    translate: 0 -4.5px;
+  }
+  .site-nav-phone + .site-nav-count {
+    margin-left: 8px;
+  }
+  .site-nav-hint,
+  .site-nav-count {
+    font: 400 14px var(--body);
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--muted);
+  }
+  .site-nav-social {
+    gap: 8px;
+    margin: 16px 0 0;
+  }
+  .site-nav-social .site-nl {
+    flex: 1;
+    justify-content: center;
+    min-height: 48px;
+    border: 1px solid var(--line);
+  }
+}

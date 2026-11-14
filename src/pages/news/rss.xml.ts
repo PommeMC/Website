@@ -1,27 +1,15 @@
 import type { APIRoute } from "astro";
 import rss from "@astrojs/rss";
-import { getCollection, type CollectionEntry } from "astro:content";
+import { getNewsEntries } from "@/utils/news";
 
 export const GET: APIRoute = async ({ site }) => {
-  const posts = await getCollection("posts");
-
-  const items = posts.map((post: CollectionEntry<"posts">) => {
-    const data = post.data;
-    const pubDate = data.pubDate ?? data.date ?? undefined;
-
-    return {
-      title: data.title,
-      pubDate,
-      link: `/news/${post.id}`,
-      author: data.author,
-    };
-  });
+  const entries = await getNewsEntries();
 
   return rss({
     title: "Pomme News",
-    description: "Updates and news from the Pomme project",
+    description: "Releases and posts from the Pomme team",
     site: site?.toString() ?? "https://pomme.rs",
-    items,
+    items: entries.map((e) => ({ title: e.title, pubDate: e.date, link: e.href, description: e.summary || undefined })),
     trailingSlash: false,
   });
 };

@@ -1,0 +1,157 @@
+---
+import "@/styles/community.css";
+import { Image } from "astro:assets";
+import Layout from "@/layouts/Layout.astro";
+import { LINKS } from "@/data/home";
+import { NEW_TAB, PARITY_HREF, externalAttrs } from "@/data/nav";
+import { plural } from "@/utils/content";
+import { getParityRun } from "@/utils/parity";
+import { getDiscordMembers } from "@/utils/discord";
+import { getCommitCount, getContributors, getGoodFirstIssues, getIdeasUrl, GITHUB_URL, NEW_ISSUE_URL, sizedAvatar } from "@/utils/github";
+
+const [members, contributors, commits, issues, ideasUrl, parity] = await Promise.all([
+  getDiscordMembers(),
+  getContributors(),
+  getCommitCount(),
+  getGoodFirstIssues(),
+  getIdeasUrl(),
+  getParityRun(),
+]);
+const membersText = members !== null ? plural(members, "member") : null;
+
+const ways = [
+  {
+    title: "Play and report bugs",
+    body: "Found something broken? Say what you did, what you expected and what happened.",
+    link: { label: "Report a bug", href: NEW_ISSUE_URL },
+  },
+  parity && {
+    title: "Check parity",
+    body: "See which in-game scenarios match vanilla, and report anything that behaves differently.",
+    link: { label: "See the parity results", href: PARITY_HREF },
+  },
+  {
+    title: "Make add-ons",
+    body: "Build for the Orchard, the Pomme marketplace.",
+    link: { label: "Visit the Orchard", href: LINKS.orchard },
+  },
+  {
+    title: "Contribute code",
+    body: "Pomme is written in Rust, in the open on GitHub. Start with an issue marked as a good first issue.",
+    link: { label: "See all open issues", href: `${GITHUB_URL}/issues` },
+    issues: true,
+  },
+  {
+    title: "Support the project",
+    body: "Sponsor Pomme's development on GitHub Sponsors.",
+    link: { label: "Become a sponsor", href: LINKS.sponsor },
+  },
+].filter((w) => !!w);
+
+const people = contributors ?? [];
+const peopleText = [`${people.length} ${people.length === 1 ? "person" : "people"}`, commits !== null && plural(commits, "commit")]
+  .filter(Boolean)
+  .join(" · ");
+---
+
+<Layout
+  title="Get involved"
+  description="Ways to help Pomme, where the community talks, and everyone who has contributed."
+  keywords={["pomme", "community", "contribute", "discord"]}
+  canonical="/community"
+>
+  <div class="home">
+    <div class="home-s community">
+      <header class="home-stack community-head">
+        <h1 class="home-d community-h1">Get involved</h1>
+        <p class="community-lede">Pomme is open source and built by volunteers. Whatever you have time for, there is a way to help.</p>
+        <p class="community-join">
+          <a class="home-rib home-rib-sm" href={LINKS.discord} {...NEW_TAB}>Join the Discord</a>
+          {membersText && <span class="home-small">{membersText}</span>}
+        </p>
+      </header>
+
+      <section aria-labelledby="ways">
+        <h2 class="home-d community-h2" id="ways">Ways to help</h2>
+        <ol class="community-ways" role="list">
+          {
+            ways.map((w, i) => (
+              <li class="community-way">
+                <span class="home-d community-num" aria-hidden="true">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <div class="community-way-text">
+                  <h3 class="home-d">{w.title}</h3>
+                  <p class="home-muted">{w.body}</p>
+                </div>
+                <a class="home-link" href={w.link.href} {...externalAttrs({ external: !w.link.href.startsWith("/") })}>
+                  {w.link.label} →
+                </a>
+                {w.issues && issues && issues.length > 0 && (
+                  <ul class="community-issues" role="list" aria-label="Good first issues">
+                    {issues.map((issue) => (
+                      <li>
+                        <a href={issue.url} {...NEW_TAB}>
+                          {issue.title}
+                        </a>
+                        <span class="home-small">{[...issue.labels, `#${issue.number}`].join(" · ")}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            ))
+          }
+        </ol>
+      </section>
+
+      <section aria-labelledby="talk">
+        <h2 class="home-d community-h2" id="talk">Where people talk</h2>
+        <div class="community-talk">
+          <div class="community-panel">
+            <h3 class="home-d">Discord</h3>
+            <p class="home-muted">Chat with players and the team, and get help.</p>
+            {membersText && <p class="home-small">{membersText}</p>}
+            <a class="home-link" href={LINKS.discord} {...NEW_TAB}>Join the Discord →</a>
+          </div>
+          <div class="community-panel">
+            <h3 class="home-d">GitHub</h3>
+            <p class="home-muted">The code, issues and releases.</p>
+            <a class="home-link" href={NEW_ISSUE_URL} {...NEW_TAB}>Report a bug →</a>
+            <a class="home-link" href={ideasUrl} {...NEW_TAB}>Suggest a feature →</a>
+            <a class="home-link" href={GITHUB_URL} {...NEW_TAB}>Browse the code →</a>
+          </div>
+        </div>
+      </section>
+
+      {
+        people.length > 0 && (
+          <section aria-labelledby="contributors">
+            <div class="community-people-head">
+              <h2 class="home-d community-h2" id="contributors">
+                Code contributors
+              </h2>
+              <p class="home-small">{peopleText}</p>
+            </div>
+            <ul class="community-people" role="list">
+              {people.map((c) => (
+                <li>
+                  <a href={c.profileUrl} {...NEW_TAB}>
+                    <Image src={sizedAvatar(c.avatarUrl, 64)} width={32} height={32} layout="fixed" alt="" />
+                    <span>{c.login}</span>
+                  </a>
+                  <span class="home-small">
+                    {c.commits.toLocaleString("en")}
+                    <span class="home-sr"> commits</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+
+      <p class="home-small community-rules">Be respectful, stay on topic, no spam, and report bugs properly.</p>
+    </div>
+  </div>
+</Layout>

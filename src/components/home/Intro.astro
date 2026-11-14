@@ -1,0 +1,86 @@
+---
+import Features from "@/components/home/Features.astro";
+import { DEMO, LINKS, MOBILE_NOTE } from "@/data/home";
+import { listFormat } from "@/utils/content";
+import { downloadLabel, releaseParts, type HomePlatform } from "@/utils/downloads";
+import type { Release } from "@/utils/github";
+
+interface Props {
+  platforms: HomePlatform[];
+  release: Release | null;
+}
+const { platforms, release } = Astro.props;
+const downloads = platforms.filter((p) => p.downloadable);
+const parts = releaseParts(release);
+const [version] = parts;
+const meta = [...parts, MOBILE_NOTE.replace(/\.$/, "")];
+---
+
+<section class="home-w home-s home-intro">
+  <p class="home-d home-kicker">Free and open source</p>
+  <p class="home-lede">Pomme is a Minecraft: Java Edition client written in Rust, with a Vulkan renderer.</p>
+
+  {
+    downloads.map((p) => (
+      <div class="home-pick" data-pick={p.key} hidden>
+        <a href={p.href} class="home-rib home-rib-lg">
+          {p.cta}
+        </a>
+        <p class="home-small">
+          {[p.details, version].filter(Boolean).join(" · ")}
+          {downloads.length > 1 && " · also for "}
+          {listFormat.formatToParts(downloads.filter((o) => o !== p).map((o) => o.label)).map((part) => {
+            const o = downloads.find((d) => d.label === part.value);
+            return part.type === "element" && o ? (
+              <a href={o.href} class="home-inline-link" aria-label={downloadLabel(o)} set:text={o.label} />
+            ) : (
+              part.value
+            );
+          })}
+        </p>
+      </div>
+    ))
+  }
+
+  <div class="home-pick-fallback" data-pick-fallback>
+    <div class:list={["home-ribs", { "home-ribs-3": !DEMO.enabled }]}>
+      {
+        downloads.map((p) => (
+          <a href={p.href} class="home-rib" aria-label={downloadLabel(p)}>
+            {p.label}
+          </a>
+        ))
+      }
+      {
+        downloads.length === 0 && (
+          <a href={LINKS.latestRelease} class="home-rib">
+            See releases
+          </a>
+        )
+      }
+      {
+        DEMO.enabled && (
+          <a href="#demo" class="home-rib">
+            Play in browser
+          </a>
+        )
+      }
+    </div>
+    <span class="home-small">{meta.join(" · ")}</span>
+  </div>
+
+  <Features />
+</section>
+
+<script>
+  import { detectPlatform } from "@/utils/platform";
+
+  // One button for the visitor's own system; phones, unknown systems and no-JS visitors keep the full set.
+  const platform = detectPlatform();
+  const pick = platform && document.querySelector<HTMLElement>(`[data-pick="${platform}"]`);
+  const fallback = document.querySelector<HTMLElement>("[data-pick-fallback]");
+  if (pick && fallback) {
+    pick.hidden = false;
+    fallback.hidden = true;
+  }
+</script>

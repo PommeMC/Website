@@ -1,0 +1,83 @@
+---
+import { Image } from "astro:assets";
+import LogoMark from "@/components/home/LogoMark.astro";
+import { PARALLAX } from "@/data/home";
+import { HERO_IMAGE, HERO_LAYERS, HERO_RENDER, HERO_SKY_SOURCES } from "@/utils/hero";
+---
+
+<section
+  class="home-hero"
+  style={`--range: ${PARALLAX.range}px; --render-ratio: ${HERO_RENDER.height / HERO_RENDER.width}; --ridge-y: ${HERO_RENDER.ridgeY}`}
+  data-parallax
+  data-nav-until
+>
+  {
+    HERO_LAYERS.map((layer) => (
+      <Fragment>
+        <Image
+          class="home-layer"
+          src={layer.image}
+          {...HERO_IMAGE}
+          layout="none"
+          loading="eager"
+          alt=""
+          aria-hidden="true"
+          fetchpriority={layer.priority ? "high" : "auto"}
+          style={`--speed: ${PARALLAX[layer.key]}`}
+        />
+        {layer.key === "sky" && (
+          <Fragment>
+            <video
+              class="home-layer home-sky-video"
+              muted
+              loop
+              playsinline
+              preload="none"
+              aria-hidden="true"
+              style={`--speed: ${PARALLAX.sky}`}
+              data-sky-video
+            >
+              {HERO_SKY_SOURCES.map((s) => (
+                <source data-src={s.src} type={s.type} media={s.media} />
+              ))}
+            </video>
+            <div class="home-layer home-logo" style={`--speed: ${PARALLAX.logo}`}>
+              <LogoMark />
+              <p class="home-d home-logo-tag">A Minecraft client, rewritten from scratch</p>
+            </div>
+          </Fragment>
+        )}
+      </Fragment>
+    ))
+  }
+  <div class="home-hero-fade" aria-hidden="true"></div>
+</section>
+
+<script>
+  import { perFrame } from "@/utils/frame";
+
+  const still = matchMedia("(prefers-reduced-motion: reduce)");
+
+  // The sky video only loads when motion is welcome and data isn't being saved, and pauses while off screen.
+  const video = document.querySelector<HTMLVideoElement>("[data-sky-video]");
+  const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+  if (video && !saveData && !still.matches) {
+    video.querySelectorAll("source").forEach((s) => (s.src = s.dataset.src ?? ""));
+    video.addEventListener("playing", () => video.classList.add("is-playing"), { once: true });
+    video.load();
+    new IntersectionObserver(([entry]) => (entry.isIntersecting ? video.play().catch(() => {}) : video.pause())).observe(video);
+  }
+
+  // Fallback for browsers without CSS scroll-driven animations.
+  const hero = document.querySelector<HTMLElement>("[data-parallax]");
+  if (hero && !CSS.supports("animation-timeline: scroll()")) {
+    const range = parseFloat(hero.style.getPropertyValue("--range"));
+    const draw = () => {
+      hero.style.setProperty("--s", `${still.matches ? 0 : Math.min(scrollY, range)}px`);
+    };
+    const queue = perFrame(draw);
+    addEventListener("scroll", queue, { passive: true });
+    still.addEventListener("change", queue);
+    draw();
+  }
+</script>

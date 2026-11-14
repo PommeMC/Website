@@ -1,0 +1,579 @@
+.home ul[role="list"] {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.home p {
+  margin: 0;
+}
+
+.home-h2 {
+  font-size: 44px;
+}
+.home-h2-sm {
+  font-size: 36px;
+}
+.home-h2-lg {
+  font-size: 52px;
+}
+.home-sun {
+  color: var(--sun);
+}
+.home-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 3px 28px 0;
+  font: 700 17px var(--display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 0;
+  cursor: pointer;
+}
+.home-pri {
+  background: var(--sun);
+  color: var(--ink) !important;
+}
+.home-pri:hover {
+  background: var(--sun-hover);
+}
+.home-pri:disabled {
+  cursor: progress;
+  opacity: 0.85;
+}
+
+.home [id] {
+  scroll-margin-top: var(--nav-h);
+}
+
+.home-hero {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  min-height: 480px;
+  overflow: hidden;
+  background: #5792f5;
+  /* Wide screens crop the grass rather than the sky, keeping the horizon below the logo. */
+  --crop-y: 0.35;
+  container-type: size;
+}
+.home-layer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% calc(var(--crop-y) * 100%);
+  will-change: transform;
+  transform: translateY(calc(var(--s, 0px) * var(--speed, 0)));
+}
+@keyframes home-parallax {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(calc(var(--range) * var(--speed, 0)));
+  }
+}
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .home-layer {
+      animation: home-parallax linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 var(--range);
+    }
+    .anim-fall .home-mark-apple .home-mark-fall {
+      animation: home-fall linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 1100px;
+    }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-layer {
+    transform: none !important;
+    animation: none !important;
+  }
+}
+.home-sky-video {
+  opacity: 0;
+  transition: opacity 800ms ease;
+}
+.home-sky-video.is-playing {
+  opacity: 1;
+}
+.home-logo {
+  --logo-w: min(760px, 80vw, 75svh);
+  /* Rendered image height under object-fit: cover, then the ridge's on-screen y after the crop. */
+  --image-h: max(100cqh, calc(100cqw * var(--render-ratio)));
+  --ridge: calc(var(--ridge-y) * var(--image-h) - var(--crop-y) * (var(--image-h) - 100cqh));
+  bottom: calc(100cqh - var(--ridge) + 6px);
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.home-logo-tag {
+  font-size: 20px;
+  letter-spacing: 0.14em;
+  text-align: center;
+  color: #0f2f14;
+}
+img.home-layer {
+  pointer-events: none;
+}
+
+.home-mark {
+  position: relative;
+  width: var(--logo-w);
+  margin: 0;
+  /* Keeps the letters readable when the logo scrolls down over the terrain. */
+  filter: drop-shadow(0 4px 0 rgb(15 47 20 / 0.55));
+}
+.home-mark-part,
+.home-mark-fall,
+.home-mark-sway,
+.home-mark-img {
+  display: block;
+  transform-origin: 50% 100%;
+}
+.home-mark-part {
+  position: absolute;
+}
+.home-mark-fall,
+.home-mark-sway,
+.home-mark-img {
+  width: 100%;
+  height: 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .anim-build .home-mark-part {
+    animation: home-drop 650ms cubic-bezier(0.3, 0.7, 0.4, 1) both;
+    animation-delay: calc(150ms + var(--n) * 90ms);
+  }
+  .anim-sway .home-mark-apple .home-mark-sway {
+    animation: home-sway 7s ease-in-out 1.6s infinite;
+  }
+  .anim-hop .home-mark-apple:hover .home-mark-img,
+  .anim-hop .home-mark-apple.is-poked .home-mark-img {
+    animation: home-hop 650ms ease-out;
+  }
+}
+
+@keyframes home-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-140%);
+  }
+  55% {
+    opacity: 1;
+  }
+  70% {
+    transform: translateY(0) scaleY(0.88);
+  }
+  85% {
+    transform: translateY(-4%) scaleY(1.03);
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes home-sway {
+  0%,
+  80%,
+  100% {
+    rotate: 0deg;
+  }
+  85% {
+    rotate: -3deg;
+  }
+  90% {
+    rotate: 2.5deg;
+  }
+  95% {
+    rotate: -1deg;
+  }
+}
+@keyframes home-hop {
+  0% {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+  30% {
+    translate: 0 -18%;
+    rotate: -6deg;
+  }
+  55% {
+    translate: 0 0;
+    rotate: 4deg;
+  }
+  70% {
+    translate: 0 -5%;
+    rotate: -2deg;
+  }
+  100% {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+}
+@keyframes home-fall {
+  0%,
+  15% {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+  100% {
+    translate: 35% 260%;
+    rotate: 160deg;
+  }
+}
+.home-hero-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 140px;
+  background: linear-gradient(to bottom, rgb(15 51 26 / 0), var(--bg));
+}
+
+.home-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 26px;
+  padding-top: 88px;
+  padding-bottom: 88px;
+  text-align: center;
+}
+.home-kicker {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  color: var(--text);
+}
+.home-features {
+  width: 100%;
+  margin-top: 72px;
+  text-align: left;
+}
+.home-ribs {
+  display: grid;
+  grid-template-columns: repeat(2, 320px);
+  gap: 24px 56px;
+}
+.home-ribs-3 {
+  grid-template-columns: repeat(3, 260px);
+  gap: 24px 32px;
+}
+.home-lede {
+  max-width: 680px;
+  text-wrap: balance;
+  font-size: 19px;
+  color: var(--muted);
+}
+.home-pick,
+.home-pick-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.home-demo {
+  padding-bottom: 104px;
+}
+.home-demo-frame {
+  background: var(--bar);
+}
+.home-demo-stage {
+  position: relative;
+  aspect-ratio: 16 / 9;
+}
+.home-demo-stage img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.home-demo-play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.home-demo-cap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 6px 16px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.home-demo-cap strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.home-compare-head {
+  margin-bottom: 40px;
+}
+.home-not {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+.home-not-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 28px;
+  background: var(--bar);
+  color: var(--muted);
+}
+.home-not-title {
+  font-size: 30px;
+}
+/* Josefin Sans puts its line-through below the middle of capitals, so the line is drawn by hand. */
+.home-not-col s {
+  position: relative;
+  text-decoration: none;
+}
+.home-not-col s::after {
+  content: "";
+  position: absolute;
+  inset: 0.39em 0 auto;
+  height: 2px;
+  translate: 0 -50%;
+  background: currentColor;
+}
+.home-not-yes {
+  background: var(--sun);
+  color: var(--ink);
+}
+.home-points {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  margin-top: 48px !important;
+}
+.home-feature {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 18px;
+  border-top: 2px solid var(--leaf);
+}
+.home-feature h3 {
+  font-size: 17px;
+}
+.home-feature p {
+  color: var(--muted);
+  font-size: 16px;
+}
+
+.home-pct {
+  margin-top: 8px;
+  font-size: 84px;
+  color: var(--sun);
+}
+.home-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.home-counts b {
+  color: var(--text);
+}
+.home-rows {
+  border-top: 1px solid var(--line);
+}
+.home-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 16px;
+}
+.home-row > span:first-child {
+  flex: 1;
+}
+
+.home-totals {
+  color: var(--sun);
+  font-size: 15px;
+  font-weight: 600;
+}
+.home-people {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 24px;
+}
+.home-person {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+  border-top: 1px solid var(--line);
+  font-size: 15px;
+  font-weight: 600;
+}
+.home-person img,
+.home-person-count {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+.home-person img {
+  background: var(--line);
+}
+.home-person span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.home-person:hover span {
+  color: var(--sun);
+}
+.home-person-more {
+  color: var(--sun) !important;
+}
+.home-person-count {
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--sun);
+  font-size: 14px;
+}
+.home-news-block {
+  margin-top: 72px;
+}
+.home-news-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 12px;
+}
+.home-news-head h2 {
+  font-size: 24px;
+}
+.home-news-list {
+  border-bottom: 1px solid var(--line);
+}
+.home-news {
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr);
+  gap: 20px;
+  padding: 20px 0;
+  border-top: 1px solid var(--line);
+}
+.home-news time {
+  font-size: 14px;
+  color: var(--muted);
+}
+.home-news .t {
+  font-weight: 600;
+  font-size: 19px;
+  line-height: 1.3;
+}
+.home-news:hover .t {
+  color: var(--sun);
+}
+
+.home-download {
+  align-items: center;
+}
+.home-dl {
+  background: var(--bar);
+}
+.home-dl-row {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px 20px;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--line);
+}
+.home-dl-name {
+  font-size: 20px;
+}
+.home-dl-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 14px;
+}
+.home-dl-note {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.home-dl-go {
+  font-size: 14px;
+  letter-spacing: 0.1em;
+}
+.home-dl-soon .home-dl-name,
+.home-dl-soon .home-dl-info {
+  color: var(--muted);
+}
+.home-dl-meta {
+  padding: 16px 24px;
+}
+/* Keep in sync with MOBILE_BREAKPOINT in src/data/layout.ts. */
+@media (max-width: 900px) {
+  .home-hero {
+    height: var(--hero-mobile-h);
+    min-height: 0;
+  }
+  .home-logo {
+    --logo-w: calc(100vw - 4 * var(--gutter));
+    gap: 10px;
+  }
+  .home-logo-tag {
+    font-size: 12px;
+    letter-spacing: 0.06em;
+  }
+  .home-s {
+    padding-top: 64px;
+    padding-bottom: 64px;
+  }
+  .home-h2,
+  .home-h2-sm,
+  .home-h2-lg {
+    font-size: 32px;
+  }
+  .home-not {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .home-points,
+  .home-ribs,
+  .home-ribs-3 {
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    gap: 14px;
+  }
+  .home-people {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .home-dl-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 16px;
+  }
+  .home-dl-info {
+    grid-column: 1 / -1;
+  }
+  .home-dl-meta {
+    padding: 16px;
+  }
+  .home-news {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+}

@@ -1,0 +1,33 @@
+---
+import { NEWS_CATEGORIES, type NewsCategory } from "@/utils/news";
+
+interface Props {
+  category: NewsCategory;
+}
+const { category } = Astro.props;
+---
+
+<span class="home-d tag" data-category={category}>{NEWS_CATEGORIES[category].tag}</span>
+
+<style>
+  .tag {
+    display: inline-block;
+    justify-self: start;
+    padding: 4px 7px 1px;
+    background: var(--sun);
+    color: var(--ink);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+  .tag[data-category="dev-log"] {
+    background: var(--leaf);
+  }
+  .tag[data-category="announcement"] {
+    padding: 3px 6px 0;
+    border: 1px solid var(--text);
+    background: none;
+    color: var(--text);
+  }
+</style>

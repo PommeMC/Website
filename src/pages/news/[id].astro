@@ -1,110 +1,133 @@
 ---
+import "@/styles/post.css";
+import { Image } from "astro:assets";
+import { render, type CollectionEntry } from "astro:content";
+import CompareSlider from "@/components/CompareSlider.astro";
+import LongDate from "@/components/LongDate.astro";
+import NewsTag from "@/components/news/NewsTag.astro";
+import PostCover from "@/components/news/PostCover.astro";
 import Layout from "@/layouts/Layout.astro";
-import { getCollection, render } from "astro:content";
-import { formatDateLong, formatRelativeDate } from "@/utils/time";
-import { countWords, minutesToRead, truncateForPreview } from "@/utils/content";
-import { components } from "@/mdx/components";
-import { Icon } from "astro-icon/components";
+import { DOWNLOADS_HREF } from "@/data/nav";
+import { listFormat } from "@/utils/content";
+import { buildPlatforms } from "@/utils/downloads";
+import { getLatestRelease, sizedAvatar } from "@/utils/github";
+import { getPosts, postInfo } from "@/utils/news";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("posts");
-  return posts.map((post) => ({
+  const posts = await getPosts();
+  return posts.map((post, i) => ({
     params: { id: post.id },
-    props: { post },
+    props: { post, newer: posts[i - 1], older: posts[i + 1] },
   }));
 }
 
-const { post } = Astro.props;
+interface Props {
+  post: CollectionEntry<"posts">;
+  newer?: CollectionEntry<"posts">;
+  older?: CollectionEntry<"posts">;
+}
+const { post, newer, older } = Astro.props;
+const { data } = post;
 const { Content } = await render(post);
+/** Components a post can use without importing them. */
+const components = { CompareSlider };
+const { title, summary, readTime } = postInfo(post);
 
-const words = countWords(post.body ?? "");
-const mins = minutesToRead(words);
-const excerpt = truncateForPreview(post.body ?? "", 160);
-const publishedAt = new Date(post.data.date);
+const release = await getLatestRelease();
+const systems = listFormat.format(
+  buildPlatforms(release)
+    .filter((p) => p.downloadable)
+    .map((p) => p.label)
+);
 ---
 
-<Layout title={post.data.title!} description={excerpt} keywords={[]} canonical={`/news/${post.id}`}>
-  <section class="section-border section-header-bg border-b">
-    <div class="mx-auto max-w-4xl px-6 pt-20 pb-14 lg:pt-28">
-      <a
-        href="/news"
-        class="text-muted hover:text-primary-400 inline-flex items-center gap-1.5 font-[Rajdhani] text-xs font-bold tracking-wider uppercase transition-colors"
-      >
-        <Icon name="icons/heroicons/chevron-left" class="size-3.5" />
-        Back to news
-      </a>
-      <h1 class="animate-fade-up mt-6 font-[Rajdhani] text-4xl leading-[1.1] font-bold tracking-wide uppercase lg:text-5xl">
-        {post.data.title}
-      </h1>
-      <div class="animate-fade-up text-dim mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs delay-100">
-        <span class="inline-flex items-center gap-1.5">
-          <Icon name="icons/lucide/calendar" class="size-3.5" />
-          <time datetime={publishedAt.toISOString()}>{formatDateLong(publishedAt)}</time>
-          <span class="opacity-60">· {formatRelativeDate(publishedAt)}</span>
-        </span>
-        <span>·</span>
-        <span class="inline-flex items-center gap-1.5">
-          <Icon name="icons/lucide/clock" class="size-3.5" />
-          {mins} min read
-        </span>
-        <span>·</span>
-        <span>{words.toLocaleString()} words</span>
+<Layout title={title} description={summary} keywords={["pomme", "news"]} canonical={`/news/${post.id}`}>
+  <div class="home">
+    <article class="home-s post">
+      <header class="post-col post-head">
+        <a class="home-link post-back" href="/news">← All news</a>
+        <NewsTag category={data.category} />
+        <h1 class="home-d post-title">{title}</h1>
+        {data.description && <p class="post-summary">{data.description}</p>}
+        <p class="post-byline">
+          <img src={data.authorAvatar} width="36" height="36" alt="" loading="eager" />
+          <span>
+            <strong>{data.author}</strong>
+            <span class="home-small">
+              <LongDate date={data.date} /> · {readTime}
+            </span>
+          </span>
+        </p>
+      </header>
+
+      {
+        data.cover && (
+          <figure class="post-wide">
+            <PostCover cover={data.cover} widths={[640, 960, 1440, 1920]} sizes="(max-width: 1000px) 100vw, 960px" />
+            {data.cover.caption && <figcaption class="home-small">{data.cover.caption}</figcaption>}
+          </figure>
+        )
+      }
+
+      <div class="post-body">
+        <Content components={components} />
       </div>
-      <div class="animate-fade-up mt-5 flex items-center gap-3 delay-200">
+
+      <footer class="post-col post-end">
         {
-          post.data.authorAvatar && (
-            <img
-              src={post.data.authorAvatar}
-              alt=""
-              width="36"
-              height="36"
-              class="border-subtle h-9 w-9 rounded-full object-cover"
-              loading="lazy"
-              decoding="async"
-            />
+          data.thanks && data.thanks.length > 0 && (
+            <p class="home-small post-thanks">
+              <span class="post-thanks-faces" aria-hidden="true">
+                {data.thanks.map((login) => (
+                  <Image
+                    src={sizedAvatar(`https://avatars.githubusercontent.com/${login}`, 56)}
+                    width={28}
+                    height={28}
+                    layout="fixed"
+                    alt=""
+                  />
+                ))}
+              </span>
+              <span>
+                Thanks to{" "}
+                {listFormat.formatToParts(data.thanks).map((part) =>
+                  part.type === "element" ? (
+                    <a class="home-quiet-link" href={`https://github.com/${part.value}`}>
+                      {part.value}
+                    </a>
+                  ) : (
+                    part.value
+                  )
+                )}{" "}
+                for their work on this.
+              </span>
+            </p>
           )
         }
-        <span class="text-muted font-[Rajdhani] text-sm font-bold tracking-wider uppercase">{post.data.author}</span>
-      </div>
-    </div>
-  </section>
 
-  {
-    post.data.cover && (
-      <section class="section-border bg-section-dark border-b">
-        <div class="mx-auto max-w-4xl px-6 pt-10 pb-4">
-          <div class="border-subtle overflow-hidden rounded-[14px]">
-            <img
-              src={typeof post.data.cover === "string" ? post.data.cover : post.data.cover.src}
-              alt={typeof post.data.cover === "string" ? "" : (post.data.cover.alt ?? "")}
-              loading="eager"
-              decoding="async"
-              class="aspect-video h-full w-full object-cover"
-            />
+        <div class="post-get">
+          <div>
+            <p class="home-d post-get-title">{release ? `Get v${release.version}` : "Get Pomme"}</p>
+            <p>{systems ? `${systems}. ` : ""}Already on Pomme? It updates itself.</p>
           </div>
-          {typeof post.data.cover !== "string" && post.data.cover.credit && (
-            <p class="text-dim mt-2 text-right text-xs">{post.data.cover.credit}</p>
-          )}
+          <a class="home-d post-get-button" href={DOWNLOADS_HREF}>Download</a>
         </div>
-      </section>
-    )
-  }
 
-  <section class="bg-section-dark">
-    <article class="prose dark:prose-invert mx-auto max-w-3xl px-6 py-20">
-      <Content components={components} />
+        <nav class="post-nav" aria-label="More news">
+          {
+            older && (
+              <a href={`/news/${older.id}`}>
+                <span class="home-small">← Older</span>
+                <span class="home-d">{postInfo(older).title}</span>
+              </a>
+            )
+          }
+          <a href={newer ? `/news/${newer.id}` : "/news"} class="post-nav-next">
+            <span class="home-small">{newer ? "Newer →" : "Newest post"}</span>
+            <span class="home-d">{newer ? postInfo(newer).title : "Back to all news →"}</span>
+          </a>
+        </nav>
+      </footer>
     </article>
-  </section>
-
-  <section class="section-border section-alt-bg border-t">
-    <div class="mx-auto max-w-4xl px-6 py-14 text-center">
-      <a
-        href="/news"
-        class="text-primary-400 hover:text-primary-500 inline-flex items-center gap-1.5 font-[Rajdhani] text-sm font-bold tracking-wider uppercase transition-colors"
-      >
-        <Icon name="icons/heroicons/chevron-left" class="size-4" />
-        All news
-      </a>
-    </div>
-  </section>
+  </div>
 </Layout>

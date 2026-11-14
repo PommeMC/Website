@@ -25,3 +25,10 @@ export function formatBytes(bytes: number): string {
   if (bytes < 1024 ** 3) return `${(bytes / 1024 ** 2).toFixed(1)} MB`;
   return `${(bytes / 1024 ** 3).toFixed(2)} GB`;
 }
+
+export const plural = (n: number, word: string) => `${n.toLocaleString("en")} ${word}${n === 1 ? "" : "s"}`;
+
+/** "a, b and c", British style (no comma before "and"). */
+export const listFormat = new Intl.ListFormat("en-GB");
+
+export const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);

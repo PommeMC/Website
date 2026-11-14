@@ -1,7 +1,5 @@
 import { defineConfig } from "astro/config";
-import tailwindcss from "@tailwindcss/vite";
 import { execSync } from "child_process";
-import svelte from "@astrojs/svelte";
 import icon from "astro-icon";
 import sitemap from "@astrojs/sitemap";
 import cloudflare from "@astrojs/cloudflare";
@@ -13,7 +11,6 @@ export default defineConfig({
   site: "https://pomme.rs",
 
   vite: {
-    plugins: [tailwindcss()],
     define: {
       "import.meta.env.GIT_COMMIT_HASH": JSON.stringify(GIT_COMMIT_HASH),
     },
@@ -27,15 +24,10 @@ export default defineConfig({
         protocol: "https",
         hostname: "avatars.githubusercontent.com",
       },
-      {
-        protocol: "https",
-        hostname: "images.opencollective.com",
-      },
     ],
   },
 
   integrations: [
-    svelte(),
     icon({
       iconDir: "src/assets",
     }),

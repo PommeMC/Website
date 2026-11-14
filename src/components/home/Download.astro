@@ -1,0 +1,44 @@
+---
+import Apple from "@/assets/brand/pomme-apple.svg";
+import { plural } from "@/utils/content";
+import { downloadLabel, releaseParts, type HomePlatform } from "@/utils/downloads";
+import type { Release } from "@/utils/github";
+
+interface Props {
+  platforms: HomePlatform[];
+  release: Release | null;
+  ruled: boolean;
+}
+const { platforms, release, ruled } = Astro.props;
+const meta = release ? [...releaseParts(release), plural(release.downloads, "download")] : [];
+---
+
+<section id="download" class:list={{ "home-ruled": ruled }}>
+  <div class="home-w home-s home-two home-download">
+    <div class="home-stack">
+      <Apple width={48} height={48} aria-hidden="true" />
+      <h2 class="home-d home-h2 home-h2-lg">Ready to pick one?</h2>
+      <p class="home-muted">Free to download. Sign in with the Microsoft account that owns Java Edition, and you're in.</p>
+    </div>
+
+    <div class="home-dl">
+      <ul class="home-dl-list" role="list">
+        {
+          platforms.map((p) => (
+            <li class:list={["home-dl-row", { "home-dl-soon": !p.downloadable }]}>
+              <span class="home-d home-dl-name">{p.label}</span>
+              <span class="home-dl-info">
+                <span>{p.details}</span>
+                {p.note && <span class="home-dl-note">{p.note}</span>}
+              </span>
+              <a class="home-d home-link home-dl-go" href={p.href} aria-label={p.downloadable ? downloadLabel(p) : undefined}>
+                {p.downloadable ? "Download" : p.cta}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      {meta.length > 0 && <p class="home-small home-dl-meta">{meta.join(" · ")}</p>}
+    </div>
+  </div>
+</section>

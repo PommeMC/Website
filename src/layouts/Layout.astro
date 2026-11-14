@@ -1,6 +1,7 @@
 ---
-import Footer from "@/components/layout/Footer.astro";
-import NavBar from "@/components/layout/NavBar.astro";
+import SiteFooter from "@/components/layout/SiteFooter.astro";
+import SiteNav from "@/components/layout/SiteNav.astro";
+import { NAV_HEIGHT } from "@/data/layout";
 import "@/styles/global.css";
 
 interface Props {
@@ -8,13 +9,17 @@ interface Props {
   description: string;
   keywords: string[];
   canonical: string;
+  /** Set to false on pages that render their own main landmark. */
+  chrome?: boolean;
+  /** Nav starts clear over a full-bleed hero and turns solid on scroll. */
+  navOverlay?: boolean;
 }
 
-const { title, description, keywords, canonical } = Astro.props;
+const { title, description, keywords, canonical, chrome = true, navOverlay = false } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en" class="dark bg-background-dark-90 scroll-smooth text-white [tap-highlight-color:transparent]" style="color-scheme: dark;">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
@@ -34,15 +39,22 @@ const { title, description, keywords, canonical } = Astro.props;
     <link rel="icon" href="/favicon.ico" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <title>{`${title} | Pomme`}</title>
+    <slot name="head" />
   </head>
-  <body class="flex min-h-screen flex-col">
-    <div class="bg-primary-400/10 border-primary-400/20 text-primary-400 border-b px-6 py-2 text-center text-xs">
-      This website is currently in preview. Things may change.
-    </div>
-    <NavBar />
-    <main class="flex-1">
-      <slot />
-    </main>
-    <Footer />
+  <body style={`--nav-h: ${NAV_HEIGHT}px`}>
+    <SiteNav overlay={navOverlay} />
+    {
+      chrome ? (
+        <main id="main">
+          <slot />
+        </main>
+      ) : (
+        <slot />
+      )
+    }
+    <SiteFooter />
+    <script>
+      addEventListener("dragstart", (e) => e.preventDefault());
+    </script>
   </body>
 </html>

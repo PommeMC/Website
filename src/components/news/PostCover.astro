@@ -1,0 +1,12 @@
+---
+import { Image } from "astro:assets";
+
+interface Props {
+  cover: { src: ImageMetadata | string; alt: string };
+  widths: number[];
+  sizes: string;
+}
+const { cover, widths, sizes } = Astro.props;
+---
+
+<Image src={cover.src} alt={cover.alt} inferSize={typeof cover.src === "string"} {widths} {sizes} loading="eager" />

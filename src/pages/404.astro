@@ -1,27 +1,79 @@
 ---
-import Button from "@/components/input/Button.astro";
+import { Image } from "astro:assets";
+import core from "@/assets/brand/apple-core.png";
 import Layout from "@/layouts/Layout.astro";
+import { NEW_TAB, externalAttrs, getSitePages } from "@/data/nav";
+import { NEW_ISSUE_URL } from "@/utils/github";
+
+const pages = await getSitePages();
 ---
 
-<Layout title="404 · Not found" description="The page you're looking for doesn't exist." keywords={["404", "not found"]} canonical="/404">
-  <section class="bg-section-dark">
-    <div class="mx-auto flex min-h-[calc(100vh-14rem)] max-w-[1400px] flex-col items-center justify-center px-6 py-24 text-center">
-      <div class="animate-fade-up text-primary-400 font-[Rajdhani] text-[8rem] leading-none font-bold tracking-wide lg:text-[12rem]">
-        404
-      </div>
-
-      <h1 class="animate-fade-up mt-2 font-[Rajdhani] text-2xl font-bold tracking-wide uppercase delay-100 lg:text-3xl">
-        Page <span class="text-primary-400">not found</span>
-      </h1>
-
-      <p class="animate-fade-up text-muted mt-4 max-w-md delay-200">
-        The page you're looking for doesn't exist, has been moved, or is hiding behind a chunk that hasn't loaded yet.
-      </p>
-
-      <div class="animate-fade-up mt-10 flex flex-col gap-4 delay-300 sm:flex-row">
-        <Button variant="filled" size="lg" href="/">Back to home</Button>
-        <Button variant="outlined" size="lg" href="/downloads">Download Pomme</Button>
+<Layout title="Page not found" description="This page doesn't exist." keywords={[]} canonical="/404">
+  <div class="home">
+    <div class="home-w home-s missing">
+      <Image src={core} alt="An eaten apple core" widths={[180, 379]} sizes="180px" loading="eager" />
+      <div class="home-stack">
+        <p class="home-d missing-kicker">Error 404</p>
+        <h1 class="home-d missing-title">Someone already ate this page.</h1>
+        <p class="home-muted">The link may be old, or the page may have moved. Nothing is wrong on your end.</p>
+        <a class="home-rib" href="/">Back to the homepage</a>
+        <nav class="missing-links" aria-label="Pages">
+          {
+            pages.map((l) => (
+              <a class="home-link" href={l.href} {...externalAttrs(l)}>
+                {l.label}
+              </a>
+            ))
+          }
+        </nav>
+        <p class="home-small">
+          Followed a link from our site to get here? <a class="home-inline-link" href={NEW_ISSUE_URL} {...NEW_TAB}>Tell us on GitHub</a> so we
+          can fix it.
+        </p>
       </div>
     </div>
-  </section>
+  </div>
 </Layout>
+
+<style>
+  .missing {
+    display: grid;
+    grid-template-columns: 180px minmax(0, 520px);
+    justify-content: center;
+    align-items: center;
+    gap: 64px;
+    min-height: 60vh;
+  }
+  .missing :global(img) {
+    width: 180px;
+    height: auto;
+  }
+  .missing-kicker {
+    font-size: 16px;
+    letter-spacing: 0.3em;
+    color: var(--sun);
+  }
+  .missing-title {
+    font-size: 52px;
+  }
+  .missing-links {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 20px;
+  }
+
+  /* Keep in sync with MOBILE_BREAKPOINT in src/data/layout.ts. */
+  @media (max-width: 900px) {
+    .missing {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 32px;
+      min-height: 0;
+    }
+    .missing :global(img) {
+      width: 120px;
+    }
+    .missing-title {
+      font-size: 36px;
+    }
+  }
+</style>

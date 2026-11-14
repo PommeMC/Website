@@ -1,0 +1,33 @@
+---
+import CompareSlider from "@/components/CompareSlider.astro";
+import { shotLabel, type Shot } from "@/utils/parity";
+
+interface Props {
+  shot: Shot;
+  title: string;
+}
+const { shot, title } = Astro.props;
+const label = shotLabel(shot.name);
+---
+
+<figure class="parity-shot">
+  <CompareSlider
+    before={{ src: shot.vanilla, label: "Vanilla", alt: `${title}, ${label}: vanilla` }}
+    after={{ src: shot.pomme, label: "Pomme", alt: `${title}, ${label}: Pomme` }}
+    size={shot.width && shot.height ? { width: shot.width, height: shot.height } : undefined}
+  >
+    {shot.heatmap && shot.flagged && <img class="parity-heat" src={shot.heatmap} alt="" loading="lazy" hidden />}
+  </CompareSlider>
+  <figcaption class="home-small">
+    <span>{label}</span>
+    <span>{Math.round(shot.score * 100)}% similar</span>
+    {shot.flagged && <span class="parity-flag">Flagged</span>}
+    {
+      shot.heatmap && shot.flagged && (
+        <button type="button" class="parity-heat-toggle" aria-pressed="false" data-heat-toggle>
+          Show differences
+        </button>
+      )
+    }
+  </figcaption>
+</figure>

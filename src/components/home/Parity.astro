@@ -1,0 +1,42 @@
+---
+import Meter from "@/components/Meter.astro";
+import { PARITY_HREF } from "@/data/nav";
+import { plural } from "@/utils/content";
+import { tally, type ParityRun } from "@/utils/parity";
+
+interface Props {
+  run: ParityRun;
+}
+const { run } = Astro.props;
+const total = tally(run.scenarios);
+---
+
+<section id="parity" class="home-alt">
+  <div class="home-w home-s home-two">
+    <div class="home-stack">
+      <h2 class="home-d home-h2">How ripe is it?</h2>
+      <p class="home-muted">
+        The same in-game scenarios run on Pomme and on vanilla Minecraft {run.versions.vanilla}, with the results side by side.
+      </p>
+      <p class="home-d home-pct">{total.behaveAlike}</p>
+      <p class="home-counts">
+        <span><b>of {plural(total.scenarios, "scenario")}</b> behave the same</span>
+        <span><b>{total.shotsAlike} of {total.shots}</b> screenshot pairs within tolerance</span>
+      </p>
+      <a class="home-link" href={PARITY_HREF}>See every scenario →</a>
+    </div>
+    <ul class="home-rows" role="list">
+      {
+        run.coverage.map((c) => (
+          <li class="home-row">
+            <span>{c.label}</span>
+            <span class="home-small">
+              {c.counts.implemented} of {c.items.length} built
+            </span>
+            <Meter value={c.counts.implemented} max={c.items.length} />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

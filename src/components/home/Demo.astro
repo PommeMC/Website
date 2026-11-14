@@ -1,0 +1,48 @@
+---
+import { Image } from "astro:assets";
+import poster from "@/assets/images/home-1.png";
+import { DEMO } from "@/data/home";
+---
+
+<section id="demo" class="home-w home-demo">
+  <div class="home-demo-frame">
+    <div class="home-demo-stage" data-demo-mount data-entry={DEMO.entry}>
+      <Image
+        src={poster}
+        alt="Pomme running in the browser"
+        widths={[640, 1120, 1600]}
+        sizes="(max-width: 1120px) 100vw, 1056px"
+        format="webp"
+      />
+      <button type="button" class="home-btn home-pri home-demo-play" data-demo-play>
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4l14 8-14 8z"></path></svg>
+        Play the demo
+      </button>
+    </div>
+    <div class="home-demo-cap"><strong>Playable demo</strong><span>Runs in your browser · nothing to install</span></div>
+  </div>
+</section>
+
+<script>
+  const stage = document.querySelector<HTMLElement>("[data-demo-mount]");
+  const play = stage?.querySelector<HTMLButtonElement>("[data-demo-play]");
+  if (stage && play) {
+    play.addEventListener("click", async () => {
+      const entry = stage.dataset.entry;
+      if (!entry) return;
+      play.disabled = true;
+      play.textContent = "Loading…";
+      const poster = [...stage.childNodes];
+      try {
+        const mod = (await import(/* @vite-ignore */ entry)) as { mount?: (el: HTMLElement) => unknown };
+        stage.replaceChildren();
+        await mod.mount?.(stage);
+      } catch (err) {
+        console.error("[demo] failed to load", err);
+        stage.replaceChildren(...poster);
+        play.disabled = false;
+        play.textContent = "Couldn't load the demo. Try again";
+      }
+    });
+  }
+</script>

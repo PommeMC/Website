@@ -1,0 +1,276 @@
+---
+import "@/styles/parity.css";
+import LongDate from "@/components/LongDate.astro";
+import Meter from "@/components/Meter.astro";
+import ParityShot from "@/components/parity/ParityShot.astro";
+import ResultMark from "@/components/parity/ResultMark.astro";
+import Layout from "@/layouts/Layout.astro";
+import { NEW_TAB, PARITY_HREF } from "@/data/nav";
+import { listFormat, plural } from "@/utils/content";
+import { GITHUB_URL, NEW_ISSUE_URL } from "@/utils/github";
+import { getParityRun, scenarioAnchor, tally, type ParityRun, type Scenario } from "@/utils/parity";
+
+// Only generated when a parity export is present, so without one /parity is a real 404.
+export async function getStaticPaths() {
+  const run = await getParityRun();
+  return run ? [{ params: { parity: "parity" }, props: { run } }] : [];
+}
+
+const { run } = Astro.props as { run: ParityRun };
+
+const total = tally(run.scenarios);
+const SHOWN_SHOTS = 4;
+const sameVersion = run.versions.pomme === run.versions.vanilla;
+const versionText = sameVersion
+  ? `Both on Minecraft ${run.versions.vanilla}`
+  : `Pomme on ${run.versions.pomme}, vanilla on ${run.versions.vanilla}`;
+const gapAreas = [...new Set(run.gaps.map((g) => g.area))];
+const titles = new Map(run.scenarios.map((s) => [s.id, s.title]));
+const shotsText = (s: Scenario) => {
+  const t = tally([s]);
+  return t.shots > 0 ? `${t.shotsAlike} of ${t.shots} within tolerance` : "No screenshots";
+};
+---
+
+<Layout
+  title="Parity with vanilla"
+  description="The same in-game scripts run on Pomme and on vanilla Minecraft, with the results side by side."
+  keywords={["pomme", "parity", "vanilla", "minecraft"]}
+  canonical={PARITY_HREF}
+>
+  <div class="home">
+    <div class="home-w home-s parity">
+      <aside class="parity-side">
+        <div class="home-stack">
+          <h1 class="home-d parity-h1">How close is it to vanilla?</h1>
+          <p class="home-muted">
+            A scenario is a short scripted play session: the game joins a server, does one thing, like placing a block from the offhand, and
+            checks the result. Each one runs on Pomme and on vanilla Minecraft with the same server settings.
+          </p>
+        </div>
+        <dl class="parity-stats">
+          <div>
+            <dt class="home-small">Scenarios that behave the same</dt>
+            <dd class="home-d"><span class="parity-big">{total.behaveAlike}</span> of {total.scenarios}</dd>
+          </div>
+          <div>
+            <dt class="home-small">Screenshot pairs within tolerance</dt>
+            <dd class="home-d"><span class="parity-big">{total.shotsAlike}</span> of {total.shots}</dd>
+          </div>
+        </dl>
+        <p class="home-small">✓ passed · ✗ failed · – not run. A scenario passes when all of its checks do.</p>
+        <p class="home-small">
+          {versionText} · Pomme at <a class="home-inline-link" href={`${GITHUB_URL}/commit/${run.commit}`} {...NEW_TAB}
+            >{run.commit.slice(0, 7)}</a
+          > · run on <LongDate date={run.generatedAt} />
+        </p>
+        <p class="home-small">
+          Screenshots are compared cell by cell on colour. A flagged pair has at least one cell past the threshold; open a scenario and
+          choose Show differences to see where.
+        </p>
+        <a class="home-rib home-rib-sm" href={NEW_ISSUE_URL} {...NEW_TAB}>Report a difference</a>
+      </aside>
+
+      <div class="parity-main">
+        {
+          run.coverage.length > 0 && (
+            <section aria-labelledby="built">
+              <div class="parity-cat-head">
+                <h2 class="home-d" id="built">
+                  Built so far
+                </h2>
+                <p class="home-small">Measured against vanilla's own lists for {run.versions.vanilla}.</p>
+              </div>
+              <div class="parity-coverage">
+                {run.coverage.map((c) => {
+                  const total = c.items.length;
+                  // Built items link to the scenarios that cover them.
+                  const items = c.items.map((i) => ({
+                    ...i,
+                    tests: i.status === "implemented" ? i.scripts.filter((id) => titles.has(id)) : [],
+                  }));
+                  const lists = [
+                    { label: "Built", items: items.filter((i) => i.status === "implemented") },
+                    { label: "Still to do", items: items.filter((i) => i.status !== "implemented") },
+                  ];
+                  return (
+                    <div class="parity-cov">
+                      <h3 class="home-d">{c.label}</h3>
+                      <p>
+                        <span class="home-d parity-cov-count">{c.counts.implemented}</span> of {total} built
+                      </p>
+                      {c.counts.progress > 0 && <p class="home-small">{c.counts.progress} in progress</p>}
+                      <Meter value={c.counts.implemented} max={total} />
+                      {lists.map(
+                        (list) =>
+                          list.items.length > 0 && (
+                            <details class="parity-more">
+                              <summary class="home-link">
+                                {list.label} ({list.items.length})
+                              </summary>
+                              <ul class="parity-left">
+                                {list.items.map((i) => (
+                                  <li>
+                                    {i.name}
+                                    {i.status === "progress" && <span class="home-small"> · in progress{i.note && `: ${i.note}`}</span>}
+                                    {i.tests.length > 0 && (
+                                      <span class="home-small">
+                                        {" · tested in "}
+                                        {listFormat.formatToParts(i.tests).map((part) =>
+                                          part.type === "element" ? (
+                                            <a class="home-quiet-link" href={`#${scenarioAnchor(part.value)}`}>
+                                              {titles.get(part.value)}
+                                            </a>
+                                          ) : (
+                                            part.value
+                                          )
+                                        )}
+                                      </span>
+                                    )}
+                                  </li>
+                                ))}
+                              </ul>
+                            </details>
+                          )
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          )
+        }
+        {
+          run.categories.map((c) => {
+            const t = tally(c.scenarios);
+            return (
+              <section aria-labelledby={`cat-${c.id}`}>
+                <div class="parity-cat-head">
+                  <h2 class="home-d" id={`cat-${c.id}`}>
+                    {c.name}
+                  </h2>
+                  <p class="home-small">
+                    {t.behaveAlike} of {plural(t.scenarios, "scenario")} behave the same
+                  </p>
+                </div>
+                {c.scenarios.map((s) => {
+                  const summary = (
+                    <Fragment>
+                      <span class="parity-name">
+                        <span class="parity-title">{s.title}</span>
+                        <span class="home-small">{s.description}</span>
+                      </span>
+                      <span class="parity-results">
+                        <ResultMark result={s.mechanics.pomme} label="Pomme" />
+                        <ResultMark result={s.mechanics.vanilla} label="Vanilla" />
+                      </span>
+                      <span class="home-small parity-shots-text">{shotsText(s)}</span>
+                    </Fragment>
+                  );
+                  return s.shots.length > 0 || s.checks.length > 0 ? (
+                    <details class="parity-row" id={scenarioAnchor(s.id)}>
+                      <summary>{summary}</summary>
+                      {s.checks.length > 0 && (
+                        <table class="parity-checks">
+                          <caption class="home-sr">Checks in {s.title}</caption>
+                          <thead>
+                            <tr>
+                              <th scope="col">Check</th>
+                              <th scope="col">Pomme</th>
+                              <th scope="col">Vanilla</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {s.checks.map((check) => (
+                              <tr>
+                                <td>{check.text}</td>
+                                <td>
+                                  <ResultMark result={check.pomme} />
+                                </td>
+                                <td>
+                                  <ResultMark result={check.vanilla} />
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      )}
+                      {s.shots.length > 0 && (
+                        <div class="parity-shots">
+                          {s.shots.slice(0, SHOWN_SHOTS).map((shot) => (
+                            <ParityShot shot={shot} title={s.title} />
+                          ))}
+                          {s.shots.length > SHOWN_SHOTS && (
+                            <details class="parity-more">
+                              <summary class="home-link">Show {plural(s.shots.length - SHOWN_SHOTS, "more screenshot")}</summary>
+                              {s.shots.slice(SHOWN_SHOTS).map((shot) => (
+                                <ParityShot shot={shot} title={s.title} />
+                              ))}
+                            </details>
+                          )}
+                        </div>
+                      )}
+                    </details>
+                  ) : (
+                    <div class="parity-row parity-row-plain" id={scenarioAnchor(s.id)}>
+                      {summary}
+                    </div>
+                  );
+                })}
+              </section>
+            );
+          })
+        }
+
+        {
+          run.gaps.length > 0 && (
+            <section aria-labelledby="gaps">
+              <div class="parity-cat-head">
+                <h2 class="home-d" id="gaps">
+                  Known differences
+                </h2>
+                <p class="home-small">Deliberate gaps, noted in Pomme's code.</p>
+              </div>
+              {gapAreas.map((area) => (
+                <div class="parity-gap">
+                  <h3 class="home-d">{area}</h3>
+                  <ul class="home-bullets">
+                    {run.gaps
+                      .filter((g) => g.area === area)
+                      .map((g) => (
+                        <li>{g.text}</li>
+                      ))}
+                  </ul>
+                </div>
+              ))}
+            </section>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  // Links to a scenario open its row, so its screenshots and heatmaps are one click away.
+  const openLinked = () => {
+    const target = location.hash && document.getElementById(location.hash.slice(1));
+    if (target instanceof HTMLDetailsElement) {
+      target.open = true;
+      target.scrollIntoView();
+    }
+  };
+  addEventListener("hashchange", openLinked);
+  openLinked();
+
+  for (const button of document.querySelectorAll<HTMLButtonElement>("[data-heat-toggle]")) {
+    button.addEventListener("click", () => {
+      const heat = button.closest("figure")?.querySelector<HTMLElement>(".parity-heat");
+      if (!heat) return;
+      const show = heat.hidden;
+      heat.hidden = !show;
+      button.setAttribute("aria-pressed", String(show));
+      button.textContent = show ? "Hide differences" : "Show differences";
+    });
+  }
+</script>

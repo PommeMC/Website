@@ -9,8 +9,7 @@
     "javascriptreact",
     "typescript",
     "typescriptreact",
-    "astro",
-    "svelte"
+    "astro"
   ],
 
   "editor.codeActionsOnSave": {

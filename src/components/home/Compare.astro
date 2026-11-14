@@ -1,0 +1,23 @@
+---
+import CompareSlider from "@/components/CompareSlider.astro";
+import { COMPARE } from "@/data/compare";
+
+const files = import.meta.glob<{ default: ImageMetadata }>("/src/assets/compare/*.png", { eager: true });
+const shot = (key: "vanilla" | "pomme") => files[`/src/assets/compare/${key}.png`]?.default;
+const vanilla = shot("vanilla");
+const pomme = shot("pomme");
+---
+
+{
+  vanilla && pomme && (
+    <section class="home-ruled">
+      <div class="home-w home-s">
+        <div class="home-stack home-compare-head">
+          <h2 class="home-d home-h2">See further</h2>
+          <p class="home-muted">{COMPARE.caption}</p>
+        </div>
+        <CompareSlider before={{ ...COMPARE.vanilla, src: vanilla }} after={{ ...COMPARE.pomme, src: pomme }} />
+      </div>
+    </section>
+  )
+}

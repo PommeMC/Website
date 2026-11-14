@@ -1,0 +1,54 @@
+---
+import layout from "@/assets/brand/logo/parts.json";
+import { LOGO_MOTION } from "@/data/home";
+
+const images = import.meta.glob<{ default: ImageMetadata }>("/src/assets/brand/logo/*.png", { eager: true });
+const letters = layout.parts.filter((p) => p.id !== "apple");
+const motion = Object.entries(LOGO_MOTION)
+  .filter(([, on]) => on)
+  .map(([name]) => `anim-${name}`);
+
+const parts = layout.parts.map((part) => {
+  const isApple = part.id === "apple";
+  return {
+    ...part,
+    isApple,
+    img: images[`/src/assets/brand/logo/${part.file}`].default,
+    // Letters land left to right, then the apple drops in last.
+    order: isApple ? letters.length : letters.indexOf(part),
+  };
+});
+---
+
+<h1 class:list={["home-mark", ...motion]} style={`aspect-ratio: ${layout.width} / ${layout.height}`}>
+  <span class="home-sr">Pomme</span>
+  {
+    parts.map((p) => (
+      <span
+        class:list={["home-mark-part", { "home-mark-apple": p.isApple }]}
+        style={`left: ${p.left}%; top: ${p.top}%; width: ${p.width}%; height: ${p.height}%; --n: ${p.order}`}
+        aria-hidden="true"
+      >
+        <span class="home-mark-fall">
+          <span class="home-mark-sway">
+            <img class="home-mark-img" src={p.img.src} width={p.img.width} height={p.img.height} alt="" />
+          </span>
+        </span>
+      </span>
+    ))
+  }
+</h1>
+
+<script>
+  // Tapping replays the hop; on touch screens there is no hover to trigger it.
+  for (const apple of document.querySelectorAll<HTMLElement>(".anim-hop .home-mark-apple")) {
+    apple.addEventListener("pointerdown", () => {
+      apple.classList.remove("is-poked");
+      void apple.offsetWidth;
+      apple.classList.add("is-poked");
+    });
+    apple.addEventListener("animationend", (e) => {
+      if (e.animationName === "home-hop") apple.classList.remove("is-poked");
+    });
+  }
+</script>

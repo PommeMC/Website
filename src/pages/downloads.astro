@@ -1,0 +1,8 @@
+---
+import { DOWNLOADS_HREF } from "@/data/nav";
+
+// Old links to /downloads land on the homepage's download section.
+export const prerender = false;
+
+return Astro.redirect(DOWNLOADS_HREF, 301);
+---

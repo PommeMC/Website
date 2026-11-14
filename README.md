@@ -1,6 +1,6 @@
 # Pomme Website ![License](https://img.shields.io/github/license/PommeMC/pomme-website)
 
-The official [Pomme](https://pomme.rs) website — built with **Astro 5**, powered by **Bun**, and styled using **Tailwind CSS v4**.
+The official [Pomme](https://pomme.rs) website — built with **Astro 5**, powered by **Bun**, and styled with plain CSS.
 
 ---
 
@@ -55,9 +55,9 @@ bun run preview
 website/
 ├─ src/
 │  ├─ pages/         # Astro route files
-│  ├─ components/    # Astro & Svelte components (islands)
+│  ├─ components/    # Astro components
 │  ├─ layouts/       # Shared layout templates
-│  ├─ styles/        # Tailwind v4 theme tokens
+│  ├─ styles/        # Brand tokens, a small reset and per-page CSS
 │  └─ content/       # Markdown or MDX content
 ├─ public/           # Static assets (favicon, icons, etc.)
 ├─ astro.config.mjs  # Astro configuration
@@ -68,9 +68,9 @@ website/
 
 This project uses Astro 5, which introduces faster rebuilds, partial hydration improvements, and first-class hybrid rendering.
 
-Svelte is used for dynamic islands and component interactivity.
+Interactive bits (nav menu, download picker, hero parallax, comparison slider) are small inline scripts; no client-side framework is shipped.
 
-Tailwind v4 leverages the new @theme token system for consistent color and typography design.
+Styles are plain CSS: `brand.css` holds the colour and type tokens every page shares, `global.css` a small reset, and each page or area has its own file.
 
 Bun handles dependency management and script execution, replacing Node for faster dev cycles.
 

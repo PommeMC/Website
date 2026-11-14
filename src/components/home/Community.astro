@@ -1,0 +1,90 @@
+---
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+import { LINKS } from "@/data/home";
+import { CONTRIBUTORS_URL, formatCompact, sizedAvatar, type Contributor } from "@/utils/github";
+import LongDate from "@/components/LongDate.astro";
+import { plural } from "@/utils/content";
+import { postInfo } from "@/utils/news";
+
+interface Props {
+  contributors: Contributor[] | null;
+  commits: number | null;
+  stars: number | null;
+  posts: CollectionEntry<"posts">[];
+  alt: boolean;
+}
+const { contributors, commits, stars, posts, alt } = Astro.props;
+
+const GRID = 12;
+const all = contributors ?? [];
+// Fill the grid with names; when there are more than fit, the last cell links to the full list instead.
+const shown = all.length > GRID ? all.slice(0, GRID - 1) : all;
+const more = all.length - shown.length;
+const totals = [commits !== null && plural(commits, "commit"), stars !== null && `${formatCompact(stars)} stars`].filter(Boolean);
+---
+
+<section class:list={{ "home-alt": alt }}>
+  <div class="home-w home-s">
+    <div class="home-two">
+      <div class="home-stack">
+        <h2 class="home-d home-h2 home-h2-sm">
+          {all.length > 0 ? `Planted by ${plural(all.length, "contributor")}` : "Planted by its contributors"}
+        </h2>
+        {totals.length > 0 && <p class="home-totals">{totals.join(" · ")}</p>}
+        <p class="home-muted">Listed by number of commits. Your first pull request is welcome.</p>
+        <a class="home-link" href={LINKS.contribute}>Start contributing →</a>
+      </div>
+
+      {
+        shown.length > 0 && (
+          <ul class="home-people" role="list" aria-label="Contributors, most commits first">
+            {shown.map((c) => (
+              <li>
+                <a href={c.profileUrl} class="home-person" title={c.login}>
+                  <Image src={sizedAvatar(c.avatarUrl, 80)} width={40} height={40} layout="fixed" alt="" />
+                  <span>{c.login}</span>
+                </a>
+              </li>
+            ))}
+            {more > 0 && (
+              <li>
+                <a href={CONTRIBUTORS_URL} class="home-person home-person-more">
+                  <span class="home-person-count" aria-hidden="true">
+                    +{more}
+                  </span>
+                  <span>
+                    <span class="home-sr">{more} </span>more on GitHub
+                  </span>
+                </a>
+              </li>
+            )}
+          </ul>
+        )
+      }
+    </div>
+
+    {
+      posts.length > 0 && (
+        <div class="home-news-block">
+          <div class="home-news-head">
+            <h2 class="home-d">Fresh from the orchard</h2>
+            <a class="home-link" href="/news">
+              All news →
+            </a>
+          </div>
+          <ul class="home-news-list" role="list">
+            {posts.map((p) => (
+              <li>
+                <a href={`/news/${p.id}`} class="home-news">
+                  <LongDate date={p.data.date} />
+                  <span class="t">{postInfo(p).title}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+  </div>
+</section>

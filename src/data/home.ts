@@ -73,7 +73,10 @@ export const FEATURES = [
     title: "Performance first",
     body: "Vulkan, with hidden chunks culled on the GPU so it only draws what you see. Shader packs in early support.",
   },
-  { title: "Plays like vanilla", body: "Physics, movement and rendering ported line by line, then tested in-game against vanilla." },
+  {
+    title: "Vanilla-checked",
+    body: "Physics, movement and rendering ported line by line, with in-game tests run against the official client.",
+  },
   { title: "Real servers", body: "Joins vanilla servers from 1.20 to 26.3 with your Microsoft account." },
   { title: "Yours to fork", body: "GPL-3.0, built in the open on GitHub." },
 ];

@@ -7,42 +7,28 @@ import { SIGN_IN_FAILED_HREF } from "@/data/unlisted";
 
 const XBOX = { label: "Go to xbox.com", href: "https://www.xbox.com" };
 
-/**
- * A fix for each failure the Client reports. `code` is for when the Client sends one; until then the reason's wording
- * is matched, so these follow the Client's messages in pomme-auth.
- */
+/** A fix for each failure code the Client sends. "failed" and anything unknown get only the reason and the retry line. */
 const FIXES = [
+  { code: "cancelled", fix: "The Microsoft sign-in was closed or declined." },
+  { code: "not_owned", fix: "Sign in with the Microsoft account you bought Minecraft: Java Edition on." },
+  { code: "no_xbox_profile", fix: "Sign in once at xbox.com to create a profile, then try again.", link: XBOX },
   {
-    code: "not-owned",
-    match: "doesn't own minecraft",
-    fix: "Sign in with the Microsoft account you bought Minecraft: Java Edition on.",
+    code: "region_unavailable",
+    fix: "Microsoft doesn't offer Xbox Live in this account's country, so it can't sign in to Minecraft.",
   },
   {
-    code: "no-xbox-profile",
-    match: "no xbox profile",
-    fix: "Sign in once at xbox.com to create a profile, then try again.",
-    link: XBOX,
-  },
-  {
-    code: "adult-verification",
-    match: "adult verification",
+    code: "adult_verification",
     fix: "A parent or guardian needs to allow this account to play online in its Xbox family settings.",
     link: XBOX,
   },
   {
-    code: "country",
-    match: "isn't available in this account's country",
-    fix: "Microsoft doesn't offer Xbox Live in this account's country, so it can't sign in to Minecraft.",
+    code: "child_account",
+    fix: "An adult needs to add this account to their Microsoft family and allow it to play online.",
+    link: { label: "Open Microsoft Family", href: "https://account.microsoft.com/family" },
   },
   {
-    code: "cancelled",
-    match: "cancelled",
-    fix: "The Microsoft sign-in was closed or declined.",
-  },
-  {
-    code: "timed-out",
-    match: "timed out",
-    fix: "The sign-in took too long, so finish the Microsoft steps in one go next time.",
+    code: "mismatch",
+    fix: "The sign-in came back from a different attempt than the one Pomme started, usually an older sign-in tab. Close any other sign-in tabs first.",
   },
 ];
 ---
@@ -58,7 +44,7 @@ const FIXES = [
       </div>
       {
         FIXES.map((f) => (
-          <p data-fix={f.code} data-match={f.match} hidden>
+          <p data-fix={f.code} hidden>
             {f.fix}
             {f.link && (
               <>
@@ -89,9 +75,7 @@ const FIXES = [
     box.hidden = false;
   }
 
-  const fixes = [...document.querySelectorAll<HTMLElement>("[data-fix]")];
   const code = params.get("code");
-  const lower = reason.toLowerCase();
-  const fix = fixes.find((f) => f.dataset.fix === code) ?? fixes.find((f) => lower && f.dataset.match && lower.includes(f.dataset.match));
+  const fix = [...document.querySelectorAll<HTMLElement>("[data-fix]")].find((f) => f.dataset.fix === code);
   if (fix) fix.hidden = false;
 </script>

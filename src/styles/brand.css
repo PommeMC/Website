@@ -121,6 +121,17 @@
   text-decoration: underline !important;
   text-underline-offset: 3px;
 }
+.home-bullets {
+  padding-left: 20px;
+  list-style: square;
+  color: var(--muted);
+}
+.home-bullets li + li {
+  margin-top: 6px;
+}
+.home-bullets ::marker {
+  color: var(--sun);
+}
 .site-brand {
   display: inline-flex;
   align-items: center;

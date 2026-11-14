@@ -1,3 +1,4 @@
+import { capitalize } from "@/utils/content";
 import { once } from "@/utils/once";
 
 const GITHUB_REPO = "PommeMC/Client";
@@ -87,7 +88,7 @@ function parseFirstLaunch(body: string | null): Record<string, string> {
       .replace(/\*\*([^*]+)\*\*/g, "$1")
       .trim();
     // A note that starts with a command (`chmod ...`) keeps the command's case.
-    const sentence = raw.startsWith("`") ? text : text.charAt(0).toUpperCase() + text.slice(1);
+    const sentence = raw.startsWith("`") ? text : capitalize(text);
     notes[m[1].trim().toLowerCase()] = /[.!?]$/.test(sentence) ? sentence : `${sentence}.`;
   }
   return notes;
@@ -102,7 +103,7 @@ function parseChanges(body: string | null): { changes: string[]; contributors: n
     if (!m) continue;
     // Drop conventional-commit prefixes such as "chore(deps): ".
     const title = m[1].replace(/^\w+(?:\([^)]*\))?!?:\s*/, "");
-    changes.push(title.charAt(0).toUpperCase() + title.slice(1));
+    changes.push(capitalize(title));
     if (!m[2].endsWith("[bot]")) authors.add(m[2]);
   }
   return { changes, contributors: authors.size };

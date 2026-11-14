@@ -30,3 +30,5 @@ export const plural = (n: number, word: string) => `${n.toLocaleString("en")} ${
 
 /** "a, b and c", British style (no comma before "and"). */
 export const listFormat = new Intl.ListFormat("en-GB");
+
+export const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);

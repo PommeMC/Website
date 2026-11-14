@@ -4,7 +4,8 @@ import { Image } from "astro:assets";
 import { compareValueText } from "@/utils/compare";
 
 interface Side {
-  src: ImageMetadata;
+  /** An imported image, or the URL of one that is already optimised (then `size` is required). */
+  src: ImageMetadata | string;
   label: string;
   alt: string;
 }
@@ -13,20 +14,38 @@ interface Props {
   after: Side;
   /** How wide the slider renders, for picking image sizes. */
   sizes?: string;
+  /** Pixel size of URL images, so the page doesn't shift while they load. */
+  size?: { width: number; height: number };
 }
-const { before, after, sizes = "(max-width: 1120px) 100vw, 1088px" } = Astro.props;
+const { before, after, sizes = "(max-width: 1120px) 100vw, 1088px", size } = Astro.props;
 const widths = [640, 1120, 1600, 2240];
 ---
 
 <div class="cmp" data-compare data-before={before.label} data-after={after.label}>
   {
-    [before, after].map((side, i) => (
-      <Fragment>
-        <Image src={side.src} alt={side.alt} widths={widths} sizes={sizes} format="webp" class:list={["cmp-img", { "cmp-top": i > 0 }]} />
-        <span class:list={["home-d cmp-tag", { "cmp-tag-end": i > 0 }]}>{side.label}</span>
-      </Fragment>
-    ))
+    [before, after].map((side, i) => {
+      const imgClass = ["cmp-img", { "cmp-top": i > 0 }];
+      return (
+        <Fragment>
+          {typeof side.src === "string" ? (
+            <img
+              src={side.src}
+              alt={side.alt}
+              width={size?.width}
+              height={size?.height}
+              loading="lazy"
+              decoding="async"
+              class:list={imgClass}
+            />
+          ) : (
+            <Image src={side.src} alt={side.alt} widths={widths} sizes={sizes} format="webp" class:list={imgClass} />
+          )}
+          <span class:list={["home-d cmp-tag", { "cmp-tag-end": i > 0 }]}>{side.label}</span>
+        </Fragment>
+      );
+    })
   }
+  <slot />
   <span class="cmp-handle" aria-hidden="true">
     <span class="cmp-grip">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">

@@ -26,3 +26,6 @@ pnpm-debug.log*
 .eslintcache
 
 .wrangler/
+
+# parity run export (images too large for the repo; see src/utils/parity.ts)
+/public/parity/

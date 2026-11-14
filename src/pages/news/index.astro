@@ -56,7 +56,7 @@ const categories = [...new Set(entries.map((e) => e.category))];
                 <h2 class="home-d news-featured-title">{featured.title}</h2>
                 {featured.summary && <p>{featured.summary}</p>}
                 {featured.changes && featured.changes.shown.length > 0 && (
-                  <ul class="news-changes">
+                  <ul class="home-bullets news-changes">
                     {featured.changes.shown.map((c) => (
                       <li>{c}</li>
                     ))}

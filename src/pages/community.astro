@@ -2,20 +2,21 @@
 import "@/styles/community.css";
 import { Image } from "astro:assets";
 import Layout from "@/layouts/Layout.astro";
-import { getParity, LINKS } from "@/data/home";
-import { NEW_TAB } from "@/data/nav";
+import { LINKS } from "@/data/home";
+import { NEW_TAB, externalAttrs } from "@/data/nav";
 import { plural } from "@/utils/content";
+import { getParityRun } from "@/utils/parity";
 import { getDiscordMembers } from "@/utils/discord";
 import { getCommitCount, getContributors, getGoodFirstIssues, getIdeasUrl, GITHUB_URL, NEW_ISSUE_URL, sizedAvatar } from "@/utils/github";
 
-const [members, contributors, commits, issues, ideasUrl] = await Promise.all([
+const [members, contributors, commits, issues, ideasUrl, parity] = await Promise.all([
   getDiscordMembers(),
   getContributors(),
   getCommitCount(),
   getGoodFirstIssues(),
   getIdeasUrl(),
+  getParityRun(),
 ]);
-const parityUrl = getParity()?.trackerUrl;
 const membersText = members !== null ? plural(members, "member") : null;
 
 const ways = [
@@ -24,10 +25,10 @@ const ways = [
     body: "Found something broken? Say what you did, what you expected and what happened.",
     link: { label: "Report a bug", href: NEW_ISSUE_URL },
   },
-  parityUrl && {
+  parity && {
     title: "Check parity",
-    body: "Spot something that behaves differently from vanilla? Tell us and it joins the tracker.",
-    link: { label: "Open the parity tracker", href: parityUrl },
+    body: "See which in-game scenarios match vanilla, and report anything that behaves differently.",
+    link: { label: "See the parity results", href: "/parity" },
   },
   {
     title: "Make add-ons",
@@ -83,7 +84,7 @@ const peopleText = [`${people.length} ${people.length === 1 ? "person" : "people
                   <h3 class="home-d">{w.title}</h3>
                   <p class="home-muted">{w.body}</p>
                 </div>
-                <a class="home-link" href={w.link.href} {...NEW_TAB}>
+                <a class="home-link" href={w.link.href} {...externalAttrs({ external: !w.link.href.startsWith("/") })}>
                   {w.link.label} →
                 </a>
                 {w.issues && issues && issues.length > 0 && (

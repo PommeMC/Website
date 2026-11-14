@@ -36,8 +36,12 @@ h6 {
   font-weight: inherit;
 }
 ol,
-ul {
+ul,
+summary {
   list-style: none;
+}
+summary::-webkit-details-marker {
+  display: none;
 }
 a {
   color: inherit;

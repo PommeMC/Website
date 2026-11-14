@@ -1,0 +1,248 @@
+.parity {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  align-items: start;
+  gap: 56px;
+}
+.parity-side {
+  position: sticky;
+  top: calc(var(--nav-h) + 24px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+.parity-h1 {
+  font-size: 44px;
+}
+.parity-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  padding: 20px;
+  background: var(--bar);
+}
+.parity-stats dd {
+  font-size: 18px;
+}
+.parity-big {
+  font-size: 44px;
+  color: var(--sun);
+}
+
+.parity-main > section + section {
+  margin-top: 56px;
+}
+.parity-cat-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 4px 16px;
+  margin-bottom: 12px;
+}
+.parity-cat-head h2 {
+  font-size: 28px;
+}
+
+.parity-row {
+  border-top: 1px solid var(--line);
+}
+.parity-row:last-child {
+  border-bottom: 1px solid var(--line);
+}
+.parity-row > summary,
+.parity-row-plain {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) auto 200px;
+  align-items: center;
+  gap: 8px 16px;
+  min-height: 52px;
+  padding: 8px 0;
+}
+.parity-row > summary {
+  cursor: pointer;
+}
+.parity-row > summary:hover .parity-title {
+  color: var(--sun);
+}
+/* A plus that turns into a minus while the row is open; rows without screenshots keep the column empty. */
+.parity-row > summary::before,
+.parity-row-plain::before {
+  content: "";
+  color: var(--sun);
+  font-weight: 700;
+}
+.parity-row > summary::before {
+  content: "+";
+}
+.parity-row[open] > summary::before {
+  content: "–";
+}
+.parity-name {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.parity-title {
+  font-weight: 600;
+}
+.parity-checks {
+  width: 100%;
+  margin: 4px 0 20px;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.parity-checks th {
+  padding: 6px 0;
+  color: var(--muted);
+  font-weight: 400;
+  text-align: left;
+}
+.parity-checks td {
+  padding: 6px 0;
+  border-top: 1px solid var(--line);
+}
+.parity-checks :is(th, td):not(:first-child) {
+  width: 72px;
+  text-align: center;
+}
+
+.parity-coverage {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+.parity-cov {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 20px;
+  background: var(--bg2);
+}
+.parity-cov h3 {
+  font-size: 18px;
+}
+.parity-cov-count {
+  font-size: 32px;
+  color: var(--sun);
+}
+.parity-meter {
+  display: flex;
+  gap: 3px;
+}
+.parity-meter i {
+  width: 14px;
+  height: 14px;
+  background: var(--line);
+}
+.parity-meter i.on {
+  background: var(--leaf);
+}
+/* An open "Still to do" list takes the whole row, so names don't wrap in a narrow card. */
+.parity-cov:has(details[open]) {
+  grid-column: 1 / -1;
+}
+.parity-left {
+  columns: 4 160px;
+  column-gap: 20px;
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.parity-results {
+  display: flex;
+  gap: 12px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.parity-result[data-result="pass"] {
+  color: var(--leaf);
+}
+.parity-result[data-result="fail"] {
+  color: var(--sun);
+  font-weight: 700;
+}
+.parity-shots-text {
+  text-align: right;
+}
+
+.parity-shots {
+  display: grid;
+  gap: 24px;
+  padding: 8px 0 28px;
+}
+.parity-shot figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 16px;
+  margin-top: 8px;
+}
+.parity-flag {
+  padding: 2px 6px 0;
+  background: var(--sun);
+  color: var(--ink);
+  font: 700 11px var(--display);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.parity-heat {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.parity-heat-toggle {
+  margin-left: auto;
+  min-height: 36px;
+  color: var(--sun);
+  font-weight: 600;
+  cursor: pointer;
+}
+.parity-heat-toggle:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.parity-more {
+  display: grid;
+  gap: 24px;
+}
+.parity-more > summary {
+  cursor: pointer;
+}
+
+.parity-gap + .parity-gap {
+  margin-top: 20px;
+}
+.parity-gap h3 {
+  font-size: 18px;
+}
+.parity-gap ul {
+  margin-top: 8px;
+}
+
+/* Keep in sync with MOBILE_BREAKPOINT in src/data/layout.ts. */
+@media (max-width: 900px) {
+  .parity {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+  }
+  .parity-side {
+    position: static;
+  }
+  .parity-h1 {
+    font-size: 36px;
+  }
+  .parity-row > summary,
+  .parity-row-plain {
+    grid-template-columns: 16px minmax(0, 1fr) auto;
+  }
+  .parity-shots-text {
+    grid-column: 2 / -1;
+    text-align: left;
+  }
+}

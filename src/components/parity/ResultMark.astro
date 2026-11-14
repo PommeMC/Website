@@ -1,0 +1,16 @@
+---
+interface Props {
+  result: "pass" | "fail" | "skip";
+  /** Shown before the mark, e.g. "Pomme"; screen readers always hear the result in words. */
+  label?: string;
+}
+const { result, label } = Astro.props;
+const MARK = { pass: "✓", fail: "✗", skip: "–" } as const;
+const WORDS = { pass: "passes", fail: "fails", skip: "not run" } as const;
+---
+
+<span class="parity-result" data-result={result}>
+  {label}
+  <span aria-hidden="true">{MARK[result]}</span>
+  <span class="home-sr">{WORDS[result]}</span>
+</span>

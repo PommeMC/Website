@@ -1,47 +1,38 @@
 ---
-import { PARITY_MAX_STAGE, PARITY_STAGES, type Parity } from "@/data/home";
+import Meter from "@/components/Meter.astro";
+import { plural } from "@/utils/content";
+import { tally, type ParityRun } from "@/utils/parity";
 
 interface Props {
-  parity: Parity;
+  run: ParityRun;
 }
-const { parity } = Astro.props;
-const { counts } = parity;
-const squares = Array.from({ length: PARITY_MAX_STAGE }, (_, i) => i + 1);
+const { run } = Astro.props;
+const total = tally(run.scenarios);
 ---
 
 <section id="parity" class="home-alt">
-  <div class="home-w home-s home-two home-parity">
+  <div class="home-w home-s home-two">
     <div class="home-stack">
       <h2 class="home-d home-h2">How ripe is it?</h2>
       <p class="home-muted">
-        Our own read on each part of the game. Spot something that plays differently from vanilla? Tell us and it joins the list.
+        The same in-game scenarios run on Pomme and on vanilla Minecraft {run.versions.vanilla}, with the results side by side.
       </p>
-      <p class="home-d home-pct"><span class="home-sr">Overall: </span>{parity.percent}%<span class="home-sr"> ready</span></p>
+      <p class="home-d home-pct">{total.behaveAlike}</p>
       <p class="home-counts">
-        <span><b>{counts.ready}</b> of {counts.tracked} ready</span>
-        <span><b>{counts.inProgress}</b> in progress</span>
-        <span><b>{counts.planned}</b> planned</span>
-        <span><b>{counts.tested}</b> tested</span>
+        <span><b>of {plural(total.scenarios, "scenario")}</b> behave the same</span>
+        <span><b>{total.shotsAlike} of {total.shots}</b> screenshot pairs within tolerance</span>
       </p>
-      {parity.updated && <p class="home-small">Updated {parity.updated}</p>}
-      {
-        parity.trackerUrl && (
-          <a class="home-link" href={parity.trackerUrl}>
-            Open the parity tracker →
-          </a>
-        )
-      }
+      <a class="home-link" href="/parity">See every scenario →</a>
     </div>
     <ul class="home-rows" role="list">
       {
-        parity.subsystems.map((s) => (
+        run.coverage.map((c) => (
           <li class="home-row">
-            <span>{s.name}</span>
-            <span class="home-meter" role="img" aria-label={PARITY_STAGES[s.stage]}>
-              {squares.map((i) => (
-                <i class:list={{ f: i <= s.stage }} />
-              ))}
+            <span>{c.label}</span>
+            <span class="home-small">
+              {c.counts.implemented} of {c.items.length} built
             </span>
+            <Meter value={c.counts.implemented} max={c.items.length} />
           </li>
         ))
       }

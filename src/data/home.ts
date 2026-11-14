@@ -1,4 +1,3 @@
-import parityJson from "@/data/parity.json";
 import { GITHUB_URL } from "@/utils/github";
 
 /**
@@ -75,35 +74,3 @@ export const FEATURES = [
   { title: "Tested in-game", body: "Scripts drive a real client on every supported version before each release." },
   { title: "Yours to fork", body: "GPL-3.0, built in the open on GitHub." },
 ];
-
-export const PARITY_STAGES = ["Not started", "Started", "Playable, gaps", "Mostly there", "Matches vanilla, tested"] as const;
-export const PARITY_MAX_STAGE = PARITY_STAGES.length - 1;
-
-type Counts = { tracked: number; ready: number; inProgress: number; planned: number; tested: number };
-export interface Parity {
-  updated: string | null;
-  trackerUrl: string | null;
-  counts: Counts;
-  percent: number;
-  subsystems: { name: string; stage: number }[];
-}
-
-/** Null until every count and stage in parity.json is filled in. */
-export function getParity(): Parity | null {
-  const { counts, subsystems, updated, trackerUrl } = parityJson as {
-    counts: Record<keyof Counts, number | null>;
-    subsystems: { name: string; stage: number | null }[];
-    updated: string | null;
-    trackerUrl: string | null;
-  };
-  const filled = Object.values(counts).every((v) => typeof v === "number") && subsystems.every((s) => typeof s.stage === "number");
-  if (!filled || !counts.tracked) return null;
-  const c = counts as Counts;
-  return {
-    updated,
-    trackerUrl,
-    counts: c,
-    percent: Math.round((c.ready / c.tracked) * 100),
-    subsystems: subsystems.map((s) => ({ name: s.name, stage: Math.max(0, Math.min(PARITY_MAX_STAGE, s.stage as number)) })),
-  };
-}

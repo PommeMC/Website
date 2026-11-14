@@ -138,6 +138,18 @@
 .home-quiet-link:hover {
   color: var(--text);
 }
+.home-meter {
+  display: inline-flex;
+  gap: 3px;
+}
+.home-meter i {
+  width: 14px;
+  height: 14px;
+  background: var(--line);
+}
+.home-meter i.on {
+  background: var(--leaf);
+}
 .site-brand {
   display: inline-flex;
   align-items: center;

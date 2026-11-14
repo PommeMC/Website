@@ -1,0 +1,13 @@
+---
+interface Props {
+  value: number;
+  max: number;
+}
+const { value, max } = Astro.props;
+const SQUARES = 10;
+const filled = max > 0 ? Math.floor((value / max) * SQUARES) : 0;
+---
+
+<span class="home-meter" aria-hidden="true">
+  {Array.from({ length: SQUARES }, (_, i) => <i class:list={{ on: i < filled }} />)}
+</span>

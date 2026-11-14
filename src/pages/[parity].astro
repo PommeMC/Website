@@ -1,6 +1,7 @@
 ---
 import "@/styles/parity.css";
 import LongDate from "@/components/LongDate.astro";
+import Meter from "@/components/Meter.astro";
 import ParityShot from "@/components/parity/ParityShot.astro";
 import ResultMark from "@/components/parity/ResultMark.astro";
 import Layout from "@/layouts/Layout.astro";
@@ -24,7 +25,6 @@ const versionText = sameVersion
   ? `Both on Minecraft ${run.versions.vanilla}`
   : `Pomme on ${run.versions.pomme}, vanilla on ${run.versions.vanilla}`;
 const gapAreas = [...new Set(run.gaps.map((g) => g.area))];
-const METER_SQUARES = 10;
 const titles = new Map(run.scenarios.map((s) => [s.id, s.title]));
 const shotsText = (s: Scenario) => {
   const t = tally([s]);
@@ -84,7 +84,6 @@ const shotsText = (s: Scenario) => {
               <div class="parity-coverage">
                 {run.coverage.map((c) => {
                   const total = c.items.length;
-                  const filled = Math.floor((c.counts.implemented / total) * METER_SQUARES);
                   // Built items link to the scenarios that cover them.
                   const items = c.items.map((i) => ({
                     ...i,
@@ -101,11 +100,7 @@ const shotsText = (s: Scenario) => {
                         <span class="home-d parity-cov-count">{c.counts.implemented}</span> of {total} built
                       </p>
                       {c.counts.progress > 0 && <p class="home-small">{c.counts.progress} in progress</p>}
-                      <span class="parity-meter" aria-hidden="true">
-                        {Array.from({ length: METER_SQUARES }, (_, i) => (
-                          <i class:list={{ on: i < filled }} />
-                        ))}
-                      </span>
+                      <Meter value={c.counts.implemented} max={total} />
                       {lists.map(
                         (list) =>
                           list.items.length > 0 && (

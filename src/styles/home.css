@@ -406,19 +406,6 @@ img.home-layer {
 .home-row > span:first-child {
   flex: 1;
 }
-.home-meter {
-  display: inline-flex;
-  gap: 3px;
-}
-.home-meter i {
-  display: block;
-  width: 14px;
-  height: 14px;
-  background: var(--line);
-}
-.home-meter i.f {
-  background: var(--leaf);
-}
 
 .home-totals {
   color: var(--sun);

@@ -130,18 +130,6 @@
   font-size: 32px;
   color: var(--sun);
 }
-.parity-meter {
-  display: flex;
-  gap: 3px;
-}
-.parity-meter i {
-  width: 14px;
-  height: 14px;
-  background: var(--line);
-}
-.parity-meter i.on {
-  background: var(--leaf);
-}
 /* An open "Still to do" list takes the whole row, so names don't wrap in a narrow card. */
 .parity-cov:has(details[open]) {
   grid-column: 1 / -1;

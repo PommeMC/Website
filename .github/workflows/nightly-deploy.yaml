@@ -1,13 +1,19 @@
-name: Nightly deploy
+name: Deploy
 
-# Rebuilds the site every night so build-time GitHub data on the homepage
-# (latest release, file sizes, download counts, stars, contributors) stays fresh.
+# The site's only deploy. The nightly run keeps build-time data (releases, download counts, stars,
+# contributors, parity results) fresh, and the Client starts a run by this file's name after
+# publishing a parity export, so keep the name.
 #
 # Needs two repository secrets:
 #   CLOUDFLARE_API_TOKEN   - token with the "Edit Cloudflare Workers" permission
 #   CLOUDFLARE_ACCOUNT_ID  - the account that owns the pomme-website worker
 
 on:
+  push:
+    branches: [master]
+    paths-ignore:
+      - "README.md"
+      - "design/**"
   schedule:
     - cron: "17 3 * * *" # 03:17 UTC daily
   workflow_dispatch:
@@ -16,8 +22,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: nightly-deploy
-  # Queue rather than cancel, so a manual run can't abort a deploy halfway through.
+  group: deploy
+  # Queue rather than cancel, so one run can't abort another's deploy halfway through.
   cancel-in-progress: false
 
 jobs:

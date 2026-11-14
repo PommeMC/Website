@@ -3,7 +3,7 @@ import "@/styles/community.css";
 import { Image } from "astro:assets";
 import Layout from "@/layouts/Layout.astro";
 import { LINKS } from "@/data/home";
-import { NEW_TAB, externalAttrs } from "@/data/nav";
+import { NEW_TAB, PARITY_HREF, externalAttrs } from "@/data/nav";
 import { plural } from "@/utils/content";
 import { getParityRun } from "@/utils/parity";
 import { getDiscordMembers } from "@/utils/discord";
@@ -28,7 +28,7 @@ const ways = [
   parity && {
     title: "Check parity",
     body: "See which in-game scenarios match vanilla, and report anything that behaves differently.",
-    link: { label: "See the parity results", href: "/parity" },
+    link: { label: "See the parity results", href: PARITY_HREF },
   },
   {
     title: "Make add-ons",

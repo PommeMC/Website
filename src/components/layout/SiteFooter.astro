@@ -3,11 +3,11 @@ import "@/styles/footer.css";
 import { Icon } from "astro-icon/components";
 import SiteBrand from "@/components/layout/SiteBrand.astro";
 import { LINKS } from "@/data/home";
-import { NAV_LINKS, NEW_TAB, SITE_PAGES, externalAttrs } from "@/data/nav";
+import { NEW_TAB, externalAttrs, getNavLinks, getSitePages } from "@/data/nav";
 
 const hash = import.meta.env.GIT_COMMIT_HASH;
 const year = new Date().getFullYear();
-const social = NAV_LINKS.filter((l) => l.icon);
+const [{ social }, pages] = await Promise.all([getNavLinks(), getSitePages()]);
 ---
 
 <footer class="site-footer">
@@ -17,7 +17,7 @@ const social = NAV_LINKS.filter((l) => l.icon);
       <nav aria-label="Footer">
         <ul class="site-footer-links" role="list">
           {
-            SITE_PAGES.map((l) => (
+            pages.map((l) => (
               <li>
                 <a class="site-nl" href={l.href} {...externalAttrs(l)}>
                   {l.label}

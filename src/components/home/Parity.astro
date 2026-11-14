@@ -1,5 +1,6 @@
 ---
 import Meter from "@/components/Meter.astro";
+import { PARITY_HREF } from "@/data/nav";
 import { plural } from "@/utils/content";
 import { tally, type ParityRun } from "@/utils/parity";
 
@@ -22,7 +23,7 @@ const total = tally(run.scenarios);
         <span><b>of {plural(total.scenarios, "scenario")}</b> behave the same</span>
         <span><b>{total.shotsAlike} of {total.shots}</b> screenshot pairs within tolerance</span>
       </p>
-      <a class="home-link" href="/parity">See every scenario →</a>
+      <a class="home-link" href={PARITY_HREF}>See every scenario →</a>
     </div>
     <ul class="home-rows" role="list">
       {

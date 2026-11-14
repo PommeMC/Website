@@ -6,7 +6,7 @@ import "@/styles/nav.css";
 import { Icon } from "astro-icon/components";
 import SiteBrand from "@/components/layout/SiteBrand.astro";
 import { MOBILE_BREAKPOINT } from "@/data/layout";
-import { DOWNLOADS_HREF, NAV_LINKS, externalAttrs, type NavLink } from "@/data/nav";
+import { DOWNLOADS_HREF, externalAttrs, getNavLinks, type NavLink } from "@/data/nav";
 import { formatCompact, getStars } from "@/utils/github";
 
 interface Props {
@@ -18,8 +18,7 @@ const { overlay = false } = Astro.props;
 const stars = await getStars();
 const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 const isCurrent = (l: NavLink) => !l.external && (path === l.href || path.startsWith(`${l.href}/`));
-const pages = NAV_LINKS.filter((l) => !l.icon);
-const social = NAV_LINKS.filter((l) => l.icon);
+const { pages, social } = await getNavLinks();
 const ariaLabel = (l: NavLink) => (l.showStars && stars !== null ? `${l.label}, ${stars} stars` : l.icon ? l.label : undefined);
 const linkAttrs = (l: NavLink) => ({
   href: l.href,

@@ -5,7 +5,7 @@ import Meter from "@/components/Meter.astro";
 import ParityShot from "@/components/parity/ParityShot.astro";
 import ResultMark from "@/components/parity/ResultMark.astro";
 import Layout from "@/layouts/Layout.astro";
-import { NEW_TAB } from "@/data/nav";
+import { NEW_TAB, PARITY_HREF } from "@/data/nav";
 import { listFormat, plural } from "@/utils/content";
 import { GITHUB_URL, NEW_ISSUE_URL } from "@/utils/github";
 import { getParityRun, scenarioAnchor, tally, type ParityRun, type Scenario } from "@/utils/parity";
@@ -36,7 +36,7 @@ const shotsText = (s: Scenario) => {
   title="Parity with vanilla"
   description="The same in-game scripts run on Pomme and on vanilla Minecraft, with the results side by side."
   keywords={["pomme", "parity", "vanilla", "minecraft"]}
-  canonical="/parity"
+  canonical={PARITY_HREF}
 >
   <div class="home">
     <div class="home-w home-s parity">

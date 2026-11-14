@@ -2,8 +2,10 @@
 import { Image } from "astro:assets";
 import core from "@/assets/brand/apple-core.png";
 import Layout from "@/layouts/Layout.astro";
-import { NEW_TAB, SITE_PAGES, externalAttrs } from "@/data/nav";
+import { NEW_TAB, externalAttrs, getSitePages } from "@/data/nav";
 import { NEW_ISSUE_URL } from "@/utils/github";
+
+const pages = await getSitePages();
 ---
 
 <Layout title="Page not found" description="This page doesn't exist." keywords={[]} canonical="/404">
@@ -17,7 +19,7 @@ import { NEW_ISSUE_URL } from "@/utils/github";
         <a class="home-rib" href="/">Back to the homepage</a>
         <nav class="missing-links" aria-label="Pages">
           {
-            SITE_PAGES.map((l) => (
+            pages.map((l) => (
               <a class="home-link" href={l.href} {...externalAttrs(l)}>
                 {l.label}
               </a>

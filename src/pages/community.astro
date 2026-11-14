@@ -3,7 +3,7 @@ import "@/styles/community.css";
 import { Image } from "astro:assets";
 import Layout from "@/layouts/Layout.astro";
 import { LINKS } from "@/data/home";
-import { NEW_TAB, PARITY_HREF, externalAttrs } from "@/data/nav";
+import { NEW_TAB, PARITY_HREF, hrefAttrs } from "@/data/nav";
 import { plural } from "@/utils/content";
 import { getParityRun } from "@/utils/parity";
 import { getDiscordMembers } from "@/utils/discord";
@@ -84,7 +84,7 @@ const peopleText = [`${people.length} ${people.length === 1 ? "person" : "people
                   <h3 class="home-d">{w.title}</h3>
                   <p class="home-muted">{w.body}</p>
                 </div>
-                <a class="home-link" href={w.link.href} {...externalAttrs({ external: !w.link.href.startsWith("/") })}>
+                <a class="home-link" href={w.link.href} {...hrefAttrs(w.link.href)}>
                   {w.link.label} →
                 </a>
                 {w.issues && issues && issues.length > 0 && (

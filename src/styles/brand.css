@@ -213,8 +213,37 @@
   background: var(--sun-hover);
 }
 
+/* A page with a column that stays in view beside its main content, stacked above it on phones. */
+.home-aside {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  align-items: start;
+  gap: 56px;
+}
+.home-aside-side {
+  position: sticky;
+  top: calc(var(--nav-h) + 24px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+.home-aside-h1 {
+  font-size: 44px;
+}
+
 /* Keep in sync with MOBILE_BREAKPOINT in src/data/layout.ts. */
 @media (max-width: 900px) {
+  .home-aside {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+  }
+  .home-aside-side {
+    position: static;
+  }
+  .home-aside-h1 {
+    font-size: 36px;
+  }
   :root {
     --gutter: 16px;
   }

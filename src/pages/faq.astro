@@ -1,0 +1,82 @@
+---
+import "@/styles/faq.css";
+import Layout from "@/layouts/Layout.astro";
+import { LINKS } from "@/data/home";
+import { CHECKED_FOR, getFaq } from "@/data/faq";
+import { FAQ_HREF, NEW_TAB, hrefAttrs } from "@/data/nav";
+
+const groups = await getFaq();
+---
+
+<Layout
+  title="Questions"
+  description="Answers about Pomme: whether it needs Java, which servers it joins, signing in safely, bans, shader packs, mods and updates."
+  keywords={["pomme", "faq", "minecraft", "client", "java", "shader packs", "servers"]}
+  canonical={FAQ_HREF}
+>
+  <div class="home">
+    <div class="home-w home-s home-aside">
+      <aside class="home-aside-side">
+        <h1 class="home-d home-aside-h1">Questions</h1>
+        <nav aria-label="Question groups">
+          <ul class="faq-groups" role="list">
+            {
+              groups.map((g) => (
+                <li>
+                  <a href={`#${g.id}`}>
+                    {g.title}
+                    <span class="home-small">{g.questions.length}</span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+        <p class="home-small">Answers checked for Pomme {CHECKED_FOR}.</p>
+        <p class="home-small">
+          Can't find it?<br />
+          <a class="home-link" href={LINKS.discord} {...NEW_TAB}>Ask on Discord →</a>
+        </p>
+      </aside>
+
+      <div class="faq-main">
+        {
+          groups.map((g) => (
+            <section aria-labelledby={g.id}>
+              <h2 class="home-d faq-h2" id={g.id}>
+                {g.title}
+              </h2>
+              {g.questions.map((q) => (
+                <div class="faq-q" id={q.id}>
+                  <h3>
+                    {q.question}
+                    <a class="faq-anchor" href={`#${q.id}`} aria-label={`Link to “${q.question}”`}>
+                      #
+                    </a>
+                  </h3>
+                  <p class="home-muted">{q.answer}</p>
+                  {q.list && q.list.length > 0 && (
+                    <ul class="home-bullets">
+                      {q.list.map((item) => (
+                        <li>{item}</li>
+                      ))}
+                    </ul>
+                  )}
+                  {q.links && q.links.length > 0 && (
+                    <p class="faq-links">
+                      {q.links.map((l) => (
+                        <a class="home-link" href={l.href} {...hrefAttrs(l.href)}>
+                          {l.label} →
+                        </a>
+                      ))}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </section>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</Layout>

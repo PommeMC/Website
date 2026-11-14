@@ -4,6 +4,7 @@ import { getParityRun } from "@/utils/parity";
 
 export const DOWNLOADS_HREF = "/#download";
 export const PARITY_HREF = "/parity";
+export const FAQ_HREF = "/faq";
 
 export interface NavLink {
   label: string;
@@ -37,11 +38,13 @@ export async function getNavLinks(): Promise<{ pages: NavLink[]; social: NavLink
   return { pages: links.filter((l) => !l.icon), social: links.filter((l) => l.icon) };
 }
 
-/** Download plus the nav's page links, for lists of everywhere a visitor can go. */
+/** Download, the nav's page links and the FAQ, for lists of everywhere a visitor can go. */
 export async function getSitePages(): Promise<NavLink[]> {
-  return [{ label: "Download", href: DOWNLOADS_HREF }, ...(await getNavLinks()).pages];
+  return [{ label: "Download", href: DOWNLOADS_HREF }, ...(await getNavLinks()).pages, { label: "FAQ", href: FAQ_HREF }];
 }
 
 /** New-tab attributes for links that leave the site. */
 export const NEW_TAB = { target: "_blank", rel: "noopener" } as const;
 export const externalAttrs = (l: Pick<NavLink, "external">) => (l.external ? NEW_TAB : {});
+/** The same, for a bare address: anything not on this site opens in a new tab. */
+export const hrefAttrs = (href: string) => externalAttrs({ external: !href.startsWith("/") });

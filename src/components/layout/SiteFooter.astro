@@ -48,11 +48,7 @@ const [{ social }, pages] = await Promise.all([getNavLinks(), getSitePages()]);
           hash && (
             <>
               {" · "}
-              <a
-                class="home-quiet-link"
-                href={`https://github.com/PommeMC/pomme-website/commit/${hash}`}
-                aria-label={`Site version ${hash}`}
-              >
+              <a class="home-quiet-link" href={`https://github.com/PommeMC/Website/commit/${hash}`} aria-label={`Site version ${hash}`}>
                 {hash}
               </a>
             </>

@@ -28,7 +28,7 @@ concurrency:
 
 jobs:
   deploy:
-    if: github.repository == 'PommeMC/pomme-website' || github.repository == 'PommeMC/Website'
+    if: github.repository == 'PommeMC/Website'
     runs-on: ubuntu-latest
 
     steps:

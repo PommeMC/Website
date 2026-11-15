@@ -1,6 +1,6 @@
 import { COMPARE, LOD_NOTE, POMME_SETTINGS } from "@/data/compare";
 import { SERVER_VERSIONS } from "@/data/home";
-import { DISCLAIMER, LICENCE } from "@/data/layout";
+import { DISCLAIMER, LICENCE, ONE_LINE } from "@/data/layout";
 import { PARITY_HREF } from "@/data/nav";
 
 /** `scripts/press-kit.ts` writes the kit's files into public/ at build, served under PRESS_HREF. */
@@ -9,7 +9,7 @@ export const PRESS_EMAIL = "press@pomme.rs";
 
 /** Words for anyone writing about Pomme: copyable on the page, and about-pomme.txt in the zip. */
 export const PRESS_TEXT = [
-  { id: "one-line", label: "One line", text: "Pomme is a Minecraft: Java Edition client written from scratch in Rust." },
+  { id: "one-line", label: "One line", text: ONE_LINE },
   {
     id: "description",
     label: "Short description",

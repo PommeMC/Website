@@ -1,6 +1,6 @@
 # Pomme Website ![License](https://img.shields.io/github/license/PommeMC/Website)
 
-The official [Pomme](https://pomme.rs) website — built with **Astro 5**, powered by **Bun**, and styled with plain CSS.
+The official [Pomme](https://pomme.rs) website, built with **Astro 5**, powered by **Bun**, and styled with plain CSS.
 
 ---
 

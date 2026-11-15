@@ -3,6 +3,9 @@ export const MOBILE_BREAKPOINT = 900;
 export const NAV_HEIGHT = 64;
 /** Each page's h1 carries this id; rendering waits for it so a page transition never fades to an empty page. */
 export const PAGE_TITLE_ID = "page-title";
+/** Shown on every page's footer and handed to the press, so it is worded once. */
+export const DISCLAIMER = "Not an official Minecraft product. Not approved by or associated with Mojang or Microsoft.";
+export const LICENCE = "GPL-3.0";
 
 export interface ShareImage {
   src: string;

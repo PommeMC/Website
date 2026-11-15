@@ -5,6 +5,7 @@ import { getParityRun } from "@/utils/parity";
 export const DOWNLOADS_HREF = "/#download";
 export const PARITY_HREF = "/parity";
 export const FAQ_HREF = "/faq";
+export const PRESS_HREF = "/press";
 
 export interface NavLink {
   label: string;
@@ -40,7 +41,12 @@ export async function getNavLinks(): Promise<{ pages: NavLink[]; social: NavLink
 
 /** Download, the nav's page links and the FAQ, for lists of everywhere a visitor can go. */
 export async function getSitePages(): Promise<NavLink[]> {
-  return [{ label: "Download", href: DOWNLOADS_HREF }, ...(await getNavLinks()).pages, { label: "FAQ", href: FAQ_HREF }];
+  return [
+    { label: "Download", href: DOWNLOADS_HREF },
+    ...(await getNavLinks()).pages,
+    { label: "FAQ", href: FAQ_HREF },
+    { label: "Press", href: PRESS_HREF },
+  ];
 }
 
 /** New-tab attributes for links that leave the site. */

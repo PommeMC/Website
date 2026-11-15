@@ -28,3 +28,6 @@ desktop.ini
 .eslintcache
 
 .wrangler/
+
+# press kit, built from src/ by scripts/press-kit.ts
+public/press/

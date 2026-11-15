@@ -91,22 +91,29 @@
 /* A plus that turns into a minus while it's open; scenario rows without screenshots keep the column empty. */
 .parity-row > summary::before,
 .parity-row-plain::before,
-.parity-cat-name::before {
+.parity-cat-name::before,
+.parity-more > summary::before {
   color: var(--sun);
   font-weight: 700;
 }
 .parity-row-plain::before {
   content: "";
 }
+/* `/ ""` gives the marker empty alt text so screen readers skip it; the plain value is the fallback for browsers without that syntax. */
 .parity-row > summary::before,
-.parity-cat-name::before {
+.parity-cat-name::before,
+.parity-more > summary::before {
   content: "+";
+  content: "+" / "";
 }
 .parity-row[open] > summary::before,
-.parity-cat[open] .parity-cat-name::before {
+.parity-cat[open] .parity-cat-name::before,
+.parity-more[open] > summary::before {
   content: "–";
+  content: "–" / "";
 }
-.parity-cat-name::before {
+.parity-cat-name::before,
+.parity-more > summary::before {
   display: inline-block;
   width: 1em;
   margin-right: 12px;
@@ -125,14 +132,15 @@
   border-collapse: collapse;
   font-size: 14px;
 }
-.parity-checks th {
+.parity-checks :is(th, td) {
   padding: 6px 0;
-  color: var(--muted);
   font-weight: 400;
   text-align: left;
 }
-.parity-checks td {
-  padding: 6px 0;
+.parity-checks thead th {
+  color: var(--muted);
+}
+.parity-checks tbody :is(th, td) {
   border-top: 1px solid var(--line);
 }
 .parity-checks :is(th, td):not(:first-child) {
@@ -217,7 +225,7 @@
 }
 .parity-heat-toggle {
   margin-left: auto;
-  min-height: 36px;
+  min-height: var(--tap);
   color: var(--sun);
   font-weight: 600;
   cursor: pointer;
@@ -225,6 +233,16 @@
 .parity-heat-toggle:hover {
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+/* A tick shows the overlay is on, in space kept for it so the label never moves; same alt-text fallback as the markers above. */
+.parity-heat-toggle::before {
+  content: "";
+  display: inline-block;
+  width: 1em;
+}
+.parity-heat-toggle[aria-pressed="true"]::before {
+  content: "✓";
+  content: "✓" / "";
 }
 .parity-more {
   display: grid;

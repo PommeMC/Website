@@ -9,7 +9,7 @@ import { PAGE_TITLE_ID } from "@/data/layout";
 import { NEW_TAB, PARITY_HREF } from "@/data/nav";
 import { listFormat, plural } from "@/utils/content";
 import { GITHUB_URL, NEW_ISSUE_URL } from "@/utils/github";
-import { getParityRun, scenarioAnchor, tally, type ParityRun, type Scenario } from "@/utils/parity";
+import { getParityRun, HEAT_TOGGLE_LABEL, scenarioAnchor, tally, type ParityRun, type Scenario } from "@/utils/parity";
 
 // Only generated when a parity export is present, so without one /parity is a real 404.
 export async function getStaticPaths() {
@@ -72,7 +72,7 @@ const shotsText = (s: Scenario) => {
         </p>
         <p class="home-small">
           Screenshots are compared cell by cell on colour. A flagged pair has at least one cell past the threshold; open a scenario and
-          choose Show differences to see where.
+          choose {HEAT_TOGGLE_LABEL} to see where.
         </p>
         <a class="home-rib home-rib-sm" href={NEW_ISSUE_URL} {...NEW_TAB}>Report a difference</a>
       </aside>
@@ -172,9 +172,9 @@ const shotsText = (s: Scenario) => {
               <details class="parity-cat" id={anchor} open={!allAlike}>
                 <summary class="parity-cat-head">
                   <span class="home-d parity-cat-name">{c.name}</span>
-                  <p class="home-small">
+                  <span class="home-small">
                     {t.behaveAlike} of {plural(t.scenarios, "scenario")} behave the same
-                  </p>
+                  </span>
                 </summary>
                 {c.scenarios.map((s) => {
                   const summary = (
@@ -206,7 +206,7 @@ const shotsText = (s: Scenario) => {
                           <tbody>
                             {s.checks.map((check) => (
                               <tr>
-                                <td>{check.text}</td>
+                                <th scope="row">{check.text}</th>
                                 <td>
                                   <ResultMark result={check.pomme} />
                                 </td>
@@ -225,7 +225,7 @@ const shotsText = (s: Scenario) => {
                           ))}
                           {s.shots.length > SHOWN_SHOTS && (
                             <details class="parity-more">
-                              <summary class="home-link">Show {plural(s.shots.length - SHOWN_SHOTS, "more screenshot")}</summary>
+                              <summary class="home-link">{plural(s.shots.length - SHOWN_SHOTS, "more screenshot")}</summary>
                               {s.shots.slice(SHOWN_SHOTS).map((shot) => (
                                 <ParityShot shot={shot} title={s.title} />
                               ))}
@@ -297,7 +297,6 @@ const shotsText = (s: Scenario) => {
       const show = heat.hidden;
       heat.hidden = !show;
       button.setAttribute("aria-pressed", String(show));
-      button.textContent = show ? "Hide differences" : "Show differences";
     });
   }
 </script>

@@ -9,7 +9,7 @@ import { PAGE_TITLE_ID } from "@/data/layout";
 import { NEW_TAB, PARITY_HREF } from "@/data/nav";
 import { listFormat, plural } from "@/utils/content";
 import { GITHUB_URL, NEW_ISSUE_URL } from "@/utils/github";
-import { getParityRun, scenarioAnchor, tally, type ParityRun, type Scenario } from "@/utils/parity";
+import { getParityRun, HEAT_TOGGLE_LABEL, scenarioAnchor, tally, type ParityRun, type Scenario } from "@/utils/parity";
 
 // Only generated when a parity export is present, so without one /parity is a real 404.
 export async function getStaticPaths() {
@@ -72,7 +72,7 @@ const shotsText = (s: Scenario) => {
         </p>
         <p class="home-small">
           Screenshots are compared cell by cell on colour. A flagged pair has at least one cell past the threshold; open a scenario and
-          choose Highlight differences to see where.
+          choose {HEAT_TOGGLE_LABEL} to see where.
         </p>
         <a class="home-rib home-rib-sm" href={NEW_ISSUE_URL} {...NEW_TAB}>Report a difference</a>
       </aside>

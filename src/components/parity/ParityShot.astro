@@ -1,6 +1,6 @@
 ---
 import CompareSlider from "@/components/CompareSlider.astro";
-import { shotLabel, type Shot } from "@/utils/parity";
+import { HEAT_TOGGLE_LABEL, shotLabel, type Shot } from "@/utils/parity";
 
 interface Props {
   shot: Shot;
@@ -25,7 +25,7 @@ const label = shotLabel(shot.name);
     {
       shot.heatmap && shot.flagged && (
         <button type="button" class="parity-heat-toggle" aria-pressed="false" data-heat-toggle>
-          Highlight differences
+          {HEAT_TOGGLE_LABEL}
         </button>
       )
     }

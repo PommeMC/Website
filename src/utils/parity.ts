@@ -179,3 +179,6 @@ export const shotLabel = (name: string) => capitalize(name.replace(/_/g, " "));
 
 /** Anchor for a scenario's row, so other parts of the page can link to it. */
 export const scenarioAnchor = (id: string) => `scenario-${id.replace(/\//g, "-")}`;
+
+/** The heatmap toggle's label, which the page's explanation also names. */
+export const HEAT_TOGGLE_LABEL = "Highlight differences";

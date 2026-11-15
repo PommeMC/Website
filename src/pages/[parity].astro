@@ -71,8 +71,8 @@ const shotsText = (s: Scenario) => {
           > · run on <LongDate date={run.generatedAt} />
         </p>
         <p class="home-small">
-          Screenshots are compared cell by cell on colour. A flagged pair has at least one cell past the threshold; open a scenario and turn
-          on Differences to see where.
+          Screenshots are compared cell by cell on colour. A flagged pair has at least one cell past the threshold; open a scenario and
+          choose Highlight differences to see where.
         </p>
         <a class="home-rib home-rib-sm" href={NEW_ISSUE_URL} {...NEW_TAB}>Report a difference</a>
       </aside>
@@ -225,7 +225,7 @@ const shotsText = (s: Scenario) => {
                           ))}
                           {s.shots.length > SHOWN_SHOTS && (
                             <details class="parity-more">
-                              <summary class="home-link">Show {plural(s.shots.length - SHOWN_SHOTS, "more screenshot")}</summary>
+                              <summary class="home-link">{plural(s.shots.length - SHOWN_SHOTS, "more screenshot")}</summary>
                               {s.shots.slice(SHOWN_SHOTS).map((shot) => (
                                 <ParityShot shot={shot} title={s.title} />
                               ))}

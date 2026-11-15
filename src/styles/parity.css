@@ -223,16 +223,16 @@
 .parity-heat-toggle {
   margin-left: auto;
   min-height: 36px;
+  padding: 0 8px;
   color: var(--sun);
   font-weight: 600;
   cursor: pointer;
 }
-.parity-heat-toggle:hover {
+.parity-heat-toggle[aria-pressed="false"]:hover {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 .parity-heat-toggle[aria-pressed="true"] {
-  padding: 0 8px;
   background: var(--sun);
   color: var(--ink);
 }

@@ -2,7 +2,7 @@
 .post-col,
 .post-body > *,
 .post-wide {
-  --measure: 680px;
+  --measure: 760px;
   width: min(var(--measure), 100% - 2 * var(--gutter));
   margin-inline: auto;
 }
@@ -21,7 +21,7 @@
   margin-bottom: 8px;
 }
 .post-title {
-  font-size: 52px;
+  font-size: 48px;
 }
 .post-summary {
   font-size: 20px;
@@ -163,11 +163,11 @@
 .post-get-button {
   display: inline-flex;
   align-items: center;
-  min-height: var(--tap);
-  padding: 3px 24px 0;
+  min-height: 52px;
+  padding: 3px 26px 0;
   background: var(--ink);
   color: var(--sun) !important;
-  font-size: 14px;
+  font-size: 16px;
   letter-spacing: 0.1em;
 }
 .post-get-button:hover {
@@ -182,14 +182,14 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 16px 18px;
-  border: 1px solid var(--line);
+  padding: 20px;
+  border: 2px solid var(--line);
 }
 .post-nav a:hover {
   border-color: var(--sun);
 }
 .post-nav .home-d {
-  font-size: 16px;
+  font-size: 18px;
 }
 .post-nav-next {
   grid-column: 2;

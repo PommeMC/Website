@@ -1,0 +1,81 @@
+---
+title: "Past the fog: how Pomme draws distant terrain"
+description: "Pomme keeps the land you've seen at five levels of detail and draws it out to 256 chunks. Here's how that works, and what it can't do yet."
+date: 2026-11-15
+category: dev-log
+author: Purdze
+github: Purdze
+---
+
+import { COMPARE } from "../../data/compare";
+import { DOWNLOADS_HREF } from "../../data/nav";
+import { NEW_ISSUE_URL } from "../../utils/github";
+import vanilla from "../../assets/compare/vanilla.png";
+import pomme from "../../assets/compare/pomme.png";
+
+<CompareSlider before={{ ...COMPARE.vanilla, src: vanilla }} after={{ ...COMPARE.pomme, src: pomme }} />
+
+<p class="home-small">{COMPARE.caption}</p>
+
+Render distance has always been the trade you make in Minecraft. Every chunk you draw at full detail costs memory and frame time, so the world stops a few hundred blocks out and fog hides the edge. Stand on a hill at 12 chunks and the valley below you just ends.
+
+Pomme's distant terrain fills in that gap. It keeps a lighter copy of the land you've already seen and draws it past your render distance, out to 256 chunks. This post walks through how it works, from the moment a chunk arrives to the pixels on screen, and ends with the parts that aren't done yet.
+
+## Turning it on
+
+It's off by default. In **Options → Video Settings**, the **Distant Terrain** slider goes from Off to anywhere between 32 and 256 chunks, in steps of 16. It's a Pomme-only setting, so there's nothing in vanilla to match it against.
+
+One thing to know before you try it: Pomme only draws land your client has actually received. Fly somewhere new and the horizon is empty until you've been near it. Come back later and it's there, because Pomme keeps what it saw.
+
+## Remembering the world
+
+When a chunk column has loaded and been lit, Pomme takes a copy of it. It takes another just before the column unloads, which is also when any blocks you placed or broke there are picked up.
+
+That copy isn't stored block by block. The world is split into cubes of 32 × 32 × 32 cells, and there are five levels of them. At the finest level a cell is one block. At each level up, a cell covers twice the width: 2, 4, 8, then 16 blocks. So one cube at the coarsest level spans 512 blocks.
+
+Each cell is a single 64-bit number holding a block, a biome and the light level. When eight cells merge into one at the next level up, the coarse cell keeps the most solid of the eight. That's what stops a far-off mountain from going see-through as it gets coarser.
+
+All of this is saved to disk, one compressed file per cube. Each server you join, and each singleplayer world, gets its own folder, with a separate set per dimension. That's why the horizon is still there the next time you join: Pomme doesn't have to see the land again to draw it.
+
+## From cells to shapes
+
+A cell knows which block it is, but the graphics card needs faces to draw. Pomme makes them on a background thread of their own, so that work stays off the game's main loop.
+
+First, each block's model is drawn once, in software, from all six sides into small 16 × 16 textures. A far-off oak log becomes six little pictures of an oak log. Up to 2,048 models fit in that set.
+
+Then each cube is turned into a mesh. Faces that touch a neighbour are dropped, and the faces that are left get merged into larger rectangles of up to 16 × 16 cells, so a flat plain becomes a handful of quads instead of thousands.
+
+The order matters too. When you join a server, a flood of chunks arrives at once, and copying them all in would hold everything else up. So the thread copies chunks in short slices between batches of meshes, and it always handles what the graphics card has asked for before new chunks.
+
+## Choosing what to draw
+
+Every frame, the graphics card walks the cubes as a tree, starting from coarse 512-block cubes around you. A cube is split into its finer children while it covers more than 64 × 64 pixels on screen. Close land ends up at fine detail, and distant land stays coarse, which you can't see anyway at that size.
+
+Land hidden behind something nearer is skipped. Pomme builds a small depth map from what's already been drawn and checks each cube against it before drawing it.
+
+When the tree reaches a cube whose mesh isn't on the graphics card yet, it asks the background thread for it, up to 50 requests a frame. Cubes just outside your view get asked for too, so turning around doesn't show gaps.
+
+Distant terrain never draws over the real world. It only fills pixels where the normal chunks drew nothing, and a column switches over to the real chunks once they've actually drawn, not just loaded, so you don't get a gap of empty ground while they load in. The fog is pushed out to the new distance, and distant terrain fades out over the last tenth of it.
+
+All of this lives in a slice of graphics memory: an eighth of your card's memory, between 64 and 512 MiB. When that slice runs low, the cubes you haven't looked at for longest are dropped first.
+
+## The water problem
+
+Water needed a fix of its own.
+
+A coarse cell is a cube. If a cell 8 blocks tall contains a lake whose surface is 3 blocks from the top, drawing the whole cell as water puts the surface 3 blocks too high. Next to a finer level drawn at the right height, you get a step in the water at every seam between levels.
+
+The fix is to store the gap. A coarse water cell remembers how far below its top the real surface sits, and it's drawn with a model whose top face is lowered by that much. Every level puts the water surface on the same plane. Water next to water is also treated as the same surface, so the seams don't draw it twice. And water is shaded by direction, the way vanilla shades it, so it doesn't stand out against the land.
+
+## What it doesn't do yet
+
+- **It only shows land you've seen.** There's no generation past that yet. Generating land you haven't visited is something I'd like to add, but it isn't built.
+- **It's off in the Nether and the End.** Those dimensions have no sky light, and a cave roof would cover everything.
+- **It's off under shader packs.**
+- **The disk cache has no size limit.** Explore a lot on one server and that folder only grows. A cap is on the list.
+- **There's room for 2,048 block models.** Past that, a model draws as nothing.
+- **Edits show up late.** Blocks you change are picked up when the column unloads, not as you change them.
+
+## Try it
+
+Distant terrain has been in Pomme since 0.2.10. <a href={DOWNLOADS_HREF}>Download Pomme</a>, open Video Settings and move the Distant Terrain slider. If something draws wrong, a <a href={NEW_ISSUE_URL}>bug report</a> with a screenshot and your settings helps a lot.

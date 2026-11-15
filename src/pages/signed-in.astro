@@ -1,6 +1,7 @@
 ---
 import "@/styles/signin.css";
 import Layout from "@/layouts/Layout.astro";
+import { PAGE_TITLE_ID } from "@/data/layout";
 import { SIGNED_IN_HREF } from "@/data/unlisted";
 ---
 
@@ -8,7 +9,7 @@ import { SIGNED_IN_HREF } from "@/data/unlisted";
   <div class="home">
     <div class="home-w home-s signin">
       <span class="signin-mark signin-ok" aria-hidden="true">✓</span>
-      <h1 class="home-d signin-h1">You're signed in</h1>
+      <h1 id={PAGE_TITLE_ID} class="home-d signin-h1">You're signed in</h1>
       <p class="home-muted">You can close this tab and go back to Pomme.</p>
     </div>
   </div>

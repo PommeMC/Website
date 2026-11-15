@@ -1,6 +1,7 @@
 ---
 import "@/styles/faq.css";
 import Layout from "@/layouts/Layout.astro";
+import { PAGE_TITLE_ID } from "@/data/layout";
 import { LINKS } from "@/data/home";
 import { CHECKED_FOR, getFaq } from "@/data/faq";
 import { FAQ_HREF, NEW_TAB, hrefAttrs } from "@/data/nav";
@@ -16,7 +17,7 @@ const groups = await getFaq();
   <div class="home">
     <div class="home-w home-s home-aside">
       <aside class="home-aside-side">
-        <h1 class="home-d home-aside-h1">Questions</h1>
+        <h1 id={PAGE_TITLE_ID} class="home-d home-aside-h1">Questions</h1>
         <nav aria-label="Question groups">
           <ul class="faq-groups" role="list">
             {

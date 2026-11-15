@@ -1,6 +1,7 @@
 ---
 import "@/styles/news.css";
 import Layout from "@/layouts/Layout.astro";
+import { PAGE_TITLE_ID } from "@/data/layout";
 import LongDate from "@/components/LongDate.astro";
 import NewsTag from "@/components/news/NewsTag.astro";
 import PostCover from "@/components/news/PostCover.astro";
@@ -18,7 +19,7 @@ const categories = [...new Set(entries.map((e) => e.category))];
     <div class="home-w home-s">
       <header class="news-head">
         <div class="home-stack">
-          <h1 class="home-d news-h1">News</h1>
+          <h1 id={PAGE_TITLE_ID} class="home-d news-h1">News</h1>
           <p class="home-muted">Releases and posts from the Pomme team.</p>
         </div>
         {

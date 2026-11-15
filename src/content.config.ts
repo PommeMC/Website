@@ -1,9 +1,7 @@
 import { defineCollection, z } from "astro:content";
 import { glob } from "astro/loaders";
 import { rssSchema } from "@astrojs/rss";
-
-export const DEFAULT_AUTHOR = "Pomme Team";
-const DEFAULT_AVATAR = "/assets/brand/pomme.png";
+import { DEFAULT_AUTHOR, DEFAULT_AVATAR } from "@/data/posts";
 
 const posts = defineCollection({
   loader: glob({ pattern: "**/*.mdx", base: "./src/content/posts" }),

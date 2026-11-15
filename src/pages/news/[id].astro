@@ -8,7 +8,8 @@ import NewsTag from "@/components/news/NewsTag.astro";
 import PostCover from "@/components/news/PostCover.astro";
 import JsonScript from "@/components/JsonScript.astro";
 import Layout from "@/layouts/Layout.astro";
-import { DEFAULT_AUTHOR } from "@/content.config";
+import { PAGE_TITLE_ID, SITE_CARD } from "@/data/layout";
+import { DEFAULT_AUTHOR } from "@/data/posts";
 import { DOWNLOADS_HREF } from "@/data/nav";
 import { listFormat } from "@/utils/content";
 import { buildPlatforms, downloadableSystems } from "@/utils/downloads";
@@ -37,16 +38,16 @@ const { title, summary, readTime } = postInfo(post);
 
 // A local cover is shared as a JPEG at link-preview width, since not every site that shows previews reads WebP.
 const cover = data.cover;
-const share =
-  cover &&
-  (typeof cover.src === "string"
+const share = !cover
+  ? SITE_CARD
+  : typeof cover.src === "string"
     ? { src: cover.src, alt: cover.alt }
     : await getImage({ src: cover.src, width: 1200, format: "jpg" }).then((img) => ({
         src: img.src,
         width: Number(img.attributes.width),
         height: Number(img.attributes.height),
         alt: cover.alt,
-      })));
+      }));
 
 const release = await getLatestRelease();
 const systems = listFormat.format(downloadableSystems(buildPlatforms(release)));
@@ -59,7 +60,7 @@ const structuredData = {
   description: summary,
   datePublished: data.date.toISOString(),
   author: { "@type": data.author === DEFAULT_AUTHOR ? "Organization" : "Person", name: data.author },
-  image: share ? new URL(share.src, Astro.site) : undefined,
+  image: new URL(share.src, Astro.site),
   url: new URL(canonical, Astro.site),
   publisher: { "@type": "Organization", name: "Pomme", url: Astro.site },
 };
@@ -74,7 +75,7 @@ const structuredData = {
       <header class="post-col post-head">
         <a class="home-link post-back" href="/news">← All news</a>
         <NewsTag category={data.category} />
-        <h1 class="home-d post-title">{title}</h1>
+        <h1 id={PAGE_TITLE_ID} class="home-d post-title">{title}</h1>
         {data.description && <p class="post-summary">{data.description}</p>}
         <p class="post-byline">
           <img src={data.authorAvatar} width="36" height="36" alt="" loading="eager" />

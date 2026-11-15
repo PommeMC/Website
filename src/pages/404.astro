@@ -2,6 +2,7 @@
 import { Image } from "astro:assets";
 import core from "@/assets/brand/apple-core.png";
 import Layout from "@/layouts/Layout.astro";
+import { PAGE_TITLE_ID } from "@/data/layout";
 import { NEW_TAB, externalAttrs, getSitePages } from "@/data/nav";
 import { NEW_ISSUE_URL } from "@/utils/github";
 
@@ -14,7 +15,7 @@ const pages = await getSitePages();
       <Image src={core} alt="An eaten apple core" widths={[180, 379]} sizes="180px" loading="eager" />
       <div class="home-stack">
         <p class="home-d missing-kicker">Error 404</p>
-        <h1 class="home-d missing-title">Someone already ate this page.</h1>
+        <h1 id={PAGE_TITLE_ID} class="home-d missing-title">Someone already ate this page.</h1>
         <p class="home-muted">The link may be old, or the page may have moved. Nothing is wrong on your end.</p>
         <a class="home-rib" href="/">Back to the homepage</a>
         <nav class="missing-links" aria-label="Pages">

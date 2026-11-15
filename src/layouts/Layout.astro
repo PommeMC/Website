@@ -2,16 +2,9 @@
 import JsonScript from "@/components/JsonScript.astro";
 import SiteFooter from "@/components/layout/SiteFooter.astro";
 import SiteNav from "@/components/layout/SiteNav.astro";
-import { NAV_HEIGHT } from "@/data/layout";
+import { NAV_HEIGHT, PAGE_TITLE_ID, SITE_CARD, type ShareImage } from "@/data/layout";
 import { REDIRECTS, UNLISTED } from "@/data/unlisted";
 import "@/styles/global.css";
-
-interface ShareImage {
-  src: string;
-  width?: number;
-  height?: number;
-  alt: string;
-}
 
 interface Props {
   /** Shown as "<title> | Pomme". Left out on the homepage, which uses the site's own title. */
@@ -25,13 +18,6 @@ interface Props {
   /** The picture shown when the page is shared. */
   share?: ShareImage;
 }
-
-const SITE_CARD: ShareImage = {
-  src: "/og.jpg",
-  width: 1200,
-  height: 630,
-  alt: "Pomme, a Minecraft client written from scratch in Rust, next to a landscape captured in Pomme.",
-};
 
 const { title, description, canonical, chrome = true, navOverlay = false, share = SITE_CARD } = Astro.props;
 const fullTitle = title ? `${title} | Pomme` : "Pomme: a Minecraft client written in Rust";
@@ -68,7 +54,7 @@ const SPECULATION_RULES = {
     <link rel="canonical" href={url} />
     <link rel="icon" href="/favicon.ico" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <link rel="expect" href="#main" blocking="render" />
+    <link rel="expect" href={`#${PAGE_TITLE_ID}`} blocking="render" />
     <JsonScript type="speculationrules" data={SPECULATION_RULES} />
     <title>{fullTitle}</title>
     <slot name="head" />

@@ -98,6 +98,22 @@
     animation: none !important;
   }
 }
+/* The intro starts partly on screen, so it's left still rather than resting half-faded. */
+@supports (animation-timeline: view()) and (animation-range: entry) {
+  @media (prefers-reduced-motion: no-preference) {
+    .home main > section:not(.home-hero, .home-intro) > * {
+      animation: home-reveal linear backwards;
+      animation-timeline: view();
+      animation-range: entry 0% entry 200px;
+    }
+  }
+}
+@keyframes home-reveal {
+  from {
+    opacity: 0;
+    translate: 0 24px;
+  }
+}
 .home-sky-video {
   opacity: 0;
   transition: opacity 800ms ease;
@@ -231,6 +247,25 @@ img.home-layer {
     translate: 35% 260%;
     rotate: 160deg;
   }
+}
+.home-hero[data-paused] .home-mark-apple .home-mark-sway {
+  animation-play-state: paused;
+}
+.home-motion-toggle {
+  position: absolute;
+  right: var(--gutter);
+  bottom: 24px;
+  display: grid;
+  place-items: center;
+  width: var(--tap);
+  height: var(--tap);
+  background: var(--bar);
+  color: var(--sun);
+  cursor: pointer;
+}
+.home-motion-toggle:not([aria-pressed="true"]) .play,
+.home-motion-toggle[aria-pressed="true"] .pause {
+  display: none;
 }
 .home-hero-fade {
   position: absolute;

@@ -51,25 +51,44 @@ import { HERO_IMAGE, HERO_LAYERS, HERO_RENDER, HERO_SKY_SOURCES } from "@/utils/
     ))
   }
   <div class="home-hero-fade" aria-hidden="true"></div>
+  <button type="button" class="home-motion-toggle" aria-pressed="false" aria-label="Pause background motion" data-motion-toggle hidden>
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"
+      ><path class="pause" d="M6 5h4v14H6zM14 5h4v14h-4z"></path><path class="play" d="M7 4l14 8-14 8z"></path></svg
+    >
+  </button>
 </section>
 
 <script>
   import { perFrame } from "@/utils/frame";
 
   const still = matchMedia("(prefers-reduced-motion: reduce)");
+  const hero = document.querySelector<HTMLElement>("[data-parallax]");
+  let paused = false;
 
   // The sky video only loads when motion is welcome and data isn't being saved, and pauses while off screen.
   const video = document.querySelector<HTMLVideoElement>("[data-sky-video]");
   const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
-  if (video && !saveData && !still.matches) {
-    video.querySelectorAll("source").forEach((s) => (s.src = s.dataset.src ?? ""));
-    video.addEventListener("playing", () => video.classList.add("is-playing"), { once: true });
-    video.load();
-    new IntersectionObserver(([entry]) => (entry.isIntersecting ? video.play().catch(() => {}) : video.pause())).observe(video);
+  const sky = !saveData && !still.matches ? video : null;
+  const setSkyPlaying = (play: boolean) => (play ? sky?.play().catch(() => {}) : sky?.pause());
+  if (sky) {
+    sky.querySelectorAll("source").forEach((s) => (s.src = s.dataset.src ?? ""));
+    sky.addEventListener("playing", () => sky.classList.add("is-playing"), { once: true });
+    sky.load();
+    new IntersectionObserver(([entry]) => setSkyPlaying(entry.isIntersecting && !paused)).observe(sky);
+  }
+
+  const toggle = document.querySelector<HTMLButtonElement>("[data-motion-toggle]");
+  if (toggle && !still.matches) {
+    toggle.hidden = false;
+    toggle.addEventListener("click", () => {
+      paused = !paused;
+      toggle.setAttribute("aria-pressed", String(paused));
+      hero?.toggleAttribute("data-paused", paused);
+      setSkyPlaying(!paused);
+    });
   }
 
   // Fallback for browsers without CSS scroll-driven animations.
-  const hero = document.querySelector<HTMLElement>("[data-parallax]");
   if (hero && !CSS.supports("(animation-timeline: scroll()) and (animation-range: 0% 100%)")) {
     const range = parseFloat(hero.style.getPropertyValue("--range"));
     const draw = () => {

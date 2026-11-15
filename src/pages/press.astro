@@ -1,0 +1,202 @@
+---
+import "@/styles/press.css";
+import { Image } from "astro:assets";
+import LongDate from "@/components/LongDate.astro";
+import Layout from "@/layouts/Layout.astro";
+import { SERVER_VERSIONS } from "@/data/home";
+import { LICENCE, MOBILE_BREAKPOINT, PAGE_TITLE_ID } from "@/data/layout";
+import { PRESS_HREF } from "@/data/nav";
+import { BACKGROUNDS, LOGO_FORMATS, LOGOS, NAME_RULES, PRESS_EMAIL, PRESS_TEXT, PRESS_ZIP, SCREENSHOTS } from "@/data/press";
+import { getContributors, getLatestRelease } from "@/utils/github";
+
+const [release, contributors] = await Promise.all([getLatestRelease(), getContributors()]);
+const images = import.meta.glob<{ default: ImageMetadata }>("/src/assets/**/*.png", { eager: true });
+const shots = SCREENSHOTS.map((s) => ({ ...s, image: images[`/${s.source}`].default }));
+const file = (name: string) => `${PRESS_HREF}/${name}`;
+const WIDTHS = [640, 1120];
+const sizes = (desktopPx: number) => `(max-width: ${MOBILE_BREAKPOINT}px) 100vw, ${desktopPx}px`;
+---
+
+<Layout title="Press kit" description="Logos, screenshots and descriptions for anyone writing about Pomme." canonical={PRESS_HREF}>
+  <div class="home">
+    <div class="home-w home-s press">
+      <header class="press-head">
+        <div class="home-stack">
+          <h1 id={PAGE_TITLE_ID} class="home-d press-h1">Press kit</h1>
+          <p class="press-lede">Everything you need to write about Pomme, in one download.</p>
+          <a class="home-rib home-rib-lg" href={file(PRESS_ZIP)} download>Download everything (.zip)</a>
+          <ul class="press-ticks" role="list">
+            <li>The logo and apple, as SVG and PNG</li>
+            <li>Screenshots at full size</li>
+            <li>The descriptions below, as text</li>
+          </ul>
+        </div>
+        <Image src={shots[0].image} alt={shots[0].alt} widths={WIDTHS} sizes={sizes(520)} loading="eager" />
+      </header>
+
+      <section aria-labelledby="files">
+        <h2 class="home-d press-h2" id="files">Or take one file</h2>
+        <ul class="press-cards" role="list">
+          {
+            LOGOS.flatMap((l) =>
+              BACKGROUNDS.map((bg) => (
+                <li class="press-card">
+                  <div class:list={["press-mark", `press-${bg}`]}>
+                    <img src={file(`${l.file(bg)}.svg`)} alt="" loading="lazy" />
+                  </div>
+                  <p class="press-card-foot">
+                    <span>
+                      {l.title} on {bg}
+                    </span>
+                    <span class="press-formats">
+                      {LOGO_FORMATS.map((f) => (
+                        <a href={file(`${l.file(bg)}.${f}`)} download>
+                          {f.toUpperCase()}
+                          <span class="home-sr">
+                            {" "}
+                            of the {l.title.toLowerCase()} on {bg}
+                          </span>
+                        </a>
+                      ))}
+                    </span>
+                  </p>
+                </li>
+              ))
+            )
+          }
+        </ul>
+        <ul class="press-shots" role="list">
+          {
+            shots.map((s) => (
+              <li class="press-card">
+                <Image src={s.image} alt={s.alt} widths={WIDTHS} sizes={sizes(540)} />
+                <p class="press-card-foot">
+                  <span>{s.title}</span>
+                  <a href={file(s.file)} download>
+                    PNG<span class="home-sr"> of {s.title.toLowerCase()}</span>
+                  </a>
+                </p>
+                {s.note && <p class="home-small">{s.note}</p>}
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <section aria-labelledby="words">
+        <h2 class="home-d press-h2" id="words">Words you can copy</h2>
+        <div class="press-words">
+          {
+            PRESS_TEXT.map((t) => (
+              <div class="press-word">
+                <div class="press-word-head">
+                  <h3 class="home-small">{t.label}</h3>
+                  <span class="press-copy">
+                    <button type="button" command="--copy" commandfor={`press-${t.id}`}>
+                      Copy<span class="home-sr"> {t.label.toLowerCase()}</span>
+                    </button>
+                    <span class="press-tip" role="status" />
+                  </span>
+                </div>
+                <p id={`press-${t.id}`}>{t.text}</p>
+              </div>
+            ))
+          }
+        </div>
+        <dl class="press-facts">
+          {
+            release && (
+              <div>
+                <dt class="home-small">
+                  Latest release, <LongDate date={release.publishedAt} />
+                </dt>
+                <dd class="home-d">{release.version}</dd>
+              </div>
+            )
+          }
+          <div>
+            <dt class="home-small">Joins Minecraft servers</dt>
+            <dd class="home-d">{SERVER_VERSIONS}</dd>
+          </div>
+          {
+            contributors && (
+              <div>
+                <dt class="home-small">Contributors</dt>
+                <dd class="home-d">{contributors.length}</dd>
+              </div>
+            )
+          }
+          <div>
+            <dt class="home-small">Licence</dt>
+            <dd class="home-d">{LICENCE}</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section aria-labelledby="name">
+        <h2 class="home-d press-h2" id="name">Using the name</h2>
+        <ul class="home-bullets">
+          {NAME_RULES.map((r) => <li>{r}</li>)}
+        </ul>
+      </section>
+
+      <section class="press-contact" aria-labelledby="contact">
+        <div>
+          <h2 class="home-d" id="contact">Press contact</h2>
+          <p class="home-muted">Questions, interviews or something missing from this page.</p>
+        </div>
+        <p class="press-copy">
+          <a class="home-inline-link" id="press-email" href={`mailto:${PRESS_EMAIL}`}>{PRESS_EMAIL}</a>
+          <button type="button" command="--copy" commandfor="press-email">
+            Copy<span class="home-sr"> the press email address</span>
+          </button>
+          <span class="press-tip" role="status"></span>
+        </p>
+      </section>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  const timers = new WeakMap<HTMLButtonElement, number>();
+
+  // The status bubble after the button is both the visible feedback and what screen readers hear.
+  function report(button: HTMLButtonElement, ok: boolean) {
+    const tip = button.nextElementSibling;
+    if (!tip) return;
+    clearTimeout(timers.get(button));
+    tip.textContent = "";
+    requestAnimationFrame(() => (tip.textContent = ok ? "Copied" : "Copy failed"));
+    timers.set(
+      button,
+      window.setTimeout(() => (tip.textContent = ""), 2000)
+    );
+  }
+
+  async function copy(button: HTMLButtonElement, target: HTMLElement) {
+    try {
+      await navigator.clipboard.writeText(target.innerText.trim());
+      report(button, true);
+    } catch {
+      report(button, false);
+    }
+  }
+
+  // Command events don't bubble, so listen in the capture phase; browsers without invoker commands get a click listener.
+  if ("CommandEvent" in window) {
+    document.addEventListener(
+      "command",
+      (e) => {
+        const event = e as Event & { command: string; source: HTMLButtonElement };
+        if (event.command === "--copy") copy(event.source, event.target as HTMLElement);
+      },
+      true
+    );
+  } else {
+    document.addEventListener("click", (e) => {
+      const button = (e.target as Element).closest<HTMLButtonElement>('button[command="--copy"]');
+      const target = button && document.getElementById(button.getAttribute("commandfor") ?? "");
+      if (button && target) copy(button, target);
+    });
+  }
+</script>

@@ -3,6 +3,7 @@ import "@/styles/footer.css";
 import { Icon } from "astro-icon/components";
 import SiteBrand from "@/components/layout/SiteBrand.astro";
 import { LINKS } from "@/data/home";
+import { DISCLAIMER, LICENCE } from "@/data/layout";
 import { NEW_TAB, externalAttrs, getNavLinks, getSitePages } from "@/data/nav";
 
 const hash = import.meta.env.GIT_COMMIT_HASH;
@@ -40,9 +41,9 @@ const [{ social }, pages] = await Promise.all([getNavLinks(), getSitePages()]);
       </ul>
     </div>
     <div class="site-footer-bottom">
-      <p class="site-footer-legal">Not an official Minecraft product. Not approved by or associated with Mojang or Microsoft.</p>
+      <p class="site-footer-legal">{DISCLAIMER}</p>
       <p>
-        &copy; {year} Pomme · GPL-3.0 · <a class="home-quiet-link" href={LINKS.sponsor} {...NEW_TAB}>Donate</a>
+        &copy; {year} Pomme · {LICENCE} · <a class="home-quiet-link" href={LINKS.sponsor} {...NEW_TAB}>Donate</a>
         {
           hash && (
             <>

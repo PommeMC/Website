@@ -71,8 +71,8 @@ const shotsText = (s: Scenario) => {
           > · run on <LongDate date={run.generatedAt} />
         </p>
         <p class="home-small">
-          Screenshots are compared cell by cell on colour. A flagged pair has at least one cell past the threshold; open a scenario and
-          choose Show differences to see where.
+          Screenshots are compared cell by cell on colour. A flagged pair has at least one cell past the threshold; open a scenario and turn
+          on Differences to see where.
         </p>
         <a class="home-rib home-rib-sm" href={NEW_ISSUE_URL} {...NEW_TAB}>Report a difference</a>
       </aside>
@@ -172,9 +172,9 @@ const shotsText = (s: Scenario) => {
               <details class="parity-cat" id={anchor} open={!allAlike}>
                 <summary class="parity-cat-head">
                   <span class="home-d parity-cat-name">{c.name}</span>
-                  <p class="home-small">
+                  <span class="home-small">
                     {t.behaveAlike} of {plural(t.scenarios, "scenario")} behave the same
-                  </p>
+                  </span>
                 </summary>
                 {c.scenarios.map((s) => {
                   const summary = (
@@ -206,7 +206,7 @@ const shotsText = (s: Scenario) => {
                           <tbody>
                             {s.checks.map((check) => (
                               <tr>
-                                <td>{check.text}</td>
+                                <th scope="row">{check.text}</th>
                                 <td>
                                   <ResultMark result={check.pomme} />
                                 </td>
@@ -297,7 +297,6 @@ const shotsText = (s: Scenario) => {
       const show = heat.hidden;
       heat.hidden = !show;
       button.setAttribute("aria-pressed", String(show));
-      button.textContent = show ? "Hide differences" : "Show differences";
     });
   }
 </script>

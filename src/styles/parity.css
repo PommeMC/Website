@@ -91,7 +91,8 @@
 /* A plus that turns into a minus while it's open; scenario rows without screenshots keep the column empty. */
 .parity-row > summary::before,
 .parity-row-plain::before,
-.parity-cat-name::before {
+.parity-cat-name::before,
+.parity-more > summary::before {
   color: var(--sun);
   font-weight: 700;
 }
@@ -99,14 +100,17 @@
   content: "";
 }
 .parity-row > summary::before,
-.parity-cat-name::before {
+.parity-cat-name::before,
+.parity-more > summary::before {
   content: "+";
 }
 .parity-row[open] > summary::before,
-.parity-cat[open] .parity-cat-name::before {
+.parity-cat[open] .parity-cat-name::before,
+.parity-more[open] > summary::before {
   content: "–";
 }
-.parity-cat-name::before {
+.parity-cat-name::before,
+.parity-more > summary::before {
   display: inline-block;
   width: 1em;
   margin-right: 12px;
@@ -125,14 +129,15 @@
   border-collapse: collapse;
   font-size: 14px;
 }
-.parity-checks th {
+.parity-checks :is(th, td) {
   padding: 6px 0;
-  color: var(--muted);
   font-weight: 400;
   text-align: left;
 }
-.parity-checks td {
-  padding: 6px 0;
+.parity-checks thead th {
+  color: var(--muted);
+}
+.parity-checks tbody :is(th, td) {
   border-top: 1px solid var(--line);
 }
 .parity-checks :is(th, td):not(:first-child) {
@@ -225,6 +230,11 @@
 .parity-heat-toggle:hover {
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+.parity-heat-toggle[aria-pressed="true"] {
+  padding: 0 8px;
+  background: var(--sun);
+  color: var(--ink);
 }
 .parity-more {
   display: grid;

@@ -42,7 +42,7 @@ const totals = [commits !== null && plural(commits, "commit"), stars !== null &&
             {shown.map((c) => (
               <li>
                 <a href={c.profileUrl} class="home-person" title={c.login}>
-                  <Image src={sizedAvatar(c.avatarUrl, 80)} width={40} height={40} layout="fixed" alt="" />
+                  <Image src={sizedAvatar(c.avatarUrl, 40)} width={40} height={40} layout="fixed" alt="" />
                   <span>{c.login}</span>
                 </a>
               </li>

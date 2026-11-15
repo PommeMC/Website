@@ -13,7 +13,7 @@ import { DEFAULT_AUTHOR } from "@/data/posts";
 import { DOWNLOADS_HREF } from "@/data/nav";
 import { listFormat } from "@/utils/content";
 import { buildPlatforms, downloadableSystems } from "@/utils/downloads";
-import { getLatestRelease, sizedAvatar } from "@/utils/github";
+import { getLatestRelease, loginAvatar } from "@/utils/github";
 import { getPosts, postInfo } from "@/utils/news";
 
 export async function getStaticPaths() {
@@ -35,6 +35,8 @@ const { Content } = await render(post);
 /** Components a post can use without importing them. */
 const components = { CompareSlider };
 const { title, summary, readTime } = postInfo(post);
+const BYLINE_AVATAR = 40;
+const THANKS_AVATAR = 36;
 
 // A local cover is shared as a JPEG at link-preview width, since not every site that shows previews reads WebP.
 const cover = data.cover;
@@ -78,7 +80,14 @@ const structuredData = {
         <h1 id={PAGE_TITLE_ID} class="home-d post-title">{title}</h1>
         {data.description && <p class="post-summary">{data.description}</p>}
         <p class="post-byline">
-          <img src={data.authorAvatar} width="36" height="36" alt="" loading="eager" />
+          <Image
+            src={data.github ? loginAvatar(data.github, BYLINE_AVATAR) : data.authorAvatar}
+            width={BYLINE_AVATAR}
+            height={BYLINE_AVATAR}
+            layout="fixed"
+            alt=""
+            loading="eager"
+          />
           <span>
             <strong>{data.author}</strong>
             <span class="home-small">
@@ -107,13 +116,7 @@ const structuredData = {
             <p class="home-small post-thanks">
               <span class="post-thanks-faces" aria-hidden="true">
                 {data.thanks.map((login) => (
-                  <Image
-                    src={sizedAvatar(`https://avatars.githubusercontent.com/${login}`, 56)}
-                    width={28}
-                    height={28}
-                    layout="fixed"
-                    alt=""
-                  />
+                  <Image src={loginAvatar(login, THANKS_AVATAR)} width={THANKS_AVATAR} height={THANKS_AVATAR} layout="fixed" alt="" />
                 ))}
               </span>
               <span>

@@ -137,7 +137,7 @@ const peopleText = [`${people.length} ${people.length === 1 ? "person" : "people
               {people.map((c) => (
                 <li>
                   <a href={c.profileUrl} {...NEW_TAB}>
-                    <Image src={sizedAvatar(c.avatarUrl, 64)} width={32} height={32} layout="fixed" alt="" />
+                    <Image src={sizedAvatar(c.avatarUrl, 32)} width={32} height={32} layout="fixed" alt="" />
                     <span>{c.login}</span>
                   </a>
                   <span class="home-small">

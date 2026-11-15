@@ -159,8 +159,9 @@ export const getGoodFirstIssues = once(async (): Promise<Issue[] | null> => {
     }));
 });
 
-/** A GitHub avatar URL at a given pixel size. */
-export const sizedAvatar = (url: string, px: number) => `${url}${url.includes("?") ? "&" : "?"}s=${px}`;
+/** A GitHub avatar URL for an image shown `px` CSS pixels wide, fetched at twice that for sharp screens. */
+export const sizedAvatar = (url: string, px: number) => `${url}${url.includes("?") ? "&" : "?"}s=${2 * px}`;
+export const loginAvatar = (login: string, px: number) => sizedAvatar(`https://avatars.githubusercontent.com/${login}`, px);
 
 export const getContributors = once(async (): Promise<Contributor[] | null> => {
   const all: GhContributor[] = [];

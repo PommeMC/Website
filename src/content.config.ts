@@ -11,6 +11,8 @@ const posts = defineCollection({
       category: z.enum(["dev-log", "announcement"]).default("announcement"),
       author: z.string().default(DEFAULT_AUTHOR),
       authorAvatar: z.string().default(DEFAULT_AVATAR),
+      /** The author's GitHub username, whose avatar the byline shows in place of authorAvatar. */
+      github: z.string().optional(),
       /** A picture next to the post (./cover.png) or a full URL. */
       cover: z
         .object({

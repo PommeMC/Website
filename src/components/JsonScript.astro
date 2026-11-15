@@ -1,0 +1,12 @@
+---
+interface Props {
+  type: "application/ld+json" | "speculationrules";
+  data: object;
+}
+const { type, data } = Astro.props;
+// Escaping "<" keeps a "</script>" inside any string from ending the tag early.
+const json = JSON.stringify(data).replace(/</g, "\\u003c");
+---
+
+{/* eslint-disable astro/no-set-html-directive -- set:text would escape the JSON's quotes; the "<" escape covers XSS. */}
+<script type={type} is:inline set:html={json} />

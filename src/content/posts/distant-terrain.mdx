@@ -5,6 +5,10 @@ date: 2026-11-15
 category: dev-log
 author: Purdze
 github: Purdze
+cover:
+  src: ../../assets/compare/pomme.png
+  alt: "A badlands valley, a river, wooded hills and mountains drawn all the way to the horizon."
+  caption: "Distant terrain on, from the same spot as the comparison below."
 ---
 
 import { COMPARE } from "../../data/compare";
@@ -13,13 +17,15 @@ import { NEW_ISSUE_URL } from "../../utils/github";
 import vanilla from "../../assets/compare/vanilla.png";
 import pomme from "../../assets/compare/pomme.png";
 
+Render distance has always been the trade you make in Minecraft. Every chunk you draw at full detail costs memory and frame time, so the world stops a few hundred blocks out and fog hides the edge. Stand on a hill and the valley below you just ends.
+
+Pomme's distant terrain fills in that gap. It keeps a lighter copy of the land you've already seen and draws it past your render distance, out to 256 chunks. This post walks through how it works, from the moment a chunk arrives to the pixels on screen, and ends with the parts that aren't done yet.
+
+Here's the same spot with it off and on:
+
 <CompareSlider before={{ ...COMPARE.vanilla, src: vanilla }} after={{ ...COMPARE.pomme, src: pomme }} />
 
 <p class="home-small">{COMPARE.caption}</p>
-
-Render distance has always been the trade you make in Minecraft. Every chunk you draw at full detail costs memory and frame time, so the world stops a few hundred blocks out and fog hides the edge. Stand on a hill at 12 chunks and the valley below you just ends.
-
-Pomme's distant terrain fills in that gap. It keeps a lighter copy of the land you've already seen and draws it past your render distance, out to 256 chunks. This post walks through how it works, from the moment a chunk arrives to the pixels on screen, and ends with the parts that aren't done yet.
 
 ## Turning it on
 

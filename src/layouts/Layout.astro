@@ -37,6 +37,17 @@ const { title, description, keywords, canonical, chrome = true, navOverlay = fal
 const fullTitle = title ? `${title} | Pomme` : "Pomme: a Minecraft client written in Rust";
 const url = new URL(canonical, Astro.site);
 const shareUrl = new URL(share.src, Astro.site);
+// Hovering a link loads that page ahead; the redirects and the feed aren't pages to render.
+const SPECULATION_RULES = {
+  prerender: [
+    {
+      where: {
+        and: [{ href_matches: "/*" }, { not: { href_matches: ["/donate", "/downloads", "/community/guidelines", "/news/rss.xml"] } }],
+      },
+      eagerness: "moderate",
+    },
+  ],
+};
 ---
 
 <!doctype html>
@@ -61,6 +72,8 @@ const shareUrl = new URL(share.src, Astro.site);
     <link rel="canonical" href={url} />
     <link rel="icon" href="/favicon.ico" />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="expect" href="#main" blocking="render" />
+    <script type="speculationrules" is:inline set:html={JSON.stringify(SPECULATION_RULES)} />
     <title>{fullTitle}</title>
     <slot name="head" />
   </head>

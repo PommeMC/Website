@@ -21,6 +21,13 @@ html {
   html {
     scroll-behavior: smooth;
   }
+  /* Pages cross-fade into each other while the nav stays put. */
+  @view-transition {
+    navigation: auto;
+  }
+  .site-nav {
+    view-transition-name: site-nav;
+  }
 }
 body {
   display: flex;
@@ -38,6 +45,12 @@ h5,
 h6 {
   font-size: inherit;
   font-weight: inherit;
+  text-wrap: balance;
+}
+p,
+li,
+blockquote {
+  text-wrap: pretty;
 }
 ol,
 ul,

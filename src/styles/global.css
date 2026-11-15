@@ -21,7 +21,6 @@ html {
   html {
     scroll-behavior: smooth;
   }
-  /* Pages cross-fade into each other while the nav stays put. */
   @view-transition {
     navigation: auto;
   }
@@ -92,4 +91,11 @@ input {
 /* Components set their own display, which would otherwise override the hidden attribute. */
 [hidden] {
   display: none !important;
+}
+/* High contrast replaces the backgrounds that show a pressed button, so it gets the system highlight instead. */
+@media (forced-colors: active) {
+  [aria-pressed="true"] {
+    background: Highlight !important;
+    color: HighlightText !important;
+  }
 }

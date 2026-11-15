@@ -35,13 +35,6 @@
   background: var(--sun);
   color: var(--ink);
 }
-/* High contrast replaces backgrounds, so the chosen filter needs a system colour to stand out. */
-@media (forced-colors: active) {
-  .news-tabs button[aria-pressed="true"] {
-    background: Highlight;
-    color: HighlightText;
-  }
-}
 
 .news-meta {
   display: flex;

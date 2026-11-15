@@ -37,7 +37,7 @@ const { title, description, keywords, canonical, chrome = true, navOverlay = fal
 const fullTitle = title ? `${title} | Pomme` : "Pomme: a Minecraft client written in Rust";
 const url = new URL(canonical, Astro.site);
 const shareUrl = new URL(share.src, Astro.site);
-// Hovering a link loads that page ahead; the redirects and the feed aren't pages to render.
+// The redirects and the feed aren't pages, so they're never prerendered.
 const SPECULATION_RULES = {
   prerender: [
     {

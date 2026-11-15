@@ -20,7 +20,7 @@ const parts = layout.parts.map((part) => {
 });
 ---
 
-<h1 class:list={["home-mark", ...motion]} style={`aspect-ratio: ${layout.width} / ${layout.height}`}>
+<span class:list={["home-mark", ...motion]} style={`aspect-ratio: ${layout.width} / ${layout.height}`}>
   <span class="home-sr">Pomme</span>
   {
     parts.map((p) => (
@@ -37,7 +37,7 @@ const parts = layout.parts.map((part) => {
       </span>
     ))
   }
-</h1>
+</span>
 
 <script>
   // Tapping replays the hop; on touch screens there is no hover to trigger it.

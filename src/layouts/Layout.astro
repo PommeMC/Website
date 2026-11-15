@@ -3,7 +3,7 @@ import JsonScript from "@/components/JsonScript.astro";
 import SiteFooter from "@/components/layout/SiteFooter.astro";
 import SiteNav from "@/components/layout/SiteNav.astro";
 import { NAV_HEIGHT } from "@/data/layout";
-import { UNLISTED } from "@/data/unlisted";
+import { REDIRECTS, UNLISTED } from "@/data/unlisted";
 import "@/styles/global.css";
 
 interface ShareImage {
@@ -17,7 +17,6 @@ interface Props {
   /** Shown as "<title> | Pomme". Left out on the homepage, which uses the site's own title. */
   title?: string;
   description: string;
-  keywords: string[];
   canonical: string;
   /** Set to false on pages that render their own main landmark. */
   chrome?: boolean;
@@ -34,17 +33,14 @@ const SITE_CARD: ShareImage = {
   alt: "Pomme, a Minecraft client written from scratch in Rust, next to a landscape captured in Pomme.",
 };
 
-const { title, description, keywords, canonical, chrome = true, navOverlay = false, share = SITE_CARD } = Astro.props;
+const { title, description, canonical, chrome = true, navOverlay = false, share = SITE_CARD } = Astro.props;
 const fullTitle = title ? `${title} | Pomme` : "Pomme: a Minecraft client written in Rust";
 const url = new URL(canonical, Astro.site);
 const shareUrl = new URL(share.src, Astro.site);
-// The redirects and the feed aren't pages, so they're never prerendered.
 const SPECULATION_RULES = {
   prerender: [
     {
-      where: {
-        and: [{ href_matches: "/*" }, { not: { href_matches: ["/donate", "/downloads", "/community/guidelines", "/news/rss.xml"] } }],
-      },
+      where: { and: [{ href_matches: "/*" }, { not: { href_matches: [...REDIRECTS, "/news/rss.xml"] } }] },
       eagerness: "moderate",
     },
   ],
@@ -57,7 +53,6 @@ const SPECULATION_RULES = {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
-    <meta name="keywords" content={keywords.join(", ")} />
     {UNLISTED.includes(canonical) && <meta name="robots" content="noindex" />}
     <meta property="og:title" content={fullTitle} />
     <meta property="og:type" content="website" />

@@ -2,7 +2,7 @@ import { defineCollection, z } from "astro:content";
 import { glob } from "astro/loaders";
 import { rssSchema } from "@astrojs/rss";
 
-const DEFAULT_AUTHOR = "Pomme Team";
+export const DEFAULT_AUTHOR = "Pomme Team";
 const DEFAULT_AVATAR = "/assets/brand/pomme.png";
 
 const posts = defineCollection({

@@ -13,12 +13,7 @@ const [featured] = entries;
 const categories = [...new Set(entries.map((e) => e.category))];
 ---
 
-<Layout
-  title="News"
-  description="Releases and posts from the Pomme team."
-  keywords={["pomme", "news", "releases", "changelog"]}
-  canonical="/news"
->
+<Layout title="News" description="Releases and posts from the Pomme team." canonical="/news">
   <div class="home">
     <div class="home-w home-s">
       <header class="news-head">

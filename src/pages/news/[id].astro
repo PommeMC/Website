@@ -6,10 +6,12 @@ import CompareSlider from "@/components/CompareSlider.astro";
 import LongDate from "@/components/LongDate.astro";
 import NewsTag from "@/components/news/NewsTag.astro";
 import PostCover from "@/components/news/PostCover.astro";
+import JsonScript from "@/components/JsonScript.astro";
 import Layout from "@/layouts/Layout.astro";
+import { DEFAULT_AUTHOR } from "@/content.config";
 import { DOWNLOADS_HREF } from "@/data/nav";
 import { listFormat } from "@/utils/content";
-import { buildPlatforms } from "@/utils/downloads";
+import { buildPlatforms, downloadableSystems } from "@/utils/downloads";
 import { getLatestRelease, sizedAvatar } from "@/utils/github";
 import { getPosts, postInfo } from "@/utils/news";
 
@@ -47,14 +49,26 @@ const share =
       })));
 
 const release = await getLatestRelease();
-const systems = listFormat.format(
-  buildPlatforms(release)
-    .filter((p) => p.downloadable)
-    .map((p) => p.label)
-);
+const systems = listFormat.format(downloadableSystems(buildPlatforms(release)));
+
+const canonical = `/news/${post.id}`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: title,
+  description: summary,
+  datePublished: data.date.toISOString(),
+  author: { "@type": data.author === DEFAULT_AUTHOR ? "Organization" : "Person", name: data.author },
+  image: share ? new URL(share.src, Astro.site) : undefined,
+  url: new URL(canonical, Astro.site),
+  publisher: { "@type": "Organization", name: "Pomme", url: Astro.site },
+};
 ---
 
-<Layout title={title} description={summary} keywords={["pomme", "news"]} canonical={`/news/${post.id}`} share={share}>
+<Layout {title} description={summary} {canonical} {share}>
+  <Fragment slot="head">
+    <JsonScript type="application/ld+json" data={structuredData} />
+  </Fragment>
   <div class="home">
     <article class="home-s post">
       <header class="post-col post-head">

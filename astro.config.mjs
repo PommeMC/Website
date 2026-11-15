@@ -4,7 +4,7 @@ import icon from "astro-icon";
 import sitemap from "@astrojs/sitemap";
 import cloudflare from "@astrojs/cloudflare";
 import mdx from "@astrojs/mdx";
-import { UNLISTED } from "./src/data/unlisted.ts";
+import { REDIRECTS, UNLISTED } from "./src/data/unlisted.ts";
 
 const GIT_COMMIT_HASH = (process.env.GITHUB_SHA || "").trim().slice(0, 7) || execSync("git rev-parse --short HEAD").toString().trim();
 
@@ -35,7 +35,7 @@ export default defineConfig({
     icon({
       iconDir: "src/assets",
     }),
-    sitemap({ filter: (page) => !UNLISTED.includes(new URL(page).pathname) }),
+    sitemap({ filter: (page) => ![...UNLISTED, ...REDIRECTS].includes(new URL(page).pathname) }),
     mdx(),
   ],
 

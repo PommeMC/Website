@@ -1,10 +1,11 @@
 import { LINKS } from "@/data/home";
-import { GITHUB_URL } from "@/utils/github";
+import { GITHUB_URL, NEW_ISSUE_URL } from "@/utils/github";
 import { getParityRun } from "@/utils/parity";
 
 export const DOWNLOADS_HREF = "/#download";
 export const PARITY_HREF = "/parity";
 export const FAQ_HREF = "/faq";
+export const COMMUNITY_HREF = "/community";
 export const PRESS_HREF = "/press";
 
 export interface NavLink {
@@ -20,13 +21,16 @@ export interface NavLink {
   showStars?: boolean;
 }
 
+const DISCORD: NavLink = { label: "Discord", href: LINKS.discord, external: true, icon: "discord-brands" };
+const GITHUB: NavLink = { label: "GitHub", href: GITHUB_URL, external: true, icon: "github-brands", showStars: true };
+
 const NAV_LINKS: NavLink[] = [
   { label: "Orchard", href: LINKS.orchard, external: true, title: "Pomme's marketplace", hint: "Marketplace" },
   { label: "News", href: "/news" },
-  { label: "Community", href: "/community" },
+  { label: "Community", href: COMMUNITY_HREF },
   { label: "Parity", href: PARITY_HREF, title: "How close it is to vanilla", hint: "vs vanilla" },
-  { label: "Discord", href: LINKS.discord, external: true, icon: "discord-brands" },
-  { label: "GitHub", href: GITHUB_URL, external: true, icon: "github-brands", showStars: true },
+  DISCORD,
+  GITHUB,
 ];
 
 /**
@@ -46,6 +50,31 @@ export async function getSitePages(): Promise<NavLink[]> {
     ...(await getNavLinks()).pages,
     { label: "FAQ", href: FAQ_HREF },
     { label: "Press", href: PRESS_HREF },
+  ];
+}
+
+/** The footer's columns: the site's pages, where people meet, and the code. */
+export async function getFooterColumns(): Promise<{ title: string; links: NavLink[] }[]> {
+  const community = [COMMUNITY_HREF, PRESS_HREF];
+  return [
+    { title: "Pomme", links: (await getSitePages()).filter((l) => !community.includes(l.href)) },
+    {
+      title: "Community",
+      links: [
+        { label: "Community hub", href: COMMUNITY_HREF },
+        DISCORD,
+        { label: "Ways to help", href: `${COMMUNITY_HREF}#ways` },
+        { label: "Press", href: PRESS_HREF },
+      ],
+    },
+    {
+      title: "Source",
+      links: [
+        GITHUB,
+        { label: "Releases", href: LINKS.latestRelease, external: true },
+        { label: "Report a bug", href: NEW_ISSUE_URL, external: true },
+      ],
+    },
   ];
 }
 

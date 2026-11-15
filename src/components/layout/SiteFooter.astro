@@ -1,60 +1,58 @@
 ---
 import "@/styles/footer.css";
-import { Icon } from "astro-icon/components";
 import SiteBrand from "@/components/layout/SiteBrand.astro";
 import { LINKS } from "@/data/home";
-import { DISCLAIMER, LICENCE } from "@/data/layout";
-import { NEW_TAB, externalAttrs, getNavLinks, getSitePages } from "@/data/nav";
+import { DISCLAIMER, LICENCE, ONE_LINE, PRIVACY } from "@/data/layout";
+import { DOWNLOADS_HREF, NEW_TAB, externalAttrs, getFooterColumns } from "@/data/nav";
 
 const hash = import.meta.env.GIT_COMMIT_HASH;
 const year = new Date().getFullYear();
-const [{ social }, pages] = await Promise.all([getNavLinks(), getSitePages()]);
+const columns = await getFooterColumns();
 ---
 
 <footer class="site-footer">
   <div class="home-w">
     <div class="site-footer-top">
-      <SiteBrand />
-      <nav aria-label="Footer">
-        <ul class="site-footer-links" role="list">
-          {
-            pages.map((l) => (
-              <li>
-                <a class="site-nl" href={l.href} {...externalAttrs(l)}>
-                  {l.label}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </nav>
-      <ul class="site-footer-social" role="list">
+      <div class="site-footer-about">
+        <SiteBrand />
+        <p>{ONE_LINE}</p>
+        <a class="home-rib home-rib-sm" href={DOWNLOADS_HREF}>Download</a>
+      </div>
+      <nav class="site-footer-cols" aria-label="Footer">
         {
-          social.map((l) => (
-            <li>
-              <a class="site-nl" href={l.href} aria-label={l.label} {...externalAttrs(l)}>
-                <Icon name={`icons/fontawesome/${l.icon}`} aria-hidden="true" class="site-icon" />
-              </a>
-            </li>
+          columns.map((c) => (
+            <div>
+              <h2 class="home-d site-footer-h">{c.title}</h2>
+              <ul role="list">
+                {c.links.map((l) => (
+                  <li>
+                    <a class="site-footer-link" href={l.href} {...externalAttrs(l)}>
+                      {l.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))
         }
-      </ul>
+      </nav>
     </div>
-    <div class="site-footer-bottom">
+    <div class="site-footer-notes">
       <p class="site-footer-legal">{DISCLAIMER}</p>
-      <p>
-        &copy; {year} Pomme · {LICENCE} · <a class="home-quiet-link" href={LINKS.sponsor} {...NEW_TAB}>Donate</a>
-        {
-          hash && (
-            <>
-              {" · "}
-              <a class="home-quiet-link" href={`https://github.com/PommeMC/Website/commit/${hash}`} aria-label={`Site version ${hash}`}>
-                {hash}
-              </a>
-            </>
-          )
-        }
-      </p>
+      <p>{PRIVACY}</p>
     </div>
+    <p class="site-footer-meta">
+      &copy; {year} Pomme · {LICENCE} · <a class="home-quiet-link" href={LINKS.sponsor} {...NEW_TAB}>Donate</a>
+      {
+        hash && (
+          <>
+            {" · "}
+            <a class="home-quiet-link" href={`https://github.com/PommeMC/Website/commit/${hash}`} aria-label={`Site version ${hash}`}>
+              {hash}
+            </a>
+          </>
+        )
+      }
+    </p>
   </div>
 </footer>

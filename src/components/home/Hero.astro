@@ -70,7 +70,7 @@ import { HERO_IMAGE, HERO_LAYERS, HERO_RENDER, HERO_SKY_SOURCES } from "@/utils/
 
   // Fallback for browsers without CSS scroll-driven animations.
   const hero = document.querySelector<HTMLElement>("[data-parallax]");
-  if (hero && !CSS.supports("animation-timeline: scroll()")) {
+  if (hero && !CSS.supports("(animation-timeline: scroll()) and (animation-range: 0% 100%)")) {
     const range = parseFloat(hero.style.getPropertyValue("--range"));
     const draw = () => {
       hero.style.setProperty("--s", `${still.matches ? 0 : Math.min(scrollY, range)}px`);

@@ -78,7 +78,7 @@
     transform: translateY(calc(var(--range) * var(--speed, 0)));
   }
 }
-@supports (animation-timeline: scroll()) {
+@supports (animation-timeline: scroll()) and (animation-range: 0% 100%) {
   @media (prefers-reduced-motion: no-preference) {
     .home-layer {
       animation: home-parallax linear both;

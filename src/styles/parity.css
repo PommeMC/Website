@@ -99,15 +99,18 @@
 .parity-row-plain::before {
   content: "";
 }
+/* `/ ""` gives the marker empty alt text so screen readers skip it; the plain value is the fallback for browsers without that syntax. */
 .parity-row > summary::before,
 .parity-cat-name::before,
 .parity-more > summary::before {
   content: "+";
+  content: "+" / "";
 }
 .parity-row[open] > summary::before,
 .parity-cat[open] .parity-cat-name::before,
 .parity-more[open] > summary::before {
   content: "–";
+  content: "–" / "";
 }
 .parity-cat-name::before,
 .parity-more > summary::before {
@@ -222,19 +225,18 @@
 }
 .parity-heat-toggle {
   margin-left: auto;
-  min-height: 36px;
+  min-height: var(--tap);
   padding: 0 8px;
   color: var(--sun);
   font-weight: 600;
   cursor: pointer;
 }
-.parity-heat-toggle[aria-pressed="false"]:hover {
+.parity-heat-toggle:hover {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 .parity-heat-toggle[aria-pressed="true"] {
-  background: var(--sun);
-  color: var(--ink);
+  box-shadow: inset 0 0 0 2px var(--sun);
 }
 .parity-more {
   display: grid;

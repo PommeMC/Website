@@ -44,6 +44,11 @@ export function buildPlatforms(release: Release | null): HomePlatform[] {
   });
 }
 
+/** The systems the release has a download for, e.g. ["Windows", "macOS", "Linux"]. */
+export function downloadableSystems(platforms: HomePlatform[]): string[] {
+  return platforms.filter((p) => p.downloadable).map((p) => p.label);
+}
+
 export function downloadLabel(p: HomePlatform): string {
   return `Download Pomme for ${p.label}, ${p.details}`;
 }

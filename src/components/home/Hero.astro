@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import LogoMark from "@/components/home/LogoMark.astro";
+import { PAGE_TITLE_ID } from "@/data/layout";
 import { PARALLAX } from "@/data/home";
 import { HERO_IMAGE, HERO_LAYERS, HERO_RENDER, HERO_SKY_SOURCES } from "@/utils/hero";
 ---
@@ -41,36 +42,67 @@ import { HERO_IMAGE, HERO_LAYERS, HERO_RENDER, HERO_SKY_SOURCES } from "@/utils/
                 <source data-src={s.src} type={s.type} media={s.media} />
               ))}
             </video>
-            <div class="home-layer home-logo" style={`--speed: ${PARALLAX.logo}`}>
+            <h1 id={PAGE_TITLE_ID} class="home-layer home-logo" style={`--speed: ${PARALLAX.logo}`}>
               <LogoMark />
-              <p class="home-d home-logo-tag">A Minecraft client, rewritten from scratch</p>
-            </div>
+              <span class="home-d home-logo-tag">A Minecraft client, rewritten from scratch</span>
+            </h1>
           </Fragment>
         )}
       </Fragment>
     ))
   }
   <div class="home-hero-fade" aria-hidden="true"></div>
+  <button type="button" class="home-motion-toggle" aria-pressed="false" aria-label="Pause background motion" data-motion-toggle hidden>
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"
+      ><path class="pause" d="M6 5h4v14H6zM14 5h4v14h-4z"></path><path class="play" d="M7 4l14 8-14 8z"></path></svg
+    >
+  </button>
 </section>
 
 <script>
   import { perFrame } from "@/utils/frame";
 
   const still = matchMedia("(prefers-reduced-motion: reduce)");
+  const hero = document.querySelector<HTMLElement>("[data-parallax]");
+  let paused = false;
+  let inView = false;
 
-  // The sky video only loads when motion is welcome and data isn't being saved, and pauses while off screen.
+  // The sky video only loads when motion is welcome and data isn't being saved, and plays only while on screen.
   const video = document.querySelector<HTMLVideoElement>("[data-sky-video]");
   const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
-  if (video && !saveData && !still.matches) {
-    video.querySelectorAll("source").forEach((s) => (s.src = s.dataset.src ?? ""));
-    video.addEventListener("playing", () => video.classList.add("is-playing"), { once: true });
-    video.load();
-    new IntersectionObserver(([entry]) => (entry.isIntersecting ? video.play().catch(() => {}) : video.pause())).observe(video);
+  const sky = !saveData && !still.matches ? video : null;
+  const syncSky = () => (inView && !paused && !still.matches ? sky?.play().catch(() => {}) : sky?.pause());
+  const loadSky = () => {
+    if (!sky) return;
+    sky.querySelectorAll("source").forEach((s) => (s.src = s.dataset.src ?? ""));
+    sky.addEventListener("playing", () => sky.classList.add("is-playing"), { once: true });
+    sky.load();
+    new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      syncSky();
+    }).observe(sky);
+  };
+  // A page prerendered on hover runs this too, so the video waits until the page is actually opened.
+  if (document.prerendering) addEventListener("prerenderingchange", loadSky, { once: true });
+  else loadSky();
+  still.addEventListener("change", syncSky);
+
+  const toggle = document.querySelector<HTMLButtonElement>("[data-motion-toggle]");
+  const hasMotion = !!sky || !!hero?.querySelector(".anim-sway");
+  if (toggle && hasMotion) {
+    const showToggle = () => (toggle.hidden = still.matches);
+    showToggle();
+    still.addEventListener("change", showToggle);
+    toggle.addEventListener("click", () => {
+      paused = !paused;
+      toggle.setAttribute("aria-pressed", String(paused));
+      hero?.toggleAttribute("data-paused", paused);
+      syncSky();
+    });
   }
 
   // Fallback for browsers without CSS scroll-driven animations.
-  const hero = document.querySelector<HTMLElement>("[data-parallax]");
-  if (hero && !CSS.supports("animation-timeline: scroll()")) {
+  if (hero && !CSS.supports("(animation-timeline: scroll()) and (animation-range: 0% 100%)")) {
     const range = parseFloat(hero.style.getPropertyValue("--range"));
     const draw = () => {
       hero.style.setProperty("--s", `${still.matches ? 0 : Math.min(scrollY, range)}px`);

@@ -12,11 +12,21 @@
 html {
   background: var(--bg);
   color-scheme: dark;
-  scroll-behavior: smooth;
   -webkit-tap-highlight-color: transparent;
   -webkit-text-size-adjust: 100%;
   font-family: var(--body);
   line-height: 1.5;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+  @view-transition {
+    navigation: auto;
+  }
+  .site-nav {
+    view-transition-name: site-nav;
+  }
 }
 body {
   display: flex;
@@ -34,6 +44,12 @@ h5,
 h6 {
   font-size: inherit;
   font-weight: inherit;
+  text-wrap: balance;
+}
+p,
+li,
+blockquote {
+  text-wrap: pretty;
 }
 ol,
 ul,
@@ -75,4 +91,11 @@ input {
 /* Components set their own display, which would otherwise override the hidden attribute. */
 [hidden] {
   display: none !important;
+}
+/* High contrast replaces the backgrounds that show a pressed button, so it gets the system highlight instead. */
+@media (forced-colors: active) {
+  [aria-pressed="true"] {
+    background: Highlight !important;
+    color: HighlightText !important;
+  }
 }

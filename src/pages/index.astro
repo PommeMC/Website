@@ -1,6 +1,7 @@
 ---
 import "@/styles/home.css";
 
+import JsonScript from "@/components/JsonScript.astro";
 import Layout from "@/layouts/Layout.astro";
 import Hero from "@/components/home/Hero.astro";
 import Intro from "@/components/home/Intro.astro";
@@ -10,10 +11,11 @@ import Parity from "@/components/home/Parity.astro";
 import Community from "@/components/home/Community.astro";
 import Download from "@/components/home/Download.astro";
 import { DEMO } from "@/data/home";
-import { buildPlatforms } from "@/utils/downloads";
+import { DOWNLOADS_HREF } from "@/data/nav";
+import { buildPlatforms, downloadableSystems } from "@/utils/downloads";
 import { getPosts } from "@/utils/news";
 import { getParityRun } from "@/utils/parity";
-import { getCommitCount, getContributors, getLatestRelease, getStars } from "@/utils/github";
+import { getCommitCount, getContributors, getLatestRelease, getStars, GITHUB_URL } from "@/utils/github";
 import { getHeroPreloads, HERO_IMAGE, HERO_MOBILE_HEIGHT } from "@/utils/hero";
 
 const [release, contributors, commits, stars, preload, parity, allPosts] = await Promise.all([
@@ -28,16 +30,34 @@ const [release, contributors, commits, stars, preload, parity, allPosts] = await
 
 const platforms = buildPlatforms(release);
 const posts = allPosts.slice(0, 3);
+
+const description =
+  "Pomme is a free, high-performance Minecraft: Java Edition client written in Rust. No Java to install, a Vulkan renderer, and gameplay built to match vanilla.";
+const systems = downloadableSystems(platforms);
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "WebSite", name: "Pomme", url: Astro.site },
+    {
+      "@type": "SoftwareApplication",
+      name: "Pomme",
+      description,
+      url: Astro.site,
+      applicationCategory: "GameApplication",
+      operatingSystem: systems.length > 0 ? systems.join(", ") : undefined,
+      softwareVersion: release?.version,
+      downloadUrl: new URL(DOWNLOADS_HREF, Astro.site),
+      license: "https://www.gnu.org/licenses/gpl-3.0.html",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      sameAs: [GITHUB_URL],
+    },
+  ],
+};
 ---
 
-<Layout
-  description="Pomme is a free, high-performance Minecraft: Java Edition client written in Rust. No Java to install, a Vulkan renderer, and gameplay built to match vanilla."
-  keywords={["pomme", "minecraft", "client", "rust", "vulkan", "open source"]}
-  canonical="/"
-  chrome={false}
-  navOverlay
->
+<Layout {description} canonical="/" chrome={false} navOverlay>
   <Fragment slot="head">
+    <JsonScript type="application/ld+json" data={structuredData} />
     {
       preload.map((l) => (
         <link

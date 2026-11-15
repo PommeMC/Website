@@ -1,6 +1,7 @@
 ---
 import "@/styles/signin.css";
 import Layout from "@/layouts/Layout.astro";
+import { PAGE_TITLE_ID } from "@/data/layout";
 import { LINKS } from "@/data/home";
 import { NEW_TAB } from "@/data/nav";
 import { SIGN_IN_FAILED_HREF } from "@/data/unlisted";
@@ -29,11 +30,11 @@ const FIXES = [
 ];
 ---
 
-<Layout title="Sign-in didn't finish" description="Pomme couldn't finish signing in." keywords={[]} canonical={SIGN_IN_FAILED_HREF}>
+<Layout title="Sign-in didn't finish" description="Pomme couldn't finish signing in." canonical={SIGN_IN_FAILED_HREF}>
   <div class="home">
     <div class="home-w home-s signin">
       <span class="signin-mark signin-bad" aria-hidden="true">✗</span>
-      <h1 class="home-d signin-h1">Sign-in didn't finish</h1>
+      <h1 id={PAGE_TITLE_ID} class="home-d signin-h1">Sign-in didn't finish</h1>
       <div class="signin-reason" data-reason-box hidden>
         <p class="home-small">What went wrong</p>
         <p data-reason></p>

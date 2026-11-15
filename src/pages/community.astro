@@ -2,6 +2,7 @@
 import "@/styles/community.css";
 import { Image } from "astro:assets";
 import Layout from "@/layouts/Layout.astro";
+import { PAGE_TITLE_ID } from "@/data/layout";
 import { LINKS } from "@/data/home";
 import { NEW_TAB, PARITY_HREF, hrefAttrs } from "@/data/nav";
 import { plural } from "@/utils/content";
@@ -57,13 +58,12 @@ const peopleText = [`${people.length} ${people.length === 1 ? "person" : "people
 <Layout
   title="Get involved"
   description="Ways to help Pomme, where the community talks, and everyone who has contributed."
-  keywords={["pomme", "community", "contribute", "discord"]}
   canonical="/community"
 >
   <div class="home">
     <div class="home-s community">
       <header class="home-stack community-head">
-        <h1 class="home-d community-h1">Get involved</h1>
+        <h1 id={PAGE_TITLE_ID} class="home-d community-h1">Get involved</h1>
         <p class="community-lede">Pomme is open source and built by volunteers. Whatever you have time for, there is a way to help.</p>
         <p class="community-join">
           <a class="home-rib home-rib-sm" href={LINKS.discord} {...NEW_TAB}>Join the Discord</a>

@@ -5,6 +5,7 @@ import Meter from "@/components/Meter.astro";
 import ParityShot from "@/components/parity/ParityShot.astro";
 import ResultMark from "@/components/parity/ResultMark.astro";
 import Layout from "@/layouts/Layout.astro";
+import { PAGE_TITLE_ID } from "@/data/layout";
 import { NEW_TAB, PARITY_HREF } from "@/data/nav";
 import { listFormat, plural } from "@/utils/content";
 import { GITHUB_URL, NEW_ISSUE_URL } from "@/utils/github";
@@ -41,14 +42,13 @@ const shotsText = (s: Scenario) => {
 <Layout
   title="Parity with vanilla"
   description="The same in-game scripts run on Pomme and on vanilla Minecraft, with the results side by side."
-  keywords={["pomme", "parity", "vanilla", "minecraft"]}
   canonical={PARITY_HREF}
 >
   <div class="home">
     <div class="home-w home-s home-aside">
       <aside class="home-aside-side">
         <div class="home-stack">
-          <h1 class="home-d home-aside-h1">How close is it to vanilla?</h1>
+          <h1 id={PAGE_TITLE_ID} class="home-d home-aside-h1">How close is it to vanilla?</h1>
           <p class="home-muted">
             A scenario is a short scripted play session: the game joins a server, does one thing, like placing a block from the offhand, and
             checks the result. Each one runs on Pomme and on vanilla Minecraft with the same server settings.
